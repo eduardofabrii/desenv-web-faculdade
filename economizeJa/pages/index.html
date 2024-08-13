@@ -1,51 +1,50 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <title>EconomizeJa</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-      <nav class="navbar navbar-expand-lg bg-body-tertiary";">
-            
-            <div class="container">
-              <div class="container-fluid">
-                <a class="navbar-brand" href="#">EconomizeJa</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-                  <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNavDropdown">
-                  <ul class="navbar-nav">
-                    <li class="nav-item">
-                      <a class="nav-link" href="#">Entregador</a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link" href="#">Restaurante e Mercado</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                      <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Mais
-                      </a>
-                      <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Quem somos?</a></li>
-                        <li><a class="dropdown-item" href="#">Onde estamos?</a></li>
-                        <li><a class="dropdown-item" href="#">Contato</a></li>
-                      </ul>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <div class="registros">
-                <a href="cadastro-usuario.html">Entrar</a>
-              </div>
-              <div class="registros">
-                <a href="cadastro-usuario.html">Registrar</a>
-              </div>
-            </div>
-        </nav>
 
-      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <nav class="py-2 bg-light border-bottom">
+      <div class="container d-flex flex-wrap">
+        <ul class="nav me-auto">
+          <li class="nav-item"><a href="#" class="nav-link link-dark px-2 active" aria-current="page"><strong>EconomizeJa</strong></a></li>
+          <li class="nav-item"><a href="#" class="nav-link link-dark px-2">Entregador</a></li>
+          <li class="nav-item"><a href="#" class="nav-link link-dark px-2">Restaurante e Mercado</a></li>
+          <li class="nav-item dropdown">
+            <a href="#" class="nav-link link-dark dropdown-toggle px-2" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Mais</a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <li><a href="#" class="dropdown-item">Quem somos?</a></li>
+              <li><a href="#" class="dropdown-item">Onde estamos?</a></li>
+              <li><a href="#" class="dropdown-item">Contato</a></li>
+            </ul>
+          </li>
+        <div class="nav-register">
+          <div class="registros">
+              <a href="cadastro-usuario.html" class="nav-link link-dark px-2" style="display: flex; flex-direction: row;">Entrar</a>
+          </div>
+          <div class="registros">
+            <a href="cadastro-usuario.html" class="nav-link link-dark px-2" style="display: flex; flex-direction: row;">Registrar</a>
+          </div>
+        </div>
+        </ul>
+      </div>
+
+    <main class="main">
+      <dmriv class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-body-tertiary">
+        <div class="col-md-6 p-lg-5 mx-auto my-5">
+          <h1 class="display-3 fw-bold">Feito para enomizar agora.</h1>
+          <h3 class="fw-normal text-muted mb-3">Economize com inteligência, viva com liberdade.</h3>
+        <div class="product-device shadow-sm d-none d-md-block"></div>
+        <div class="product-device product-device-2 shadow-sm d-none d-md-block"></div>
+      </dmriv>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+      
 </body>
 </html>
