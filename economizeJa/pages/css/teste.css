@@ -63,7 +63,6 @@ a.nav-link.link-dark.px-2:hover {
     line-height: 1.2;
 }
 
-/* Estilos para telas menores que 768px */
 @media (max-width: 768px) {
     .nav-register {
         display: none;
@@ -86,14 +85,12 @@ a.nav-link.link-dark.px-2:hover {
     }
 }
 
-/* Estilos para telas entre 768px e 1199px */
 @media (min-width: 768px) and (max-width: 1199px) {
     .nav-register {
-        display: none; /* Oculta o Entrar e Registrar */
+        display: none;
     }
 }
 
-/* Estilos para telas maiores que 1200px */
 @media (min-width: 1200px) {
     .nav-register {
         display: flex;
