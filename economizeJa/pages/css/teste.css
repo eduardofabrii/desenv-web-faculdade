@@ -1,0 +1,116 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    overflow-x: hidden !important;
+}
+
+a.nav-link.link-dark.px-2 { 
+    color: #000;
+    font-size: 1.2rem;
+    font-weight: 100;
+    transition: 1s;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    flex-direction: row;
+}
+
+a.nav-link.link-dark.px-2:hover {
+    color: #fff;
+    background-color: #000;
+    transition: 1s;
+}
+
+.nav-register {
+    display: flex;
+    margin-left: 300px;
+}
+
+.container.d-flex.flex-wrap {
+    display: flex;
+    justify-content: center;  
+    padding: 1rem;
+}
+
+.container.d-flex.flex-wrap .registros a {
+    margin-left: 10px;
+    color: #fff;
+    border: 1px solid #000;
+    background-color: #000;
+}
+
+.container.d-flex.flex-wrap .registros a:hover {
+    margin-left: 10px;
+    color: #000;
+    border: 1px solid #000;
+    background-color: #fff;
+}
+
+.main {
+    background-image: url(/economizeJa/pages/images/top-view-fruit-assortement-with-copy-space.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.display-3 {
+    color: #fff;
+    font-size: 4.5rem;
+    font-weight: 300;
+    line-height: 1.2;
+}
+
+/* Estilos para telas menores que 768px */
+@media (max-width: 768px) {
+    .nav-register {
+        display: none;
+    }
+    
+    .container.d-flex.flex-wrap {
+        display: none;
+    }
+
+    .nav-item.dropdown {
+        display: none;
+    }
+
+    .nav-item {
+        display: none;
+    }
+
+    .nav-item:first-child {
+        display: block;
+    }
+}
+
+/* Estilos para telas entre 768px e 1199px */
+@media (min-width: 768px) and (max-width: 1199px) {
+    .nav-register {
+        display: none; /* Oculta o Entrar e Registrar */
+    }
+}
+
+/* Estilos para telas maiores que 1200px */
+@media (min-width: 1200px) {
+    .nav-register {
+        display: flex;
+    }
+    
+    .container.d-flex.flex-wrap {
+        display: flex;
+    }
+
+    .nav-item {
+        display: list-item;
+    }
+}
+
+@media (min-width: 1667px) {
+    .d-flex.gap-3.justify-content-center.lead.fw-normal {
+        display: flex;
+        text-align: center;
+    }
+}
