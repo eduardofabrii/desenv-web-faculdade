@@ -12,7 +12,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-image: url('/economizeJa/pages/images/image-fruits.png');
+  background-image: url('../economizeJa/pages/images/image-fruits.png');
   background-size: cover;
 }
 
