@@ -10,7 +10,11 @@ html, body {
     overflow-x: hidden !important;
 }
 
-a.nav-link.link-dark.px-2 { 
+.bg {
+    background-color: #000000;
+}
+
+a.nav-link.link-dark.px-2 {
     color: #000;
     font-size: 1.2rem;
     font-weight: 100;
