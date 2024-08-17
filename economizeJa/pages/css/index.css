@@ -10,6 +10,10 @@ html, body {
     overflow-x: hidden !important;
 }
 
+body {
+    overflow: hidden;
+}	
+
 .bg {
     background-color: #000000;
 }
@@ -55,9 +59,8 @@ a.nav-link.link-dark.px-2:hover {
     background-color: #fff;
 }
 
-
 .main {
-    background-image: url('/economizeJa/pages/images/top-view-fruit-assortement-with-copy-space.png');
+    background-image: url(background-index.png);
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
@@ -66,14 +69,17 @@ a.nav-link.link-dark.px-2:hover {
 }
 
 .display-3 {
-    color: #fff;
+    color: #000000;
     font-size: 4.5rem;
     font-weight: 300;
     line-height: 1.2;
 }
 
 .col-md-6.p-lg-5.mx-auto.my-5 {
-    margin-top: 10rem !important;
+    margin-top: 5rem !important;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
 }
 
 @media (max-width: 768px) {
@@ -98,7 +104,10 @@ a.nav-link.link-dark.px-2:hover {
     }
 
     .col-md-6.p-lg-5.mx-auto.my-5 {
-        margin-top: 10rem !important;
+        margin-top: 1rem !important;
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
     }
 }
 
@@ -108,7 +117,10 @@ a.nav-link.link-dark.px-2:hover {
     }
 
     .col-md-6.p-lg-5.mx-auto.my-5 {
-        margin-top: 3rem !important;
+        margin-top: 5rem !important;
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
     }
 }
 
@@ -123,6 +135,13 @@ a.nav-link.link-dark.px-2:hover {
 
     .nav-item {
         display: list-item;
+    }
+
+    .col-md-6.p-lg-5.mx-auto.my-5 {
+        margin-top: 5rem !important;
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
     }
 }
 
