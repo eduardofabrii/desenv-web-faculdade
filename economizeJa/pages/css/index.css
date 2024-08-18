@@ -12,14 +12,10 @@ html, body {
 
 body {
     overflow: hidden;
-}	
-
-.bg {
-    background-color: #000000;
 }
 
 a.nav-link.link-dark.px-2 {
-    color: #000;
+    color: black !important;
     font-size: 1.2rem;
     font-weight: 100;
     transition: 1s;
@@ -29,14 +25,15 @@ a.nav-link.link-dark.px-2 {
 }
 
 a.nav-link.link-dark.px-2:hover {
-    color: #fff;
-    background-color: #000;
+    color: #fff !important;
+    background-color: black;
     transition: 1s;
 }
 
 .nav-register {
     display: flex;
-    margin-left: 300px;
+    margin-left: 400px;
+    justify-content: center;
 }
 
 .container.d-flex.flex-wrap {
@@ -46,17 +43,32 @@ a.nav-link.link-dark.px-2:hover {
 }
 
 .container.d-flex.flex-wrap .registros a {
-    margin-left: 10px;
-    color: #fff;
-    border: 1px solid #000;
-    background-color: #000;
+    color: white !important;
+    background-color: black;
+    font-size: 1.2rem;
+    transition: 1s;
+    margin-left: 10px !important;
 }
 
 .container.d-flex.flex-wrap .registros a:hover {
+    color: black !important;
+    background-color: white;
+    transition: 1s;
+}
+
+.btn.btn-primary {
+    color: #fff;
+    border: 1px solid #000;
+    border-radius: 0px;
+    background-color: #000;
+}
+
+.btn.btn-primary:hover {
     margin-left: 10px;
     color: #000;
     border: 1px solid #000;
     background-color: #fff;
+    transition: 1s;
 }
 
 .main {
@@ -66,6 +78,10 @@ a.nav-link.link-dark.px-2:hover {
     background-position: center;
     background-attachment: fixed;
     height: 100vh;
+}
+
+.p-md-5 {
+    /* padding: 3rem !important; */
 }
 
 .display-3 {
@@ -143,11 +159,35 @@ a.nav-link.link-dark.px-2:hover {
         margin-left: auto;
         margin-right: auto;
     }
+
+    .btn.btn-primary {
+        display: none;
+    }
 }
 
 @media (min-width: 1667px) {
     .d-flex.gap-3.justify-content-center.lead.fw-normal {
         display: flex;
         text-align: center;
+    }
+}
+
+@media (max-width: 1400px) {
+    .container.d-flex.flex-wrap {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .nav-register {
+        display: none;
+    }
+
+    .btn.btn-primary {
+        display: block;
+    }
+
+    .offcanvas {
+        display: block;
     }
 }
