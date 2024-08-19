@@ -70,11 +70,6 @@ form {
   max-width: 500px;
 }
 
-.cadastro {
-  margin-top: 10px;
-  text-align: center;
-}
-
 #nome.btn.btn-primary {
   display: block;
   margin-top: 20px;
