@@ -11,7 +11,33 @@ html, body {
 }
 
 body {
-    overflow: hidden;
+    overflow: scroll;
+}
+
+.logo-img {
+    width: 40px; 
+    height: auto;
+    border-radius: 4px;
+}
+
+.nav-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.btn.btn-primary {
+    margin-left: auto;
+}
+
+.offcanvas-body ul.nav {
+    padding: 0;
+    margin: 0;
+}
+
+ul.nav.me-auto {
+    margin-right: 0 !important;
 }
 
 a.nav-link.link-dark.px-2 {
@@ -44,7 +70,7 @@ a.nav-link.link-dark.px-2:hover {
 
 .container.d-flex.flex-wrap .registros a {
     color: white !important;
-    background-color: black;
+    background-color: black !important;
     font-size: 1.2rem;
     transition: 1s;
     margin-left: 10px !important;
@@ -84,6 +110,14 @@ a.nav-link.link-dark.px-2:hover {
     /* padding: 3rem !important; */
 }
 
+nav.py-2.bg.bg-light.border-bottom {
+    padding-bottom: 0px !important;
+}
+
+dmriv.position-relative,overflow-hidden.p-3.p-nd-5.m-md-3.text-center.bg-body-tertiary {
+    background-color: transparent !important;
+}
+
 .display-3 {
     color: #000000;
     font-size: 4.5rem;
@@ -120,7 +154,7 @@ a.nav-link.link-dark.px-2:hover {
     }
 
     .col-md-6.p-lg-5.mx-auto.my-5 {
-        margin-top: 1rem !important;
+        margin-top: 10rem !important;
         text-align: center;
         margin-left: auto;
         margin-right: auto;
