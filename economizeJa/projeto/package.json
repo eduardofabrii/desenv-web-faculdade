@@ -1,13 +1,13 @@
 {
-  "name": "economizeja",
+  "name": "projeto",
   "version": "1.0.0",
-  "description": "Projeto para Desenvolvimento Front-End",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Eduardo Fabri",
+  "author": "",
   "license": "ISC",
+  "description": "",
   "dependencies": {
     "express": "^4.19.2"
   }
