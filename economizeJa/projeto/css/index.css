@@ -76,7 +76,7 @@ a.nav-link.link-dark.px-2:hover {
 }
 
 .main {
-    background-image: url(background-index.png);
+    background-image: url(../images/background-index.png);
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;

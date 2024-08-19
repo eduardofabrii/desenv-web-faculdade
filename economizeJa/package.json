@@ -1,12 +1,12 @@
 {
-  "name": "desenv-web-faculdade",
+  "name": "economizeja",
   "version": "1.0.0",
-  "description": "Desenvolvimento Web na Faculdade",
+  "description": "Projeto para Desenvolvimento Front-End",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Eduardo Fabri",
   "license": "ISC",
   "dependencies": {
     "express": "^4.19.2"
