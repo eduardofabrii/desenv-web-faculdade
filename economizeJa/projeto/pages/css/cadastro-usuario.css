@@ -70,19 +70,20 @@ form {
   max-width: 500px;
 }
 
+.mb-3 p {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
 #nome.btn.btn-primary {
-  display: block;
-  margin-top: 20px;
-  padding: 10px 20px;
-  font-weight: 500;
-  text-transform: uppercase;
-  border: none;
-  border-radius: 5px;
-  background-color: #050505;
+  margin-top: 15px;
+  display: flex;
   color: #fff;
-  cursor: pointer;
+  border: 1px solid #fff;
   border-radius: 0;
+  background-color: #000;
+  justify-content: center;
   transition: 1s;
+  width: 100%;
 }
 
 #nome.btn.btn-primary:hover {
@@ -102,6 +103,18 @@ main h2, p {
   font-family: 'Lora', serif;
   font-weight: 400;
   color: #333;
+}
+
+.cadastro {
+  display: flex;
+  margin-top: 10px;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+}
+
+.cadastro a {
+    margin-left: 5px;
 }
 
 @media (max-width: 1200px) {
