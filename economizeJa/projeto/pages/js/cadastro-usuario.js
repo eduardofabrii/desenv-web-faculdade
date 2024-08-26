@@ -27,3 +27,14 @@ function validarPadraoSenha(event) {
         document.getElementById('senhaPadrao').style.display = 'none';
     }
 }
+
+function validarEmail(event) {
+    let email = event.target.value;
+    let regex = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+(\.[a-z]+)?$/;
+
+    if (!regex.test(email)) {
+        document.getElementById('emailInvalido').style.display = 'block';
+    } else {
+        document.getElementById('emailInvalido').style.display = 'none';
+    }
+}
