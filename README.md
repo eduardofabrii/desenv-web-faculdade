@@ -5,10 +5,12 @@
 # Tecnologias Utilizadas
 Front-end: HTML, CSS, JavaScript <br>
 Back-end: Node.js, Express <br>
-Banco de Dados: ? <br>
+Banco de Dados: a definidir <br>
 Controle de Versão: Git/GitHub
 
 # Equipe
 Eduardo Fabri - Desenvolvedor <br>
 Renan - Desenvolvedor <br>
 João Vitor Correa - Desenvolvedor <br>
+
+# <a href="https://eduardofabrii.github.io/desenv-web-faculdade/economizeJa/projeto/pages/index.html">Clique e confira o atual projeto</a>
