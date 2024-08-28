@@ -1,4 +1,5 @@
-EconomizeJa
+# EconomizeJa
+
 EconomizeJa é uma aplicação web desenvolvida com o objetivo de reduzir o desperdício de alimentos, conectando consumidores a supermercados, restaurantes e outros estabelecimentos que desejam vender produtos próximos do vencimento ou com pequenos defeitos a preços reduzidos. Nosso foco é promover a sustentabilidade e a economia, beneficiando tanto os consumidores quanto os estabelecimentos.
 
 Tecnologias Utilizadas
