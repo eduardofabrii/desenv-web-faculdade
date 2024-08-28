@@ -4,7 +4,7 @@
 
 # Tecnologias Utilizadas
 Front-end: HTML, CSS, JavaScript <br>
-Back-end: Node.js, Express <br>
+Back-end: Node.js <br>
 Banco de Dados: a definidir <br>
 Controle de Versão: Git/GitHub
 
