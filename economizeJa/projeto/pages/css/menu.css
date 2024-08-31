@@ -87,35 +87,6 @@ nav.py-2.bg.bg-light.border-bottom {
     margin-bottom: 200px;
 }
 
-/* Responsividade */
-@media (max-width: 768px) {
-    .nav-register {
-        display: none;
-    }
-    
-    .container.d-flex.flex-wrap {
-        display: none;
-    }
-
-    .nav-item.dropdown {
-        display: none;
-    }
-
-    .nav-item {
-        display: none;
-    }
-
-    .nav-item:first-child {
-        display: block;
-    }
-
-    .col-md-6.p-lg-5.mx-auto.my-5 {
-        margin-top: 10rem !important;
-        text-align: center;
-        margin-left: auto;
-        margin-right: auto;
-    }
-}
 
 @media (min-width: 768px) and (max-width: 1199px) {
     .nav-register {
@@ -134,7 +105,7 @@ nav.py-2.bg.bg-light.border-bottom {
     .nav-register {
         display: flex;
     }
-    
+
     .container.d-flex.flex-wrap {
         display: flex;
     }
@@ -187,5 +158,29 @@ nav.py-2.bg.bg-light.border-bottom {
 
     .offcanvas {
         display: block;
+    }
+}
+
+
+/* Media query para telas menores que 760px */
+@media (max-width: 760px) {
+    .nav-item {
+        display: none;
+    }
+
+    .nav-item:first-child {
+        display: block;
+    }
+
+    .offcanvas .nav .nav-item {
+        display: block;
+        margin: 5px 0; 
+    }
+
+    .col-md-6.p-lg-5.mx-auto.my-5 {
+        margin-top: 10rem !important;
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
     }
 }
