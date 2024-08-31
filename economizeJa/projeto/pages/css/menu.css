@@ -163,7 +163,7 @@ nav.py-2.bg.bg-light.border-bottom {
 
 
 /* Media query para telas menores que 760px */
-@media (max-width: 760px) {
+@media (max-width: 770px) {
     .nav-item {
         display: none;
     }
