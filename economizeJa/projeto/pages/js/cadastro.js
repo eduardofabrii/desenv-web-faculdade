@@ -41,6 +41,34 @@ function validarLogin() {
     criarUsuario();
 }
 
+
+function criarUsuario() {
+    const nome = document.getElementById('nome').value;
+    const email = document.getElementById('email').value;
+    const senha = document.getElementById('senha').value;
+    const cpf = document.getElementById('cpf').value;
+    const endereco = document.getElementById('endereco').value;
+    const cidade = document.getElementById('cidade').value;
+    const telefone = document.getElementById('telefone').value;
+    
+    const usuario = {
+        nome,
+        email,
+        senha,
+        cpf,
+        endereco,
+        cidade,
+        telefone
+    };
+    
+    let usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+    usuarios.push(usuario);
+    localStorage.setItem('usuarios', JSON.stringify(usuarios));
+    
+    alert('Usuário cadastrado com sucesso!');
+    document.getElementById('form-cadastro').reset();
+    window.location.href = 'index.html';
+}
 function validarPadraoSenha(event) {
     let senha = event.target.value;
     let regex = /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).*$/;
@@ -52,39 +80,93 @@ function validarPadraoSenha(event) {
     }
 }
 
-function criarUsuario() {
-    const nome = document.getElementById('nome').value;
-    const email = document.getElementById('email').value;
-    const senha = document.getElementById('senha').value;
-    const cpf = document.getElementById('cpf').value;
-    const telefone = document.getElementById('telefone').value;
+function validarCadastroMotoboy() {
+    const nome = document.getElementById('nome-motoboy').value;
+    const email = document.getElementById('email-motoboy').value;
+    const telefone = document.getElementById('telefone-motoboy').value;
+    const senha = document.getElementById('senha-motoboy').value;
+    const cpf = document.getElementById('cpf-motoboy').value;
+    const placa = document.getElementById('placa-motoboy').value;
+    const cnh = document.getElementById('cnh-motoboy').value;
 
-    const usuario = {
-        nome,
-        email,
-        senha,
-        cpf,
-        telefone
-    };
+    document.getElementById('campoObrigatorio').style.display = 'none';
+    document.getElementById('senhaTamanho').style.display = 'none';
+    document.getElementById('senhaPadrao').style.display = 'none';
+    document.getElementById('emailInvalido').style.display = 'none';
+    document.getElementById('telefoneInvalido').style.display = 'none';
+    document.getElementById('cpfInvalido').style.display = 'none';
+    document.getElementById('placaInvalida').style.display = 'none';
+    document.getElementById('cnhInvalida').style.display = 'none';
 
-    let usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
-    usuarios.push(usuario);
-    localStorage.setItem('usuarios', JSON.stringify(usuarios));
 
-    alert('Usuário cadastrado com sucesso!');
-    document.getElementById('form-cadastro').reset();
-    window.location.href = 'index.html';
+    if (!nome || !email || !telefone || !senha || !cpf || !placa || !cnh) {
+        document.getElementById('campoObrigatorio').style.display = 'block';
+        return;
+    }
+
+    if (senha.length < 8 || senha.length > 16) {
+        document.getElementById('senhaTamanho').style.display = 'block';
+        return;
+    }
+
+    const regexSenha = /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).*$/;
+    if (!regexSenha.test(senha)) {
+        document.getElementById('senhaPadrao').style.display = 'block';
+        return;
+    }
+
+    const regexEmail = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+(\.[a-z]+)?$/;
+    if (!regexEmail.test(email)) {
+        document.getElementById('emailInvalido').style.display = 'block';
+        return;
+    }
+
+    const regexTelefone = /^\(\d{2}\) \d{4,5}-\d{4}$/; 
+    if (!regexTelefone.test(telefone)) {
+        document.getElementById('telefoneInvalido').style.display = 'block';
+        return;
+    }
+
+    
+    const regexCPF = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/; 
+    if (!regexCPF.test(cpf)) {
+        document.getElementById('cpfInvalido').style.display = 'block';
+        return;
+    }
+
+
+    const regexPlaca = /^[A-Z]{3}-\d{4}$/; 
+    if (!regexPlaca.test(placa)) {
+        document.getElementById('placaInvalida').style.display = 'block';
+        return;
+    }
+
+    const regexCNH = /^\d{11}$/; 
+    if (!regexCNH.test(cnh)) {
+        document.getElementById('cnhInvalida').style.display = 'block';
+        return;
+    }
+
+    criarMotoboy();
 }
 
 function criarMotoboy() {
     const nome = document.getElementById('nome-motoboy').value;
     const email = document.getElementById('email-motoboy').value;
     const telefone = document.getElementById('telefone-motoboy').value;
+    const senha = document.getElementById('senha-motoboy').value;
+    const cpf = document.getElementById('cpf-motoboy').value;
+    const placa = document.getElementById('placa-motoboy').value;
+    const cnh = document.getElementById('cnh-motoboy').value;
 
     const motoboy = {
         nome,
         email,
-        telefone
+        telefone,
+        senha,
+        cpf,
+        placa,
+        cnh
     };
 
     let motoboys = JSON.parse(localStorage.getItem('motoboys')) || [];
@@ -95,7 +177,6 @@ function criarMotoboy() {
     document.getElementById('form-motoboy').reset();
     window.location.href = 'index.html';
 }
-
 function validarCadastroRestaurante() {
     const nome = document.getElementById('nome-restaurante').value;
     const email = document.getElementById('email-restaurante').value;
@@ -105,65 +186,49 @@ function validarCadastroRestaurante() {
     const cidade = document.getElementById('cidade-restaurante').value;
     const telefone = document.getElementById('telefone-restaurante').value;
 
-    // Mensagens de validação
-    const mensagens = {
-        campoObrigatorio: 'Os campos são obrigatórios.',
-        senhaTamanho: 'A senha deve ter de 8 a 16 caracteres.',
-        senhaPadrao: 'A senha deve ter 1 letra maiúscula e 1 caractere especial.',
-        emailInvalido: 'Email inválido.',
-        cnpjInvalido: 'CNPJ inválido.',
-        telefoneInvalido: 'Telefone inválido.'
-    };
+    document.getElementById('campoObrigatorio').style.display = 'none';
+    document.getElementById('senhaTamanho').style.display = 'none';
+    document.getElementById('senhaPadrao').style.display = 'none';
+    document.getElementById('emailInvalido').style.display = 'none';
+    document.getElementById('cnpjInvalido').style.display = 'none';
+    document.getElementById('telefoneInvalido').style.display = 'none';
 
-    // Esconder todas as mensagens de erro
-    Object.keys(mensagens).forEach(id => {
-        const elemento = document.getElementById(id);
-        if (elemento) {
-            elemento.style.display = 'none';
-        }
-    });
 
-    // Verificar campos obrigatórios
     if (!nome || !email || !senha || !cnpj || !endereco || !cidade || !telefone) {
         document.getElementById('campoObrigatorio').style.display = 'block';
         return;
     }
 
-    // Verificar tamanho da senha
     if (senha.length < 8 || senha.length > 16) {
         document.getElementById('senhaTamanho').style.display = 'block';
         return;
     }
 
-    // Verificar padrão da senha
     const regexSenha = /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).*$/;
     if (!regexSenha.test(senha)) {
         document.getElementById('senhaPadrao').style.display = 'block';
         return;
     }
 
-    // Verificar formato do email
     const regexEmail = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+(\.[a-z]+)?$/;
     if (!regexEmail.test(email)) {
         document.getElementById('emailInvalido').style.display = 'block';
         return;
     }
 
-    // Verificar formato do CNPJ
-    const regexCNPJ = /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/; // Formato padrão: 00.000.000/0000-00
+    const regexCNPJ = /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/;
     if (!regexCNPJ.test(cnpj)) {
         document.getElementById('cnpjInvalido').style.display = 'block';
         return;
     }
 
     // Verificar formato do telefone
-    const regexTelefone = /^\(\d{2}\) \d{4,5}-\d{4}$/; // Formato padrão: (00) 0000-0000 ou (00) 00000-0000
+    const regexTelefone = /^\(\d{2}\) \d{4,5}-\d{4}$/;
     if (!regexTelefone.test(telefone)) {
         document.getElementById('telefoneInvalido').style.display = 'block';
         return;
     }
 
-    // Se todos os campos são válidos, criar restaurante
     criarRestaurante();
 }
 

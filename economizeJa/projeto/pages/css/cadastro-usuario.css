@@ -99,15 +99,15 @@ form {
 
 
 .btn.btn-primary {
-  display: block; /* Faz com que o botão seja exibido como um bloco */
-  margin: 0 auto; /* Centraliza horizontalmente */
+  display: block;
+  margin: 0 auto;
   color: #fff;
   border: 1px solid #fff;
   border-radius: 0;
   background-color: #000;
   transition: 1s;
   width: 100%;
-  text-align: center; /* Centraliza o texto dentro do botão */
+  text-align: center;
 }
 
 .btn.btn-primary:hover {

@@ -1,0 +1,116 @@
+body {
+    font-family: 'Roboto', sans-serif;
+}
+
+.container {
+    margin-top: 20px;
+}
+
+.btn-sm {
+    font-size: 0.875rem;
+}
+
+.action-icons {
+    display: flex;
+    justify-content: space-between;
+}
+
+.action-icons i {
+    cursor: pointer;
+    margin: 0 10px;
+}
+
+#formulario-edicao {
+    display: none;
+}
+
+#form-editar {
+    margin-bottom: 20px;
+}
+
+.btn.btn-primary {
+    color: #fff;
+    border: 1px solid #000;
+    border-radius: 0px;
+    background-color: #000;
+}
+
+.btn.btn-primary:hover {
+    color: #000;
+    border: 1px solid #000;
+    background-color: #fff;
+    transition: 1s;
+}
+
+button#cancelar-edicao.btn.btn-secondary {
+    color: #fff;
+    border: 1px solid #000;
+    border-radius: 0px;
+    background-color: #000;
+}
+
+button#cancelar-edicao.btn.btn-secondary:hover {
+    color: #000;
+    border: 1px solid #000;
+    background-color: #fff;
+    transition: 1s;
+}
+
+@media (max-width: 767px) {
+    .container {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .table td, .table th {
+        white-space: nowrap;
+    }
+
+    #formulario-edicao {
+        margin-top: 20px;
+    }
+    
+    #form-editar .form-control {
+        font-size: 0.875rem;
+    }
+
+    #searchInput {
+        font-size: 0.875rem;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+    .table {
+        font-size: 0.875rem;
+    }
+
+    #form-editar .form-control {
+        font-size: 1rem;
+    }
+
+    #searchInput {
+        font-size: 1rem;
+    }
+}
+
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1140px;
+    }
+
+    .table {
+        font-size: 1rem;
+    }
+
+    #form-editar .form-control {
+        font-size: 1rem;
+    }
+
+    #searchInput {
+        font-size: 1rem;
+    }
+}
