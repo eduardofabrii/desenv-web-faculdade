@@ -26,6 +26,7 @@ body {
 #opcoes-cadastro {
   display: block;
 }
+
 #form-usuario, #form-motoboy, #form-restaurante {
   display: none;
 }

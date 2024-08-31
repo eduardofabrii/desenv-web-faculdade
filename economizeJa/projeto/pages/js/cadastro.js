@@ -1,183 +1,197 @@
 function mostrarFormulario(tipo) {
-    document.getElementById('opcoes-cadastro').style.display = 'none';
-    
-    document.getElementById('form-usuario').style.display = 'none';
-    document.getElementById('form-motoboy').style.display = 'none';
-    document.getElementById('form-restaurante').style.display = 'none';
-    
-    document.getElementById(`form-${tipo}`).style.display = 'block';
-
-    document.getElementById('escolha-cadastro').style.display = 'none';
-}
-
-function validarLogin() {
-    let nome = document.getElementById('nome').value;
-    let email = document.getElementById('email').value;
-    let senha = document.getElementById('senha').value;
-    let cpf = document.getElementById('cpf').value;
-    let telefone = document.getElementById('telefone').value;
-
-    document.getElementById('campoObrigatorio').style.display = 'none';
-    document.getElementById('senhaTamanho').style.display = 'none';
-    document.getElementById('senhaPadrao').style.display = 'none';
-    document.getElementById('emailInvalido').style.display = 'none';
-
-    if (!nome || !email || !senha || !cpf || !telefone) {
-        document.getElementById('campoObrigatorio').style.display = 'block';
-        return;
+    const opcoesCadastro = document.getElementById('opcoes-cadastro');
+    const escolhaCadastro = document.getElementById('escolha-cadastro');
+    const formularioUsuario = document.getElementById('form-usuario');
+    const formularioMotoboy = document.getElementById('form-motoboy');
+    const formularioRestaurante = document.getElementById('form-restaurante');
+  
+    opcoesCadastro.style.display = 'none';
+    escolhaCadastro.style.display = 'none';
+    formularioUsuario.style.display = 'none';
+    formularioMotoboy.style.display = 'none';
+    formularioRestaurante.style.display = 'none';
+  
+    if (tipo === 'usuario') {
+      formularioUsuario.style.display = 'block';
+    } else if (tipo === 'motoboy') {
+      formularioMotoboy.style.display = 'block';
+    } else if (tipo === 'restaurante') {
+      formularioRestaurante.style.display = 'block';
     }
-    
-    if (senha.length < 8 || senha.length > 16) {
-       document.getElementById('senhaTamanho').style.display = 'block';
-       return;
-    }
+  }
 
-    const regexEmail = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+(\.[a-z]+)?$/;
-    if (!regexEmail.test(email)) {
-        document.getElementById('emailInvalido').style.display = 'block';
-        return;
-    }
-
-    criarUsuario();
-}
-
-
-function criarUsuario() {
-    const nome = document.getElementById('nome').value;
-    const email = document.getElementById('email').value;
-    const senha = document.getElementById('senha').value;
-    const cpf = document.getElementById('cpf').value;
-    const endereco = document.getElementById('endereco').value;
-    const cidade = document.getElementById('cidade').value;
-    const telefone = document.getElementById('telefone').value;
-    
-    const usuario = {
-        nome,
-        email,
-        senha,
-        cpf,
-        endereco,
-        cidade,
-        telefone
-    };
-    
-    let usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
-    usuarios.push(usuario);
-    localStorage.setItem('usuarios', JSON.stringify(usuarios));
-    
-    alert('Usuário cadastrado com sucesso!');
-    document.getElementById('form-cadastro').reset();
-    window.location.href = 'index.html';
-}
-function validarPadraoSenha(event) {
-    let senha = event.target.value;
-    let regex = /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).*$/;
-
-    if (!regex.test(senha)) {
-        document.getElementById('senhaPadrao').style.display = 'block';
+  function validarPadraoSenha(event) {
+    const senha = event.target.value;
+    const senhaMinLength = 8;
+    const senhaMaxLength = 16;
+    const senhaRegex = /(?=.*[A-Z])(?=.*[\W_])/; // Pelo menos uma letra maiúscula e um caractere especial
+  
+    const alertasUsuario = document.getElementById('alertas-usuario');
+    const alertasMotoboy = document.getElementById('alertas-motoboy');
+    const alertasRestaurante = document.getElementById('alertas-restaurante');
+  
+    if (senha.length < senhaMinLength || senha.length > senhaMaxLength) {
+      if (event.target.id.startsWith('senha-usuario')) {
+        alertasUsuario.querySelector('#senhaTamanho-usuario').style.display = 'block';
+      } else if (event.target.id.startsWith('senha-motoboy')) {
+        alertasMotoboy.querySelector('#senhaTamanho-motoboy').style.display = 'block';
+      } else if (event.target.id.startsWith('senha-restaurante')) {
+        alertasRestaurante.querySelector('#senhaTamanho-restaurante').style.display = 'block';
+      }
     } else {
-        document.getElementById('senhaPadrao').style.display = 'none';
+      if (senhaRegex.test(senha)) {
+        if (event.target.id.startsWith('senha-usuario')) {
+          alertasUsuario.querySelector('#senhaPadrao-usuario').style.display = 'none';
+        } else if (event.target.id.startsWith('senha-motoboy')) {
+          alertasMotoboy.querySelector('#senhaPadrao-motoboy').style.display = 'none';
+        } else if (event.target.id.startsWith('senha-restaurante')) {
+          alertasRestaurante.querySelector('#senhaPadrao-restaurante').style.display = 'none';
+        }
+      } else {
+        if (event.target.id.startsWith('senha-usuario')) {
+          alertasUsuario.querySelector('#senhaPadrao-usuario').style.display = 'block';
+        } else if (event.target.id.startsWith('senha-motoboy')) {
+          alertasMotoboy.querySelector('#senhaPadrao-motoboy').style.display = 'block';
+        } else if (event.target.id.startsWith('senha-restaurante')) {
+          alertasRestaurante.querySelector('#senhaPadrao-restaurante').style.display = 'block';
+        }
+      }
     }
-}
-
-function validarCadastroMotoboy() {
+  }
+  
+  function validarEmail(email) {
+    const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regexEmail.test(email);
+  }
+  
+  function validarTelefone(telefone) {
+    const regexTelefone = /^\d{10,11}$/;
+    return regexTelefone.test(telefone);
+  }
+  
+  function validarCpf(cpf) {
+    const regexCpf = /^\d{11}$/;
+    return regexCpf.test(cpf);
+  }
+  
+  function validarCnpj(cnpj) {
+    const regexCnpj = /^\d{14}$/;
+    return regexCnpj.test(cnpj);
+  }
+  
+  function cadastrarUsuario() {
+    const nome = document.getElementById('nome-usuario').value;
+    const email = document.getElementById('email-usuario').value;
+    const senha = document.getElementById('senha-usuario').value;
+    const cpf = document.getElementById('cpf-usuario').value;
+    const endereco = document.getElementById('endereco-usuario').value;
+    const cidade = document.getElementById('cidade-usuario').value;
+    const telefone = document.getElementById('telefone-usuario').value;
+  
+    const camposObrigatorios = [nome, email, senha, cpf, endereco, cidade, telefone];
+    const alertasUsuario = document.getElementById('alertas-usuario');
+  
+    // Verifica campos obrigatórios
+    if (camposObrigatorios.some(campo => campo.trim() === '')) {
+      alertasUsuario.querySelector('#campoObrigatorio-usuario').style.display = 'block';
+      return;
+    } else {
+      alertasUsuario.querySelector('#campoObrigatorio-usuario').style.display = 'none';
+    }
+  
+    // Verifica validade do email
+    if (!validarEmail(email)) {
+      alertasUsuario.querySelector('#emailInvalido-usuario').style.display = 'block';
+      return;
+    } else {
+      alertasUsuario.querySelector('#emailInvalido-usuario').style.display = 'none';
+    }
+  
+    // Verifica validade do telefone
+    if (!validarTelefone(telefone)) {
+      alertasUsuario.querySelector('#telefoneInvalido-usuario').style.display = 'block';
+      return;
+    } else {
+      alertasUsuario.querySelector('#telefoneInvalido-usuario').style.display = 'none';
+    }
+  
+    // Verifica validade do CPF
+    if (!validarCpf(cpf)) {
+      alertasUsuario.querySelector('#cpfInvalido-usuario').style.display = 'block';
+      return;
+    } else {
+      alertasUsuario.querySelector('#cpfInvalido-usuario').style.display = 'none';
+    }
+  
+    // Cadastro bem-sucedido
+    alert('Cadastro de usuário realizado com sucesso!');
+  }
+  
+  function cadastrarMotoboy() {
     const nome = document.getElementById('nome-motoboy').value;
     const email = document.getElementById('email-motoboy').value;
-    const telefone = document.getElementById('telefone-motoboy').value;
     const senha = document.getElementById('senha-motoboy').value;
     const cpf = document.getElementById('cpf-motoboy').value;
-    const placa = document.getElementById('placa-motoboy').value;
-    const cnh = document.getElementById('cnh-motoboy').value;
-
-    document.getElementById('campoObrigatorio').style.display = 'none';
-    document.getElementById('senhaTamanho').style.display = 'none';
-    document.getElementById('senhaPadrao').style.display = 'none';
-    document.getElementById('emailInvalido').style.display = 'none';
-    document.getElementById('telefoneInvalido').style.display = 'none';
-    document.getElementById('cpfInvalido').style.display = 'none';
-    document.getElementById('placaInvalida').style.display = 'none';
-    document.getElementById('cnhInvalida').style.display = 'none';
-
-
-    if (!nome || !email || !telefone || !senha || !cpf || !placa || !cnh) {
-        document.getElementById('campoObrigatorio').style.display = 'block';
-        return;
-    }
-
-    if (senha.length < 8 || senha.length > 16) {
-        document.getElementById('senhaTamanho').style.display = 'block';
-        return;
-    }
-
-    const regexSenha = /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).*$/;
-    if (!regexSenha.test(senha)) {
-        document.getElementById('senhaPadrao').style.display = 'block';
-        return;
-    }
-
-    const regexEmail = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+(\.[a-z]+)?$/;
-    if (!regexEmail.test(email)) {
-        document.getElementById('emailInvalido').style.display = 'block';
-        return;
-    }
-
-    const regexTelefone = /^\(\d{2}\) \d{4,5}-\d{4}$/; 
-    if (!regexTelefone.test(telefone)) {
-        document.getElementById('telefoneInvalido').style.display = 'block';
-        return;
-    }
-
-    
-    const regexCPF = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/; 
-    if (!regexCPF.test(cpf)) {
-        document.getElementById('cpfInvalido').style.display = 'block';
-        return;
-    }
-
-
-    const regexPlaca = /^[A-Z]{3}-\d{4}$/; 
-    if (!regexPlaca.test(placa)) {
-        document.getElementById('placaInvalida').style.display = 'block';
-        return;
-    }
-
-    const regexCNH = /^\d{11}$/; 
-    if (!regexCNH.test(cnh)) {
-        document.getElementById('cnhInvalida').style.display = 'block';
-        return;
-    }
-
-    criarMotoboy();
-}
-
-function criarMotoboy() {
-    const nome = document.getElementById('nome-motoboy').value;
-    const email = document.getElementById('email-motoboy').value;
     const telefone = document.getElementById('telefone-motoboy').value;
-    const senha = document.getElementById('senha-motoboy').value;
-    const cpf = document.getElementById('cpf-motoboy').value;
     const placa = document.getElementById('placa-motoboy').value;
     const cnh = document.getElementById('cnh-motoboy').value;
-
-    const motoboy = {
-        nome,
-        email,
-        telefone,
-        senha,
-        cpf,
-        placa,
-        cnh
-    };
-
-    let motoboys = JSON.parse(localStorage.getItem('motoboys')) || [];
-    motoboys.push(motoboy);
-    localStorage.setItem('motoboys', JSON.stringify(motoboys));
-
-    alert('Motoboy cadastrado com sucesso!');
-    document.getElementById('form-motoboy').reset();
-    window.location.href = 'index.html';
-}
-function validarCadastroRestaurante() {
+  
+    const camposObrigatorios = [nome, email, senha, cpf, telefone, placa, cnh];
+    const alertasMotoboy = document.getElementById('alertas-motoboy');
+  
+    // Verifica campos obrigatórios
+    if (camposObrigatorios.some(campo => campo.trim() === '')) {
+      alertasMotoboy.querySelector('#campoObrigatorio-motoboy').style.display = 'block';
+      return;
+    } else {
+      alertasMotoboy.querySelector('#campoObrigatorio-motoboy').style.display = 'none';
+    }
+  
+    // Verifica validade do email
+    if (!validarEmail(email)) {
+      alertasMotoboy.querySelector('#emailInvalido-motoboy').style.display = 'block';
+      return;
+    } else {
+      alertasMotoboy.querySelector('#emailInvalido-motoboy').style.display = 'none';
+    }
+  
+    // Verifica validade do telefone
+    if (!validarTelefone(telefone)) {
+      alertasMotoboy.querySelector('#telefoneInvalido-motoboy').style.display = 'block';
+      return;
+    } else {
+      alertasMotoboy.querySelector('#telefoneInvalido-motoboy').style.display = 'none';
+    }
+  
+    // Verifica validade do CPF
+    if (!validarCpf(cpf)) {
+      alertasMotoboy.querySelector('#cpfInvalido-motoboy').style.display = 'block';
+      return;
+    } else {
+      alertasMotoboy.querySelector('#cpfInvalido-motoboy').style.display = 'none';
+    }
+  
+    // Verifica validade da placa
+    if (!placa.match(/^[A-Z]{3}-\d{4}$/)) {
+      alertasMotoboy.querySelector('#placaInvalida-motoboy').style.display = 'block';
+      return;
+    } else {
+      alertasMotoboy.querySelector('#placaInvalida-motoboy').style.display = 'none';
+    }
+  
+    // Verifica validade da CNH
+    if (cnh.length < 11 || cnh.length > 15) {
+      alertasMotoboy.querySelector('#cnhInvalida-motoboy').style.display = 'block';
+      return;
+    } else {
+      alertasMotoboy.querySelector('#cnhInvalida-motoboy').style.display = 'none';
+    }
+  
+    // Cadastro bem-sucedido
+    alert('Cadastro de motoboy realizado com sucesso!');
+  }
+  
+  function cadastrarRestaurante() {
     const nome = document.getElementById('nome-restaurante').value;
     const email = document.getElementById('email-restaurante').value;
     const senha = document.getElementById('senha-restaurante').value;
@@ -185,77 +199,43 @@ function validarCadastroRestaurante() {
     const endereco = document.getElementById('endereco-restaurante').value;
     const cidade = document.getElementById('cidade-restaurante').value;
     const telefone = document.getElementById('telefone-restaurante').value;
-
-    document.getElementById('campoObrigatorio').style.display = 'none';
-    document.getElementById('senhaTamanho').style.display = 'none';
-    document.getElementById('senhaPadrao').style.display = 'none';
-    document.getElementById('emailInvalido').style.display = 'none';
-    document.getElementById('cnpjInvalido').style.display = 'none';
-    document.getElementById('telefoneInvalido').style.display = 'none';
-
-
-    if (!nome || !email || !senha || !cnpj || !endereco || !cidade || !telefone) {
-        document.getElementById('campoObrigatorio').style.display = 'block';
-        return;
+  
+    const camposObrigatorios = [nome, email, senha, cnpj, endereco, cidade, telefone];
+    const alertasRestaurante = document.getElementById('alertas-restaurante');
+  
+    // Verifica campos obrigatórios
+    if (camposObrigatorios.some(campo => campo.trim() === '')) {
+      alertasRestaurante.querySelector('#campoObrigatorio-restaurante').style.display = 'block';
+      return;
+    } else {
+      alertasRestaurante.querySelector('#campoObrigatorio-restaurante').style.display = 'none';
     }
-
-    if (senha.length < 8 || senha.length > 16) {
-        document.getElementById('senhaTamanho').style.display = 'block';
-        return;
+  
+    // Verifica validade do email
+    if (!validarEmail(email)) {
+      alertasRestaurante.querySelector('#emailInvalido-restaurante').style.display = 'block';
+      return;
+    } else {
+      alertasRestaurante.querySelector('#emailInvalido-restaurante').style.display = 'none';
     }
-
-    const regexSenha = /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).*$/;
-    if (!regexSenha.test(senha)) {
-        document.getElementById('senhaPadrao').style.display = 'block';
-        return;
+  
+    // Verifica validade do CNPJ
+    if (!validarCnpj(cnpj)) {
+      alertasRestaurante.querySelector('#cnpjInvalido-restaurante').style.display = 'block';
+      return;
+    } else {
+      alertasRestaurante.querySelector('#cnpjInvalido-restaurante').style.display = 'none';
     }
-
-    const regexEmail = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+(\.[a-z]+)?$/;
-    if (!regexEmail.test(email)) {
-        document.getElementById('emailInvalido').style.display = 'block';
-        return;
+  
+    // Verifica validade do telefone
+    if (!validarTelefone(telefone)) {
+      alertasRestaurante.querySelector('#telefoneInvalido-restaurante').style.display = 'block';
+      return;
+    } else {
+      alertasRestaurante.querySelector('#telefoneInvalido-restaurante').style.display = 'none';
     }
-
-    const regexCNPJ = /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/;
-    if (!regexCNPJ.test(cnpj)) {
-        document.getElementById('cnpjInvalido').style.display = 'block';
-        return;
-    }
-
-    // Verificar formato do telefone
-    const regexTelefone = /^\(\d{2}\) \d{4,5}-\d{4}$/;
-    if (!regexTelefone.test(telefone)) {
-        document.getElementById('telefoneInvalido').style.display = 'block';
-        return;
-    }
-
-    criarRestaurante();
-}
-
-function criarRestaurante() {
-    const nome = document.getElementById('nome-restaurante').value;
-    const email = document.getElementById('email-restaurante').value;
-    const senha = document.getElementById('senha-restaurante').value;
-    const cnpj = document.getElementById('cnpj-restaurante').value;
-    const endereco = document.getElementById('endereco-restaurante').value;
-    const cidade = document.getElementById('cidade-restaurante').value;
-    const telefone = document.getElementById('telefone-restaurante').value;
-
-    const restaurante = {
-        nome,
-        email,
-        senha,
-        cnpj,
-        endereco,
-        cidade,
-        telefone
-    };
-
-    let restaurantes = JSON.parse(localStorage.getItem('restaurantes')) || [];
-    restaurantes.push(restaurante);
-    localStorage.setItem('restaurantes', JSON.stringify(restaurantes));
-
-    alert('Restaurante cadastrado com sucesso!');
-    document.getElementById('form-restaurante').reset();
-    window.location.href = 'index.html';
-}
+  
+    // Cadastro bem-sucedido
+    alert('Cadastro de restaurante realizado com sucesso!');
+  }
+  
