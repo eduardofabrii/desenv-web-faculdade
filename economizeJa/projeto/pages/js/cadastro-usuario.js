@@ -7,14 +7,25 @@ function validarLogin() {
 
     document.getElementById('campoObrigatorio').style.display = 'none';
     document.getElementById('senhaTamanho').style.display = 'none';
+    document.getElementById('senhaPadrao').style.display = 'none';
 
     if (!nome || !email || !senha || !cpf || !telefone) {
         document.getElementById('campoObrigatorio').style.display = 'block';
+        return;
     }
     
-    if (senha && senha.length < 8 || senha.length > 16) {
+    if (senha.length < 8 || senha.length > 16) {
        document.getElementById('senhaTamanho').style.display = 'block';
+       return;
     }
+
+    const regexEmail = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+(\.[a-z]+)?$/;
+    if (!regexEmail.test(email)) {
+        document.getElementById('emailInvalido').style.display = 'block';
+        return;
+    }
+
+    criarUsuario();
 }
 
 function validarPadraoSenha(event) {
@@ -28,13 +39,26 @@ function validarPadraoSenha(event) {
     }
 }
 
-function validarEmail(event) {
-    let email = event.target.value;
-    let regex = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+(\.[a-z]+)?$/;
+function criarUsuario() {
+    const nome = document.getElementById('nome').value;
+    const email = document.getElementById('email').value;
+    const senha = document.getElementById('senha').value;
+    const cpf = document.getElementById('cpf').value;
+    const telefone = document.getElementById('telefone').value;
 
-    if (!regex.test(email)) {
-        document.getElementById('emailInvalido').style.display = 'block';
-    } else {
-        document.getElementById('emailInvalido').style.display = 'none';
-    }
+    const usuario = {
+        nome,
+        email,
+        senha,
+        cpf,
+        telefone
+    };
+
+    let usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+    usuarios.push(usuario);
+    localStorage.setItem('usuarios', JSON.stringify(usuarios));
+
+    alert('Usuário cadastrado com sucesso!');
+    document.getElementById('form-cadastro').reset();
+    window.location.href = 'index.html';
 }
