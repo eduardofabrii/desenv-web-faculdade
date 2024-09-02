@@ -98,6 +98,17 @@ form {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+.btn-primary:hover {
+  color: #000;
+  border: 1px solid #000;
+  transition:cubic-bezier(0.165, 0.84, 0.44, 1);
+  border-radius: 0;
+  background-color: #fff;
+}
+
+.btn-primary:active {
+  background-color: #fff;
+}
 
 .btn.btn-primary {
   display: block;

@@ -15,12 +15,14 @@ function mostrarFormulario(tipo) {
     const endereco = document.getElementById('endereco-usuario').value;
     const cidade = document.getElementById('cidade-usuario').value;
     const telefone = document.getElementById('telefone-usuario').value;
+    const senha = document.getElementById('senha-usuario').value;
   
     // Verificar se todos os campos estão preenchidos
-    if (nome && email && cpf && endereco && cidade && telefone) {
+    if (nome && email && cpf && endereco && cidade && telefone && senha) {
+        
         // Armazenar os dados no localStorage
         const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
-        usuarios.push({ nome, email, cpf, endereco, cidade, telefone });
+        usuarios.push({ nome, email, cpf, endereco, cidade, telefone, senha });
         localStorage.setItem('usuarios', JSON.stringify(usuarios));
   
         // Redirecionar para a página de lista de usuários

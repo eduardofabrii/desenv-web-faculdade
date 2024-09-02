@@ -1,0 +1,11 @@
+document.addEventListener("DOMContentLoaded", function() {
+    // Supondo que você armazene o estado de login no localStorage
+    const isLoggedIn = localStorage.getItem('loggedIn');
+
+    if (isLoggedIn === 'true') {
+    // Se o usuário estiver logado, esconda os botões de "Entrar" e "Registrar"
+    document.querySelectorAll('.nav-register').forEach(function(element) {
+        element.style.display = 'none';
+    });
+    }
+});
