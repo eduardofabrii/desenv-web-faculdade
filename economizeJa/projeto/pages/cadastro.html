@@ -22,7 +22,7 @@
       <div id="opcoes-cadastro" class="mb-3">
         <button class="btn btn-primary" id="btn-usuario" onclick="mostrarFormulario('usuario')">Cadastrar Usuário</button>
         <button class="btn btn-primary" id="btn-motoboy" onclick="mostrarFormulario('motoboy')">Cadastrar Motoboy</button>
-        <button class="btn btn-primary" id="btn-restaurante" onclick="mostrarFormulario('restaurante')">Cadastrar Restaurante</button>
+        <button class="btn btn-primary" id="btn-restaurante" onclick="mostrarFormulario('restaurante')">Cadastrar Empresa</button>
       </div>
 
       <!-- Formulário Usuário -->
@@ -122,7 +122,7 @@
       <!-- Formulário Restaurante -->
       <div id="form-restaurante" class="form-container" style="display:none;">
         <form id="form-cadastro-restaurante">
-          <h2>Cadastro de Restaurante</h2>
+          <h2>Cadastro de Empresa</h2>
           <div class="mb-3">
             <input type="text" placeholder="Nome da Empresa" id="nome-restaurante" name="nome" class="form-control">
           </div>
@@ -169,6 +169,7 @@
     </div>
   </main>
 
+  <script src="js/cadastro-empresa.js"></script>
   <script src="./js/mostrarForm.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="js/validarDados.js"></script>
