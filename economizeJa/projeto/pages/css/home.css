@@ -22,8 +22,7 @@ body {
     width: 100%;
     z-index: 100;
     top : 0;	
-    background-color: rgb(248, 248, 248) !important;
-    
+    background-color: rgb(248, 248, 248) !important;   
 }
 
 
@@ -34,9 +33,7 @@ main {
    
 }
 
-section {
-    
-    
+section {    
     position: relative;
 }
 
@@ -87,14 +84,11 @@ body::-webkit-scrollbar-thumb:hover {
     
    
 }
+
 #quem-somos{
-    box-shadow: 2px 9px 10px 1px rgba(0, 0, 0, 0.5);
-    margin-bottom: 400px;
-    border-radius: 10px;
-    background-color: rgba(236, 236, 236, 0.514);
-
-
+    margin-bottom: 200px;
 }
+
 .sede {
     display: flex;
     flex-direction: row;
@@ -104,17 +98,20 @@ body::-webkit-scrollbar-thumb:hover {
     gap: 1rem;   
    
 }
+
 .map-container{
     width: 50%;
     height: 100%;
     border-radius: 10px;
     margin: 0px;
-    
 
 }
 
-.imgSede{
+.sede {
+    margin-bottom: 200px;
+}
 
+.imgSede{
     width: 50%;
     border-radius: 10px;
     margin: 0px;
@@ -122,15 +119,15 @@ body::-webkit-scrollbar-thumb:hover {
 
 }
 
-
-
-#onde-estamos{
-    background-color: rgba(236, 236, 236, 0.514);
+.imgSede img {
+    width: 100%;
     border-radius: 10px;
-    margin-top: 50px;
-    box-shadow: 2px 9px 10px 1px rgba(0, 0, 0, 0.5);
-    height: 100%;
-    padding: 50px;
+    margin: 0px;
+    padding: 0%;
+}
+
+#onde-estamos {
+    margin-bottom: 200px;
 }
 
 

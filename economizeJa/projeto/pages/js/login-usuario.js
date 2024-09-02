@@ -17,6 +17,7 @@ function validarLogin() {
     if (usuarioEncontrado) {
         
         window.open('home.html', '_blank');
+        localStorage.setItem('loggedIn', 'true');
         
     } else {
         
