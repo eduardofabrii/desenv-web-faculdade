@@ -10,7 +10,6 @@ function validarLogin() {
         campoObrigatorio.style.display = "block";
         return false;
     }
-
    
     const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
     const usuarioEncontrado = usuarios.find(usuario => usuario.email === email && usuario.cpf === cpf);
