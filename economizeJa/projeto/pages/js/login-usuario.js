@@ -1,19 +1,19 @@
 function validarLogin() {
-    const email = document.getElementById("email").value.trim();
+    const senha = document.getElementById("senha-usuario").value.trim();
     const cpf = document.getElementById("cpf-usuario").value.trim();
     
     const campoObrigatorio = document.getElementById("campoObrigatorio");
 
     campoObrigatorio.style.display = "none";
     
-    if (email === "" || cpf === "") {
+    if (senha === "" || cpf === "") {
         campoObrigatorio.style.display = "block";
         return false;
     }
 
    
     const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
-    const usuarioEncontrado = usuarios.find(usuario => usuario.email === email && usuario.cpf === cpf);
+    const usuarioEncontrado = usuarios.find(usuario => usuario.senha === senha && usuario.cpf === cpf);
 
     if (usuarioEncontrado) {
         
@@ -21,7 +21,9 @@ function validarLogin() {
         
     } else {
         
-        alert("Email ou CPF inválidos. Por favor, cadastre-se.");
+        alert("Senha ou CPF inválidos. Por favor, cadastre-se.");
         return false;
     }
 }
+
+

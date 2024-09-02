@@ -6,7 +6,7 @@ function mostrarFormulario(tipo) {
   }
 
   
-  // Função para armazenar os dados do usuário e redirecionar para a página de exibição
+
   function cadastrarUsuario() {
     // Obter os valores dos inputs
     const nome = document.getElementById('nome-usuario').value;
