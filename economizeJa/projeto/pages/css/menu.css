@@ -15,6 +15,13 @@ html, body {
     width: 40px; 
 }
 
+.logo-img:hover{
+    scale: 1.05;
+    transition: 0.5s;
+
+
+}
+
 .nav-center {
     display: flex;
     align-items: center;
@@ -42,12 +49,11 @@ a.nav-link.link-dark.px-2 {
 a.nav-link.link-dark.px-2:hover {
     color: white !important;
     background-color: black;
-    transition: 1s;
+    transition:cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 .nav-register {
     display: flex;
-    margin-left: 400px;
     justify-content: center;
 }
 
@@ -57,19 +63,15 @@ a.nav-link.link-dark.px-2:hover {
     margin-left: 10px;
 }
 
-.btn.btn-primary {
-    color: #fff;
-    border: 1px solid #000;
+.bi.bi-menu-button-wide {
+    
     border-radius: 0px;
-    background-color: #000;
+   
 }
 
-.btn.btn-primary:hover {
-    margin-left: 10px;
-    color: #000;
-    border: 1px solid #000;
-    background-color: #fff;
-    transition: 1s;
+.bi.bi-menu-button-wide:hover {
+    scale: 1.05;
+    transition: 0.3s;
 }
 
 nav.py-2.bg.bg-light.border-bottom {
@@ -114,7 +116,7 @@ nav.py-2.bg.bg-light.border-bottom {
         display: list-item;
     }
 
-    .btn.btn-primary {
+    .bi.bi-menu-button-wide {
         display: none;
     }
 
@@ -148,13 +150,22 @@ nav.py-2.bg.bg-light.border-bottom {
         margin-right: auto;
     }
 
+  #icones {
+    display: flex;
+    justify-content: center;
+    margin-left: 0%;
+  }
+
     .nav-register {
-        display: none;
+        display: flex;
+        
     }
 
-    .btn.btn-primary {
-        display: block;
+   
+    .bi.bi-menu-button-wide {
+        display: none;
     }
+   
 
     .offcanvas {
         display: block;
@@ -166,6 +177,12 @@ nav.py-2.bg.bg-light.border-bottom {
 @media (max-width: 770px) {
     .nav-item {
         display: none;
+    }
+    .nav-register {
+        display:none;
+    }
+    .bi.bi-menu-button-wide {
+        display: block;
     }
 
     .nav-item:first-child {

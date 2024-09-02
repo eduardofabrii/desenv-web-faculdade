@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td>${empresa.endereco}</td>
                 <td>${empresa.cidade}</td>
                 <td>${empresa.telefone}</td>
+                <td>${empresa.status}</td>
                 <td>
                     <i class="fas fa-edit" title="Editar" onclick="editarEmpresa('${empresa.email}')"></i>
                     <i class="fas fa-trash" title="Apagar" onclick="apagarEmpresa('${empresa.email}')"></i>
@@ -123,6 +124,44 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     document.getElementById('searchInput').addEventListener('input', buscarEmpresas);
+
+    // Função para salvar nova empresa no localStorage
+    function salvarNovaEmpresa(event) {
+        event.preventDefault();
+
+        const nome = document.getElementById('nome-empresa').value;
+        const email = document.getElementById('email-empresa').value;
+        const senha = document.getElementById('senha-empresa').value;
+        const cnpj = document.getElementById('cnpj-empresa').value;
+        const endereco = document.getElementById('endereco-empresa').value;
+        const cidade = document.getElementById('cidade-empresa').value;
+        const telefone = document.getElementById('telefone-empresa').value;
+        const status = document.getElementById('status-empresa').value;
+
+        let empresas = JSON.parse(localStorage.getItem('empresas')) || [];
+
+        empresas.push({
+            nome: nome,
+            email: email,
+            senha: senha,
+            cnpj: cnpj,
+            endereco: endereco,
+            cidade: cidade,
+            telefone: telefone,
+            status: status
+        });
+
+        localStorage.setItem('empresas', JSON.stringify(empresas));
+
+        // Limpar formulário após salvar
+        document.getElementById('form-cadastro').reset();
+
+        // Atualizar a tabela com os novos dados
+        carregarEmpresas();
+    }
+
+    // Associa a função salvarNovaEmpresa ao botão de criação de conta
+    document.getElementById('form-cadastro').addEventListener('submit', salvarNovaEmpresa);
 
     carregarEmpresas();
 });

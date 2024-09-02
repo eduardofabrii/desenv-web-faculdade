@@ -3,64 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" href="css/mercado.css">
     <link rel="stylesheet" href="css/menu.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
     <title>Marketplace</title>
 </head>
 <body>
-    <header>
-        <nav class="py-2 bg bg-light border-bottom">
-            <div class="container d-flex justify-content-center align-items-center">
-              <ul class="nav me-auto nav-center">
-                  <li class="nav-item">
-                    <a href="#" class="nav-link link-dark px-2 active" aria-current="page">
-                      <img src="images/logoo.png" alt="Logo EconomizeJa" class="logo-img">
-                    </a>
-                  </li>
-                  <li class="nav-item"><a href="#" class="nav-link link-dark px-2">Entregador</a></li>
-                  <li class="nav-item"><a href="#" class="nav-link link-dark px-2">Restaurante e Mercado</a></li>
-                  <li class="nav-item dropdown">
-                    <a href="#" class="nav-link link-dark dropdown-toggle px-2" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Mais</a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                      <li><a href="#quem-somos" class="dropdown-item">Quem somos?</a></li>
-                      <li><a href="#onde-estamos" class="dropdown-item">Onde estamos?</a></li>
-                      <li><a href="#contato" class="dropdown-item">Contato</a></li>
-                    </ul>
-                  </li>
-                  <div class="nav-register">
-                    <div class="registros">
-                        <a href="login-usuario.html" class="nav-link link-dark px-2" style="display: flex; flex-direction: row;">Entrar</a>
-                    </div>
-                    <div class="registros">
-                      <a href="cadastro.html" class="nav-link link-dark px-2" style="display: flex; flex-direction: row;">Registrar</a>
-                    </div>
-                  </div>
-              </ul>
-              <button class="btn btn-primary ms-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Menu</button>
-              <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
-                <div class="offcanvas-header">
-                  <h5 class="offcanvas-title" id="offcanvasRightLabel">Menu</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    <nav class="py-2 bg bg-light border-bottom" id="nav">
+        <div class="container d-flex justify-content-center align-items-center" >
+          <ul class="nav me-auto nav-center"  id="icones">
+              <li class="nav-item">
+                <a href="#"  id="Logo"  aria-current="page">
+                  <img src="images/logoo.png" alt="Logo EconomizeJa" class="logo-img">
+                </a>
+              </li>
+              <li class="nav-item"><a href="#" class="nav-link link-dark px-2">Entregador</a></li>
+              <li class="nav-item"><a href="./mercado.html" class="nav-link link-dark px-2">Restaurante e Mercado</a></li>
+              <li class="nav-item dropdown">
+                <a href="#" class="nav-link link-dark dropdown-toggle px-2" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Mais</a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <li><a href="#quem-somos" class="dropdown-item">Quem somos?</a></li>
+                  <li><a href="#onde-estamos" class="dropdown-item">Onde estamos?</a></li>
+                  <li><a href="#contato" class="dropdown-item">Contato</a></li>
+                </ul>
+              </li>
+              <div class="nav-register">
+                <div class="registros">
+                    <a href="login.html" class="nav-link link-dark px-2" style="display: flex; flex-direction: row;">Entrar</a>
                 </div>
-                <div class="offcanvas-body">
-                  <ul class="nav flex-column">
-                    <li class="nav-item"><a href="#" class="nav-link link-dark px-2 active" aria-current="page"><strong>EconomizeJa</strong></a></li>
-                    <li class="nav-item"><a href="#" class="nav-link link-dark px-2">Entregador</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link link-dark px-2">Restaurante e Mercado</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link link-dark px-2">Quem somos?</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link link-dark px-2">Onde estamos?</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link link-dark px-2">Contato</a></li>
-                    <li class="nav-item"><a href="cadastro-usuario.html" class="nav-link link-dark px-2">Entrar</a></li>
-                    <li class="nav-item"><a href="cadastro-usuario.html" class="nav-link link-dark px-2">Registrar</a></li>
-                  </ul>
+                <div class="registros">
+                  <a href="cadastro.html" class="nav-link link-dark px-2" style="display: flex; flex-direction: row;">Registrar</a>
                 </div>
               </div>
+          </ul>
+          <button  class="bi bi-menu-button-wide"type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"></button>
+          <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+            <div class="offcanvas-header">
+              <h5 class="offcanvas-title" id="offcanvasRightLabel">Menu</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
-        </nav>
-    </header>
+            <div class="offcanvas-body">
+              <ul class="nav flex-column">
+                <li class="nav-item"><a href="#" class="nav-link link-dark px-2 active" aria-current="page"><strong>EconomizeJa</strong></a></li>
+                <li class="nav-item"><a href="#" class="nav-link link-dark px-2">Entregador</a></li>
+                <li class="nav-item"><a href="#" class="nav-link link-dark px-2">Restaurante e Mercado</a></li>
+                <li class="nav-item"><a href="#" class="nav-link link-dark px-2">Quem somos?</a></li>
+                <li class="nav-item"><a href="#" class="nav-link link-dark px-2">Onde estamos?</a></li>
+                <li class="nav-item"><a href="#" class="nav-link link-dark px-2">Contato</a></li>
+                <li class="nav-item"><a href="cadastro.html" class="nav-link link-dark px-2">Entrar</a></li>
+                <li class="nav-item"><a href="cadastro.html" class="nav-link link-dark px-2">Registrar</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+    </nav>
 
     <main>
-        <section id="hero" class="text-center py-5 bg-primary text-white">
+        <section id="hero"  class="text-center py-5 bg-primary text-white">
             <div class="container">
                 <h1 class="display-4">Encontre as Melhores Ofertas de Comida</h1>
                 <p class="lead">Descontos especiais em restaurantes perto de você</p>
@@ -106,7 +109,7 @@
             </div>
         </section>
 
-        <section id="offers" class="py-5 bg-light">
+        <section id="offers"  style="background-color:white ;" >
             <div class="container">
                 <h2 class="text-center mb-4">Ofertas em Destaque</h2>
                 <div class="row">
@@ -185,7 +188,9 @@
 
     <footer class="bg-light py-4">
         <div class="container text-center">
-            <p>&copy; 2024 Marketplace. Todos os direitos reservados.</p>
+            <a href="https://github.com/eduardofabrii">eduardofabrii</a>
+            <a href="https://github.com/jvecodev">jvecodev</a>
+            <a href="https://github.com/RenanH19">RenanH19</a>
         </div>
     </footer>
 

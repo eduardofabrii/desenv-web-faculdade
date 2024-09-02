@@ -30,35 +30,37 @@
         <form id="form-cadastro-usuario">
           <h2>Cadastro de Usuário</h2>
           <div class="mb-3">
-            <label for="nome-usuario" class="form-label">Nome Completo</label>
             <input type="text" placeholder="Nome Completo" id="nome-usuario" name="nome" class="form-control">
           </div>
+
           <div class="mb-3">
-            <label for="email-usuario" class="form-label">Email</label>
             <input type="text" placeholder="Email" id="email-usuario" name="email" class="form-control">
           </div>
+
           <div class="mb-3">
-            <label for="senha-usuario" class="form-label">Senha</label>
             <input onkeyup="validarPadraoSenha(event)" placeholder="Senha" type="password" id="senha-usuario" name="senha" class="form-control">
           </div>
+
           <div class="mb-3">
-            <label for="cpf-usuario" class="form-label">CPF</label>
             <input type="text" placeholder="CPF" id="cpf-usuario" name="cpf" class="form-control">
           </div>
+
           <div class="mb-3">
-            <label for="endereco-usuario" class="form-label">Endereço</label>
             <input type="text" placeholder="Endereço" id="endereco-usuario" name="endereco" class="form-control">
           </div>
+
           <div class="mb-3">
-            <label for="cidade-usuario" class="form-label">Cidade</label>
             <input type="text" placeholder="Cidade" id="cidade-usuario" name="cidade" class="form-control">
           </div>
+
           <div class="mb-3">
-            <label for="telefone-usuario" class="form-label">Telefone</label>
             <input type="text" placeholder="Telefone" id="telefone-usuario" name="telefone" class="form-control">
           </div>
+          
+          <!-- Botão Criar Conta -->
           <button type="button" class="btn btn-primary" onclick="cadastrarUsuario()">Criar Conta</button>
 
+          <!-- Alertas de validação -->
           <div id="alertas-usuario" class="alertas">
             <label id="campoObrigatorio-usuario" class="labelValidacao">Os campos são obrigatórios.</label>
             <label id="senhaTamanho-usuario" class="labelValidacao">A senha deve ter de 8 a 16 caracteres.</label>
@@ -73,35 +75,33 @@
         <form id="form-cadastro-motoboy">
           <h2>Cadastro de Motoboy</h2>
           <div class="mb-3">
-            <label for="nome-motoboy" class="form-label">Nome Completo</label>
             <input type="text" placeholder="Nome Completo" id="nome-motoboy" name="nome" class="form-control">
           </div>
+
           <div class="mb-3">
-            <label for="email-motoboy" class="form-label">Email</label>
             <input type="text" placeholder="Email" id="email-motoboy" name="email" class="form-control">
           </div>
+
           <div class="mb-3">
-            <label for="telefone-motoboy" class="form-label">Telefone</label>
-            <input type="text" placeholder="Telefone" id="telefone-motoboy" name="telefone" class="form-control">
+            <input onkeyup="validarPadraoSenha(event)" placeholder="Senha" type="password" id="senha-motoboy" name="senha" class="form-control">
           </div>
+
           <div class="mb-3">
-            <label for="senha-motoboy" class="form-label">Senha</label>
-            <input type="password" placeholder="Senha" onkeyup="validarPadraoSenha(event)" id="senha-motoboy" name="senha" class="form-control">
-          </div>
-          <div class="mb-3">
-            <label for="cpf-motoboy" class="form-label">CPF</label>
             <input type="text" placeholder="CPF" id="cpf-motoboy" name="cpf" class="form-control">
           </div>
+
           <div class="mb-3">
-            <label for="placa-motoboy" class="form-label">Placa da Moto</label>
             <input type="text" placeholder="Placa da Moto" id="placa-motoboy" name="placa" class="form-control">
           </div>
+
           <div class="mb-3">
-            <label for="cnh-motoboy" class="form-label">CNH</label>
             <input type="text" placeholder="CNH" id="cnh-motoboy" name="cnh" class="form-control">
           </div>
+          
+          <!-- Botão Criar Conta -->
           <button type="button" class="btn btn-primary" onclick="cadastrarMotoboy()">Criar Conta</button>
           
+          <!-- Alertas de validação -->
           <div id="alertas-motoboy" class="alertas">
             <label id="campoObrigatorio-motoboy" class="labelValidacao">Os campos são obrigatórios.</label>
             <label id="senhaTamanho-motoboy" class="labelValidacao">A senha deve ter de 8 a 16 caracteres.</label>
@@ -120,39 +120,42 @@
         <form id="form-cadastro-restaurante">
           <h2>Cadastro de Restaurante</h2>
           <div class="mb-3">
-            <label for="nome-restaurante" class="form-label">Nome da Empresa</label>
             <input type="text" placeholder="Nome da Empresa" id="nome-restaurante" name="nome" class="form-control">
           </div>
+
           <div class="mb-3">
-            <label for="email-restaurante" class="form-label">Email Institucional</label>
             <input type="text" placeholder="Email Institucional" id="email-restaurante" name="email" class="form-control">
           </div>
+
           <div class="mb-3">
-            <label for="senha-restaurante" class="form-label">Senha</label>
-            <input type="password" placeholder="Senha" onkeyup="validarPadraoSenha(event)" id="senha-restaurante" name="senha" class="form-control">
+            <input onkeyup="validarPadraoSenha(event)" placeholder="Senha" type="password" id="senha-restaurante" name="senha" class="form-control">
           </div>
+
           <div class="mb-3">
-            <label for="cnpj-restaurante" class="form-label">CNPJ</label>
             <input type="text" placeholder="CNPJ" id="cnpj-restaurante" name="cnpj" class="form-control">
           </div>
+
           <div class="mb-3">
-            <label for="endereco-restaurante" class="form-label">Endereço</label>
             <input type="text" placeholder="Endereço" id="endereco-restaurante" name="endereco" class="form-control">
           </div>
+
           <div class="mb-3">
-            <label for="cidade-restaurante" class="form-label">Cidade</label>
             <input type="text" placeholder="Cidade" id="cidade-restaurante" name="cidade" class="form-control">
           </div>
+
           <div class="mb-3">
-            <label for="telefone-restaurante" class="form-label">Telefone</label>
             <input type="text" placeholder="Telefone" id="telefone-restaurante" name="telefone" class="form-control">
           </div>
+          
+          <!-- Botão Criar Conta -->
           <button type="button" class="btn btn-primary" onclick="cadastrarRestaurante()">Criar Conta</button>
 
+          <!-- Alertas de validação -->
           <div id="alertas-restaurante" class="alertas">
             <label id="campoObrigatorio-restaurante" class="labelValidacao">Os campos são obrigatórios.</label>
             <label id="senhaTamanho-restaurante" class="labelValidacao">A senha deve ter de 8 a 16 caracteres.</label>
             <label id="senhaPadrao-restaurante" class="labelValidacao">A senha deve ter 1 letra maiúscula e 1 caractere especial.</label>
+            <label id="emailInvalido-restaurante" class="labelValidacao
             <label id="emailInvalido-restaurante" class="labelValidacao">Email inválido.</label>
             <label id="cnpjInvalido-restaurante" class="labelValidacao">CNPJ inválido.</label>
             <label id="telefoneInvalido-restaurante" class="labelValidacao">Telefone inválido.</label>
@@ -162,7 +165,9 @@
     </div>
   </main>
 
+  <script src="./js/mostrarForm.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="js/cadastro.js"></script>
+  <script src="js/validarDados.js"></script>
+ 
 </body>
 </html>

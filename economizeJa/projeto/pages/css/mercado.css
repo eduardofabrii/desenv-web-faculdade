@@ -1,3 +1,4 @@
+
 /* Reset e configuração básica */
 * {
     padding: 0;
@@ -15,8 +16,6 @@ body {
     background-size: cover;
     overflow: auto;
 }
-
-
 #nav{
     position: fixed;
     width: 100%;
@@ -25,21 +24,6 @@ body {
     background-color: rgb(248, 248, 248) !important;
     
 }
-
-
-main {
-    height: 95%; 
-    position: relative;
-    margin-top: 100px;
-   
-}
-
-section {
-    
-    
-    position: relative;
-}
-
 body::-webkit-scrollbar {
     width: 12px;
     background: #ffffff;
@@ -53,6 +37,17 @@ body::-webkit-scrollbar-thumb {
 
 body::-webkit-scrollbar-thumb:hover {
     background: #97A6A0;
+}
+
+.text-center.py-5.bg-primary.text-white {
+   margin-top: 3rem;
+   background-color: #196b20a2 !important;
+   
+}
+
+.btn.btn-primary{
+    background-color: #196b20a2 !important;    
+    border: none;
 }
 
 /* Estilo para o botão primário */
@@ -82,59 +77,23 @@ body::-webkit-scrollbar-thumb:hover {
     margin-bottom: 200px;
 }
 
-.container.my-7{
-    border-radius: 10px;
+footer > .container.text-center{
     
-   
+    padding: 1rem;
 }
-#quem-somos{
-    box-shadow: 2px 9px 10px 1px rgba(0, 0, 0, 0.5);
-    margin-bottom: 400px;
-    border-radius: 10px;
-    background-color: rgba(236, 236, 236, 0.514);
+.container.text-center a{
+    color: #ffffff;
+    background-color: #196B20;
+    border: #196B20 1px solid;
+    text-decoration: none;
+    margin-left: 20px; 
+    padding: 1rem;
+    border-radius: 5px;
+}
 
-
-}
-.sede {
-    display: flex;
-    flex-direction: row;
-    border-radius: 10px;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;   
-   
-}
-.map-container{
-    width: 50%;
-    height: 100%;
-    border-radius: 10px;
-    margin: 0px;
+.container.text-center a:hover{
     
-
+    background-color: white;
+    color: #196B20;
+    transition:cubic-bezier(0.165, 0.84, 0.44, 1);
 }
-
-.imgSede{
-
-    width: 50%;
-    border-radius: 10px;
-    margin: 0px;
-    padding: 0%;
-
-}
-
-
-
-#onde-estamos{
-    background-color: rgba(236, 236, 236, 0.514);
-    border-radius: 10px;
-    margin-top: 50px;
-    box-shadow: 2px 9px 10px 1px rgba(0, 0, 0, 0.5);
-    height: 100%;
-    padding: 50px;
-}
-
-
-
-    
-
-
