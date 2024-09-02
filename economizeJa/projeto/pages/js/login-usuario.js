@@ -1,38 +1,27 @@
 function validarLogin() {
     const email = document.getElementById("email").value.trim();
-    const senha = document.getElementById("senha").value.trim();
+    const cpf = document.getElementById("cpf-usuario").value.trim();
     
     const campoObrigatorio = document.getElementById("campoObrigatorio");
-    const senhaTamanho = document.getElementById("senhaTamanho");
-    const senhaPadrao = document.getElementById("senhaPadrao");
 
     campoObrigatorio.style.display = "none";
-    senhaTamanho.style.display = "none";
-    senhaPadrao.style.display = "none";
     
-    if (email === "" || senha === "") {
+    if (email === "" || cpf === "") {
         campoObrigatorio.style.display = "block";
-        return;
+        return false;
     }
 
-    if (senha.length < 8 || senha.length > 16) {
-        senhaTamanho.style.display = "block";
-        return;
-    }
-
-    const regex = /^(?=.*[A-Z])(?=.*[\W_]).+$/;
-    if (!regex.test(senha)) {
-        senhaPadrao.style.display = "block";
-        return;
-    }
-
+   
     const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
-    const usuarioValido = usuarios.find(user => user.email === email && user.senha === senha);
+    const usuarioEncontrado = usuarios.find(usuario => usuario.email === email && usuario.cpf === cpf);
 
-    if (usuarioValido) {
-        alert("Login bem-sucedido!");
-        window.location.href = "index.html";
+    if (usuarioEncontrado) {
+        
+        window.open('pagina-inicial.html', '_blank');
+        
     } else {
-        alert("Email ou senha inválidos.");
+        
+        alert("Email ou CPF inválidos. Por favor, cadastre-se.");
+        return false;
     }
 }

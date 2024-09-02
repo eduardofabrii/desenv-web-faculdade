@@ -53,6 +53,7 @@
     width: 100%;
     max-width: 500px;
     padding: 10px;
+    display: flex!important; 	
   }
   
   .container h2 {
@@ -85,25 +86,38 @@
   .cadastro a {
       margin-left: 5px;
   }
-  
-  #nome.btn.btn-primary {
-    margin-top: 25px;
+  .botao{
+    width: 100%;
+    justify-content: center;
+    align-items: center;
     display: flex;
+    
+  }
+
+
+  
+  .btn.btn-primary {
+    margin-top: 25px;
+    display: flex !important;
     color: #fff;
     border: 1px solid #fff;
     border-radius: 0;
     background-color: #000;
-    justify-content: center;
-    transition: 1s;
-    width: 100%;
+    justify-content: center !important;
+    transition: 0.3s;
+    width: 40%;
   }
   
-  #nome.btn.btn-primary:hover {
+  .btn.btn-primary:hover {
     color: #000;
     border: 1px solid #000;
     border-radius: 0;
     background-color: #fff;
+    transform: scale(1.05);
   }
+
+  
+  
   
   .mb-3 .form-control {
     border-radius: 0;
@@ -131,15 +145,12 @@
       top: 50%;
       left: 50%; 
       transform: translate(-50%, -50%);
-      width: 90%;
       max-width: 600px;
       height: auto;
       margin: 0;
       padding: 20px;
       background-color: white;
-      display: flex;
       flex-direction: column;
-      align-items: center;
       z-index: 1;
     }
   }

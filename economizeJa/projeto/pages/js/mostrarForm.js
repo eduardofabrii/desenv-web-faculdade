@@ -24,7 +24,7 @@ function mostrarFormulario(tipo) {
         localStorage.setItem('usuarios', JSON.stringify(usuarios));
   
         // Redirecionar para a página de lista de usuários
-        window.location.href = 'lista-usuarios.html';
+        window.open('lista-usuarios.html', '_blank');
     } else {
         alert('Por favor, preencha todos os campos.');
     }
