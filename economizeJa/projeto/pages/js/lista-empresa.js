@@ -14,7 +14,9 @@ function carregarEmpresas() {
             <td>${empresa.email}</td>
             <td>${empresa.cnpj}</td>
             <td>${empresa.endereco}</td>
+            <td>${empresa.cidade}</td>
             <td>${empresa.telefone}</td>
+            <td>${empresa.acoes}</td>
             <td>
                 <button class="btn btn-warning btn-sm" onclick="editarEmpresa(this)">Editar</button>
                 <button class="btn btn-danger btn-sm" onclick="excluirEmpresa(this)">Excluir</button>
