@@ -13,4 +13,4 @@ Eduardo Fabri - Desenvolvedor <br>
 Renan - Desenvolvedor <br>
 João Vitor Correa - Desenvolvedor <br>
 
-# <a href="https://eduardofabrii.github.io/desenv-web-faculdade/economizeJa/projeto/pages/index.html" target="_blank">Clique e confira o atual projeto</a>
+# <a href="https://eduardofabrii.github.io/desenv-web-faculdade/economizeJa/projeto/pages/home.html" target="_blank">Clique e confira o atual projeto</a>
