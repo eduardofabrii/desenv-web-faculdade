@@ -61,6 +61,14 @@ a.nav-link.link-dark.px-2:hover {
     margin-left: 10px;
 }
 
+.bi.bi-list {
+    background-color: transparent;
+    color: black;
+    border: none;
+    border-radius: 0px;
+    font-size: 2rem;
+}
+
 nav.py-2.bg.bg-light.border-bottom {
     padding-bottom: 0px !important;
 }
@@ -211,8 +219,9 @@ nav.py-2.bg.bg-light.border-bottom {
         display: none;
     }
     .nav-register {
-        display:none;
+        display: none;
     }
+
     .bi.bi-list {
         display: block;
     }
