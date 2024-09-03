@@ -1,12 +1,12 @@
 // Função para cadastrar empresa/restaurante
 function cadastrarEmpresa() {
-    const nome = document.getElementById('nome-empresa').value;
-    const email = document.getElementById('email-empresa').value;
-    const cnpj = document.getElementById('cnpj-empresa').value;
-    const endereco = document.getElementById('endereco-empresa').value;
-    const cidade = document.getElementById('cidade-empresa').value;
-    const telefone = document.getElementById('telefone-empresa').value;
-    const senha = document.getElementById('senha-empresa').value;
+    const nome = document.getElementById('nome-restaurante').value;
+    const email = document.getElementById('email-restaurante').value;
+    const cnpj = document.getElementById('cnpj-restaurante').value;
+    const endereco = document.getElementById('endereco-restaurante').value;
+    const cidade = document.getElementById('cidade-restaurante').value;
+    const telefone = document.getElementById('telefone-restaurante').value;
+    const senha = document.getElementById('senha-restaurante').value;
 
     // Verificar se todos os campos estão preenchidos
     if (nome && email && cnpj && endereco && cidade && telefone && senha) {
@@ -138,12 +138,47 @@ function buscarEmpresas() {
     });
 }
 
+// Função para validar o cadastro da empresa/restaurante
+function validarCadastroEmpresa() {
+    let camposValidos = true;
+    const alertas = document.querySelectorAll('#alertas-restaurante .labelValidacao');
+    
+    // Limpar alertas anteriores
+    alertas.forEach(alerta => alerta.style.display = 'none');
+
+    const nome = document.getElementById('nome-restaurante').value;
+    const email = document.getElementById('email-restaurante').value;
+    const senha = document.getElementById('senha-restaurante').value;
+    const cnpj = document.getElementById('cnpj-restaurante').value;
+    const telefone = document.getElementById('telefone-restaurante').value;
+
+    if (!nome || !email || !senha || !cnpj || !telefone) {
+        document.getElementById('campoObrigatorio-restaurante').style.display = 'block';
+        camposValidos = false;
+    }
+
+    // Validar senha
+    if (senha.length < 8 || senha.length > 16) {
+        document.getElementById('senhaTamanho-restaurante').style.display = 'block';
+        camposValidos = false;
+    }
+    // Adicione mais validações conforme necessário
+
+    return camposValidos;
+}
+
+function cadastrarRestaurante() {
+    if (validarCadastroEmpresa()) {
+        cadastrarEmpresa();
+    }
+}
+
 // Adicionar o evento de busca no input de pesquisa
 document.getElementById('searchInputEmpresa').addEventListener('input', buscarEmpresas);
 
 // Carregar empresas ao abrir a página
 document.addEventListener('DOMContentLoaded', function () {
-    if (window.location.pathname.endsWith('lista-empresa.html')) {
+    if (window.location.pathname.endsWith('lista-empresas.html')) {
         carregarEmpresas();
     }
 });
