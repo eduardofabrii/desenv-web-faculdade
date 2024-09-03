@@ -1,123 +1,80 @@
+// Função para validar e cadastrar o motoboy
 function cadastrarMotoboy() {
-    // Obter os valores dos inputs
-    const nome = document.getElementById('nome-motoboy').value;
-    const email = document.getElementById('email-motoboy').value;
-    const cpf = document.getElementById('cpf-motoboy').value;
-    const placa = document.getElementById('placa-motoboy').value;
-    const cnh = document.getElementById('cnh-motoboy').value;
-    const telefone = document.getElementById('telefone-motoboy').value;
-    const senha = document.getElementById('senha-motoboy').value;
+    // Captura os valores dos campos
+    const nome = document.getElementById('nome-motoboy').value.trim();
+    const email = document.getElementById('email-motoboy').value.trim();
+    const senha = document.getElementById('senha-motoboy').value.trim();
+    const cpf = document.getElementById('cpf-motoboy').value.trim();
+    const placa = document.getElementById('placa-motoboy').value.trim();
+    const cnh = document.getElementById('cnh-motoboy').value.trim();
+    const telefone = document.getElementById('telefone-motoboy').value.trim();
 
-    // Verificar se todos os campos estão preenchidos
-    if (nome && email && cpf && placa && cnh && telefone && senha) {
-        
-        // Armazenar os dados no localStorage
-        const motoboys = JSON.parse(localStorage.getItem('motoboys')) || [];
-        motoboys.push({ nome, email, cpf, placa, cnh, telefone, senha });
-        localStorage.setItem('motoboys', JSON.stringify(motoboys));
+    // Referências aos alertas
+    const alertaCamposObrigatorios = document.getElementById('campoObrigatorio-motoboy');
+    const alertaSenhaTamanho = document.getElementById('senhaTamanho-motoboy');
+    const alertaSenhaPadrao = document.getElementById('senhaPadrao-motoboy');
+    const alertaEmailInvalido = document.getElementById('emailInvalido-motoboy');
+    const alertaTelefoneInvalido = document.getElementById('telefoneInvalido-motoboy');
+    const alertaCpfInvalido = document.getElementById('cpfInvalido-motoboy');
+    const alertaPlacaInvalida = document.getElementById('placaInvalida-motoboy');
+    const alertaCnhInvalida = document.getElementById('cnhInvalida-motoboy');
 
-        // Redirecionar para a página de lista de motoboys
-        window.open('lista-entregadores.html', '_blank');
-    } else {
-        alert('Por favor, preencha todos os campos.');
+    // Funções de validação
+    function validarCPF(cpf) { return cpf.length === 11; }
+    function validarPlaca(placa) { const regexPlaca = /^[A-Z]{3}[0-9][A-Z][0-9]{2}|[A-Z]{3}[0-9]{4}$/; return regexPlaca.test(placa.toUpperCase()); }
+    function validarCNH(cnh) { return cnh.length === 11; }
+    function validarEmail(email) { const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; return regexEmail.test(email); }
+    function validarTelefone(telefone) { const regexTelefone = /^\d{10,11}$/; return regexTelefone.test(telefone); }
+
+    // Resetar alertas
+    alertaCamposObrigatorios.style.display = 'none';
+    alertaSenhaTamanho.style.display = 'none';
+    alertaSenhaPadrao.style.display = 'none';
+    alertaEmailInvalido.style.display = 'none';
+    alertaTelefoneInvalido.style.display = 'none';
+    alertaCpfInvalido.style.display = 'none';
+    alertaPlacaInvalida.style.display = 'none';
+    alertaCnhInvalida.style.display = 'none';
+
+    // Validações
+    if (!nome || !email || !senha || !cpf || !placa || !cnh || !telefone) {
+        alertaCamposObrigatorios.style.display = 'block';
+        return;
     }
-}
+    if (senha.length < 8 || senha.length > 16) {
+        alertaSenhaTamanho.style.display = 'block';
+        return;
+    }
+    if (!/[A-Z]/.test(senha) || !/[!@#$%^&*]/.test(senha)) {
+        alertaSenhaPadrao.style.display = 'block';
+        return;
+    }
+    if (!validarEmail(email)) {
+        alertaEmailInvalido.style.display = 'block';
+        return;
+    }
+    if (!validarCPF(cpf)) {
+        alertaCpfInvalido.style.display = 'block';
+        return;
+    }
+    if (!validarPlaca(placa)) {
+        alertaPlacaInvalida.style.display = 'block';
+        return;
+    }
+    if (!validarCNH(cnh)) {
+        alertaCnhInvalida.style.display = 'block';
+        return;
+    }
+    if (!validarTelefone(telefone)) {
+        alertaTelefoneInvalido.style.display = 'block';
+        return;
+    }
 
-// Função para carregar os motoboys armazenados na tabela
-function carregarMotoboys() {
-    const motoboys = JSON.parse(localStorage.getItem('motoboys')) || [];
-    const tabelaMotoboys = document.getElementById('tabela-motoboys');
-    
-    tabelaMotoboys.innerHTML = '';
-    
-    motoboys.forEach(motoboy => {
-        const row = tabelaMotoboys.insertRow();
-        row.insertCell(0).textContent = motoboy.nome;
-        row.insertCell(1).textContent = motoboy.email;
-        row.insertCell(2).textContent = motoboy.cpf;
-        row.insertCell(3).textContent = motoboy.placa;
-        row.insertCell(4).textContent = motoboy.cnh;
-        row.insertCell(5).textContent = motoboy.telefone;
-
-        // Criando a célula de Ações com os botões de Editar e Excluir
-        const acoesCell = row.insertCell(6);
-        acoesCell.innerHTML = `
-            <button class="btn btn-warning btn-sm" onclick="editarMotoboy(this)">Editar</button>
-            <button class="btn btn-danger btn-sm" onclick="excluirMotoboy(this)">Excluir</button>
-        `;
-    });
-}
-
-function editarMotoboy(botao) {
-    const linha = botao.parentNode.parentNode;
-    const colunas = linha.querySelectorAll('td');
-    
-    colunas.forEach((coluna, index) => {
-        if (index < colunas.length - 1) {
-            const conteudoAtual = coluna.innerText;
-            coluna.innerHTML = `<input type="text" value="${conteudoAtual}" class="form-control">`;
-        }
-    });
-
-    botao.innerText = 'Salvar';
-    botao.onclick = function() {
-        salvarEdicaoMotoboy(linha);
-    };
-}
-
-function salvarEdicaoMotoboy(linha) {
-    const inputs = linha.querySelectorAll('input');
-    
-    inputs.forEach((input, index) => {
-        const valorEditado = input.value;
-        linha.cells[index].innerText = valorEditado;
-    });
-
-    linha.querySelector('.btn-warning').innerText = 'Editar';
-    linha.querySelector('.btn-warning').onclick = function() {
-        editarMotoboy(this);
-    };
-}
-
-function excluirMotoboy(botao) {
-    const linha = botao.parentNode.parentNode;
-    const nome = linha.cells[0].innerText;  
-    linha.remove();
-
+    // Se tudo estiver válido, armazenar os dados no localStorage
+    const motoboy = { nome, email, senha, cpf, placa, cnh, telefone };
     let motoboys = JSON.parse(localStorage.getItem('motoboys')) || [];
-    motoboys = motoboys.filter(motoboy => motoboy.nome !== nome);
-
+    motoboys.push(motoboy);
     localStorage.setItem('motoboys', JSON.stringify(motoboys));
-}
 
-// Função para buscar motoboys na tabela
-function buscarMotoboys() {
-    const searchInput = document.getElementById('searchInputMotoboy');
-    const filter = searchInput.value.toLowerCase();
-    const rows = document.querySelectorAll('#tabela-motoboys tr');
-
-    rows.forEach(row => {
-        const cells = row.getElementsByTagName('td');
-        let match = false;
-
-        for (let i = 0; i < cells.length - 1; i++) { 
-            if (cells[i].textContent.toLowerCase().includes(filter)) {
-                match = true;
-                break;
-            }
-        }
-
-        if (match) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
-        }
-    });
-}
-
-document.getElementById('searchInputMotoboy').addEventListener('input', buscarMotoboys);
-
-// Carregar motoboys ao abrir a página
-if (window.location.pathname.endsWith('lista-entregadores.html')) {
-    carregarMotoboys();
+    alert('Motoboy cadastrado com sucesso!');
 }

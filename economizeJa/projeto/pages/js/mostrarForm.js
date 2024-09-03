@@ -5,8 +5,6 @@ function mostrarFormulario(tipo) {
     document.getElementById(`form-${tipo}`).style.display = 'block';
   }
 
-  
-
   function cadastrarUsuario() {
     // Obter os valores dos inputs
     const nome = document.getElementById('nome-usuario').value;
@@ -133,9 +131,3 @@ function buscarUsuarios() {
 document.getElementById('searchInput').addEventListener('input', buscarUsuarios);
 
 carregarUsuarios();
-  
-  
-  // Chamar a função para carregar os usuários ao abrir a página
-  if (window.location.pathname.endsWith('lista-usuarios.html')) {
-    carregarUsuarios();
-  }
