@@ -61,17 +61,6 @@ a.nav-link.link-dark.px-2:hover {
     margin-left: 10px;
 }
 
-.bi.bi-menu-button-wide {
-    
-    border-radius: 0px;
-   
-}
-
-.bi.bi-menu-button-wide:hover {
-    scale: 1.05;
-    transition: 0.3s;
-}
-
 nav.py-2.bg.bg-light.border-bottom {
     padding-bottom: 0px !important;
 }
@@ -114,7 +103,7 @@ nav.py-2.bg.bg-light.border-bottom {
         display: list-item;
     }
 
-    .bi.bi-menu-button-wide {
+    .bi.bi-list {
         display: none;
     }
 
@@ -160,7 +149,7 @@ nav.py-2.bg.bg-light.border-bottom {
     }
 
    
-    .bi.bi-menu-button-wide {
+    .bi.bi-list {
         display: none;
     }
    
@@ -169,17 +158,62 @@ nav.py-2.bg.bg-light.border-bottom {
         display: block;
     }
 }
+/* 760 ate 1260 */
 
+@media screen and (min-width: 760px) and (max-width: 1260px) {
+    .nav-register {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .bi.bi-list {
+        display: none;
+    }
+
+    .offcanvas {
+        display: block;
+    }
+
+    .col-md-6.p-lg-5.mx-auto.my-5 {
+        margin-top: 8rem !important;
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+}
+
+@media (max-width: 1280px) {
+    .col-md-6.p-lg-5.mx-auto.my-5 {
+        margin-top: 8rem !important;
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .nav-register {
+        display: block;
+    }
+
+    .bi.bi-list {
+        display: none;
+    }
+
+    .offcanvas {
+        display: block;
+    }
+
+}
 
 /* Media query para telas menores que 760px */
-@media (max-width: 770px) {
+@media (max-width: 750px) {
     .nav-item {
         display: none;
     }
     .nav-register {
         display:none;
     }
-    .bi.bi-menu-button-wide {
+    .bi.bi-list {
         display: block;
     }
 

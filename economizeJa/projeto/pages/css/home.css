@@ -53,7 +53,7 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 /* Estilo para o botão primário */
-.bi.bi-menu-button-wide {
+.bi.bi-list {
     background-color: transparent;
     color: black;
     border: none;
