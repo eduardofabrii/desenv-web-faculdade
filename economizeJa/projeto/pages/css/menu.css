@@ -19,6 +19,17 @@ html, body {
     scale: 1.05;
     transition: 0.5s;
 }
+.bi.bi-person-circle{
+    font-size: 2rem;
+    color: rgb(0, 0, 0);
+    text-decoration: none ;
+}
+ a.bi.bi-person-circle:hover{
+    color: #196B20;
+    transition: 0.5s;
+    
+    
+}
 
 .nav-center {
     display: flex;
