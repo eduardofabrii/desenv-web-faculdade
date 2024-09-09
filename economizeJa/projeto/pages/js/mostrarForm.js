@@ -14,21 +14,35 @@ function mostrarFormulario(tipo) {
     const cidade = document.getElementById('cidade-usuario').value;
     const telefone = document.getElementById('telefone-usuario').value;
     const senha = document.getElementById('senha-usuario').value;
-  
+
     // Verificar se todos os campos estão preenchidos
     if (nome && email && cpf && endereco && cidade && telefone && senha) {
         
-        // Armazenar os dados no localStorage
-        const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
-        usuarios.push({ nome, email, cpf, endereco, cidade, telefone, senha });
-        localStorage.setItem('usuarios', JSON.stringify(usuarios));
-  
-        // Redirecionar para a página de lista de usuários
-        window.open('lista-usuarios.html', '_blank');
+        // Montar o objeto para enviar à API
+        const usuario = { nome, email, cpf, endereco, cidade, telefone, senha };
+
+        // Fazer a requisição POST à API
+        fetch('/api/usuarios', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(usuario),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Usuário cadastrado com sucesso:', data);
+            // Redirecionar para a página de lista de usuários
+            window.open('lista-usuarios.html', '_blank');
+        })
+        .catch(error => {
+            console.error('Erro ao cadastrar usuário:', error);
+        });
+
     } else {
         alert('Por favor, preencha todos os campos.');
     }
-  }
+}
   
   // Função para carregar os dados armazenados na tabela
   function carregarUsuarios() {
