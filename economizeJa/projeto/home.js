@@ -17,9 +17,9 @@ router.post('/api/usuarios' , (req, res) => {
     console.log('Entrou no POST')
     console.log(req.body);
 
+
     var usuario = req.body;
     res.status(201).json;
-    usuario.id = 1;
 
     usuarios.push(usuario);
     res.status(201).json(usuarios);
