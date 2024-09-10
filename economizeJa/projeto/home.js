@@ -1,38 +1,53 @@
-var express = require('express');
-var app = express();
+const express = require('express');
+const fs = require('fs');
+const path = require('path');
+const app = express();
 
 app.use(express.json());
 
 app.use(express.static('./pages'));
 
-const usuarios = [];
+// Caminho para o arquivo JSON onde os usuários serão armazenados
+const USERS_FILE = path.join(__dirname, 'usuarios.json');
 
-const router = express.Router();
-router.get('/api/usuarios' , (req, res) => {
-    console.log('Entrou no GET')
-    res.status(200).json(usuarios);
-});
+// Função para ler usuários do arquivo JSON
+const readUsersFromFile = () => {
+    if (fs.existsSync(USERS_FILE)) {
+        const data = fs.readFileSync(USERS_FILE, 'utf8');
+        return JSON.parse(data);
+    } else {
+        return [];
+    }
+};
 
-router.post('/api/usuarios' , (req, res) => {
-    console.log('Entrou no POST')
-    console.log(req.body);
+// Função para escrever usuários no arquivo JSON
+const writeUsersToFile = (usuarios) => {
+    fs.writeFileSync(USERS_FILE, JSON.stringify(usuarios, null, 2), 'utf8');
+};
 
+// Rota POST para adicionar um novo usuário
+app.post('/api/usuarios', (req, res) => {
+    const usuario = req.body;
 
-    var usuario = req.body;
-    res.status(201).json;
+    if (!usuario.nome || !usuario.email) {
+        return res.status(400).json({ error: 'Nome e email são obrigatórios!' });
+    }
 
+    const usuarios = readUsersFromFile();
+    usuario.id = usuarios.length + 1; // Atribuir um ID único ao novo usuário
     usuarios.push(usuario);
+    writeUsersToFile(usuarios);
+
     res.status(201).json(usuarios);
 });
 
-app.use(router);
-
-const port = 3000;
-
-app.get('/hello', (req, res) => {
-    res.send();
+// Rota GET para listar todos os usuários
+app.get('/api/usuarios', (req, res) => {
+    const usuarios = readUsersFromFile();
+    res.status(200).json(usuarios);
 });
 
+const port = 3000;
 app.listen(port, () => {
-    console.log(`Server is running on port ${port}`); 
+    console.log(`Servidor rodando na porta ${port}`);
 });

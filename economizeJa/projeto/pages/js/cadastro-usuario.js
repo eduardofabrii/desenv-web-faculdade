@@ -1,49 +1,55 @@
-function mostrarFormulario(tipo) {
-    const formularios = document.querySelectorAll('.form-container');
-    formularios.forEach(form => form.style.display = 'none');
-    
-    document.getElementById(`form-${tipo}`).style.display = 'block';
-  }
-
-  function cadastrarUsuario() {
-    // Obter os valores dos inputs
-    const nome = document.getElementById('nome-usuario').value;
-    const email = document.getElementById('email-usuario').value;
-    const cpf = document.getElementById('cpf-usuario').value;
-    const endereco = document.getElementById('endereco-usuario').value;
-    const cidade = document.getElementById('cidade-usuario').value;
-    const telefone = document.getElementById('telefone-usuario').value;
-    const senha = document.getElementById('senha-usuario').value;
-
-    // Verificar se todos os campos estão preenchidos
-    if (nome && email && cpf && endereco && cidade && telefone && senha) {
+    function mostrarFormulario(tipo) {
+        const formularios = document.querySelectorAll('.form-container');
+        formularios.forEach(form => form.style.display = 'none');
         
-        // Montar o objeto para enviar à API
-        const usuario = { nome, email, cpf, endereco, cidade, telefone, senha };
-
-        // Fazer a requisição POST à API
-        fetch('/api/usuarios', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(usuario),
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Usuário cadastrado com sucesso:', data);
-            // Redirecionar para a página de lista de usuários
-            window.open('lista-usuarios.html', '_blank');
-        })
-        .catch(error => {
-            console.error('Erro ao cadastrar usuário:', error);
-        });
-
-    } else {
-        alert('Por favor, preencha todos os campos.');
+        document.getElementById(`form-${tipo}`).style.display = 'block';
     }
-}
-  
+
+    function cadastrarUsuario() {
+        // Obter os valores dos inputs
+        const nome = document.getElementById('nome-usuario').value;
+        const email = document.getElementById('email-usuario').value;
+        const cpf = document.getElementById('cpf-usuario').value;
+        const endereco = document.getElementById('endereco-usuario').value;
+        const cidade = document.getElementById('cidade-usuario').value;
+        const telefone = document.getElementById('telefone-usuario').value;
+        const senha = document.getElementById('senha-usuario').value;
+    
+        // Verificar se todos os campos estão preenchidos
+        if (nome && email && cpf && endereco && cidade && telefone && senha) {
+            
+            // Montar o objeto para enviar à API e salvar no localStorage
+            const usuario = { nome, email, cpf, endereco, cidade, telefone, senha };
+    
+            // Armazenar os dados no localStorage
+            const usuariosLocal = JSON.parse(localStorage.getItem('usuarios')) || [];
+            usuariosLocal.push(usuario);
+            localStorage.setItem('usuarios', JSON.stringify(usuariosLocal));
+    
+            // Fazer a requisição POST à API
+            fetch('/api/usuarios', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(usuario),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Usuário cadastrado com sucesso:', data);
+                // Redirecionar para a página de lista de usuários
+                window.open('lista-usuarios.html', '_blank');
+            })
+            .catch(error => {
+                console.error('Erro ao cadastrar o usuário:', error);
+                alert('Ocorreu um erro ao cadastrar o usuário.');
+            });
+    
+        } else {
+            alert('Por favor, preencha todos os campos.');
+        }
+    }
+    
   // Função para carregar os dados armazenados na tabela
   function carregarUsuarios() {
     const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
