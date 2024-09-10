@@ -43,7 +43,7 @@ function obterValorInput() {
         acoesCell.innerHTML = `
             <td class="Botoes">
             <button class="btn btn-warning btn-sm" onclick="editarUsuario(this)">Editar</button>
-            <button class="btn btn-danger btn-sm" onclick="excluirUsuario(this)">Excluir Conta</button>
+            <button class="btn btn-danger btn-sm" onclick="excluirUsuario(this)">Sair Conta</button>
             </td>
         `;
     });

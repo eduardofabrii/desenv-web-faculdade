@@ -5,37 +5,12 @@ const app = express();
 
 app.use(express.json());
 
-app.use(express.json());
+
 
 app.use(express.static('./pages'));
 
-<<<<<<< HEAD
-const produtos = [];
 
-const router = express.Router();
-router.get('/api/produtos', (req, res) => {  
-    console.log('entrou no get');
-    res.status(200).json(produtos);
-});
-router.post('/api/produtos', (req, res) => {  
-    console.log('entrou no post');
-    console.log(req.body);
 
-    var produto = req.body;
-    produto.id = 1;
-
-    produtos.push(produto);
-    res.status(201).json(produto);
-});
-
-app.use(router);
-
-const port = 3000;
-app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
-});
-=======
-// Caminho para o arquivo JSON onde os usuários serão armazenados
 const USERS_FILE = path.join(__dirname, 'usuarios.json');
 
 // Função para ler usuários do arquivo JSON
@@ -79,4 +54,22 @@ const port = 3000;
 app.listen(port, () => {
     console.log(`Servidor rodando na porta ${port}`);
 });
->>>>>>> 40e0a043a69686b6090b5cb7ed8a76078b6b8983
+
+// Rota DELETE para excluir um usuário pelo CPF
+app.delete('/api/usuarios/:cpf', (req, res) => {
+    const cpf = req.params.cpf;
+
+    let usuarios = readUsersFromFile();
+
+    // Filtrar para remover o usuário cujo CPF corresponde ao enviado na requisição
+    const novosUsuarios = usuarios.filter(usuario => usuario.cpf !== cpf);
+
+    if (usuarios.length === novosUsuarios.length) {
+        return res.status(404).json({ error: 'Usuário não encontrado!' });
+    }
+
+    // Escrever a nova lista de usuários no arquivo JSON
+    writeUsersToFile(novosUsuarios);
+
+    res.status(200).json({ message: 'Usuário excluído com sucesso!' });
+});

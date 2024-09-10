@@ -37,8 +37,7 @@
             .then(response => response.json())
             .then(data => {
                 console.log('Usuário cadastrado com sucesso:', data);
-                // Redirecionar para a página de lista de usuários
-                window.open('lista-usuarios.html', '_blank');
+                window.open('login.html', '_blank');
             })
             .catch(error => {
                 console.error('Erro ao cadastrar o usuário:', error);
@@ -107,22 +106,33 @@ function salvarEdicao(linha) {
         editarUsuario(this);
     };
 }
-
 function excluirUsuario(botao) {
-    // Remove a linha da tabela
     const linha = botao.parentNode.parentNode;
-    const nome = linha.cells[0].innerText;  // Ou use outro identificador único, como CPF ou email
-    linha.remove();
+    const cpf = linha.cells[2].innerText;  
+    
+   
+    fetch(`/api/usuarios/${cpf}`, {
+        method: 'DELETE',
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Usuário excluído com sucesso:', data);
+        linha.remove();  
 
-    // Carregar os dados do localStorage
-    let usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+       
+        let usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+        usuarios = usuarios.filter(usuario => usuario.cpf !== cpf);
+        localStorage.setItem('usuarios', JSON.stringify(usuarios));
 
-    // Filtrar para remover o usuário excluído
-    usuarios = usuarios.filter(usuario => usuario.nome !== nome);
-
-    // Atualizar o localStorage
-    localStorage.setItem('usuarios', JSON.stringify(usuarios));
+        
+    })
+    .catch(error => {
+        console.error('Erro ao excluir o usuário:', error);
+        alert('Ocorreu um erro ao excluir o usuário.');
+    });
 }
+
+
 
 function buscarUsuarios() {
   const searchInput = document.getElementById('searchInput');

@@ -17,7 +17,7 @@ function validarLogin() {
 
     if (usuarioEncontrado) {
         
-        window.open('home.html', '_blank');
+        window.open('homeUsuario.html', '_blank');
         
     } else {
         
