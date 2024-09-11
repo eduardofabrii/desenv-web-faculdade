@@ -73,3 +73,29 @@ app.delete('/api/usuarios/:cpf', (req, res) => {
 
     res.status(200).json({ message: 'Usuário excluído com sucesso!' });
 });
+
+
+// Rota PUT para atualizar um usuário pelo CPF
+app.put('/api/usuarios/:cpf', (req, res) => {
+    const cpf = req.params.cpf;
+    const usuarioAtualizado = req.body;
+
+    if (!usuarioAtualizado.nome || !usuarioAtualizado.email) {
+        return res.status(400).json({ error: 'Nome e email são obrigatórios!' });
+    }
+
+    let usuarios = readUsersFromFile();
+
+    // Encontrar o índice do usuário a ser atualizado
+    const index = usuarios.findIndex(usuario => usuario.cpf === cpf);
+
+    if (index === -1) {
+        return res.status(404).json({ error: 'Usuário não encontrado!' });
+    }
+
+    // Atualizar o usuário
+    usuarios[index] = usuarioAtualizado;
+    writeUsersToFile(usuarios);
+
+    res.status(200).json(usuarios[index]);
+});

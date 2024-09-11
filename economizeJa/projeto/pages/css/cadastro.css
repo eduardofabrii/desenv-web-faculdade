@@ -3,6 +3,20 @@ body {
   padding: 0;
   
 }
+body::-webkit-scrollbar {
+  width: 12px;
+  background-color: #000000;
+}
+
+body::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  transition: all 0.3s ease;
+  background-color: #196B20;
+}
+
+body::-webkit-scrollbar-thumb:hover {
+  background: #97A6A0;
+}
 
 
 .img-background {
@@ -39,7 +53,7 @@ body {
 
 .logo-container {
   position: absolute;
-  top: 20px; 
+  top: 10px; 
   left: 20px; 
   z-index: 10;
 }
@@ -57,16 +71,15 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px;
+  
  
 }
 
 .container {
-  border-radius: 0;
   box-shadow: none; 
   width: 100%;
   max-width: 500px;
-  padding: 10px;
+  padding: 5px;
 }
 
 .container h2 {
@@ -93,9 +106,6 @@ form {
 }
 
 
-.mb-3 p {
-  font-family: Arial, Helvetica, sans-serif;
-}
 
 
 #btn-usuario, #btn-motoboy, #btn-restaurante, #btn-criar {
@@ -177,8 +187,8 @@ main h2, p {
     max-width: 600px;
     border-radius: 10px;
     height: auto;
-    margin: 20px auto;
-    padding: 20px;
+    margin: 10px;
+    padding: 10px;
     background-color: white;
     flex-direction: column;
     position: absolute;
