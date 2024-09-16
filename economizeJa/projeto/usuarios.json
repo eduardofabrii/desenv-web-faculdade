@@ -8,5 +8,15 @@
     "telefone": "921615141789",
     "senha": "Joao2006@",
     "id": 1
+  },
+  {
+    "nome": "JOSIANE",
+    "email": "joao@example.com",
+    "cpf": "11094880922",
+    "endereco": "Gentil",
+    "cidade": "Curitiba",
+    "telefone": "921615141789",
+    "senha": "Joao2006@",
+    "id": 2
   }
 ]

@@ -31,7 +31,7 @@
   
   .logo-container {
     position: absolute;
-    top: 20px; 
+    top: 10px; 
     left: 20px; 
     z-index: 10;
   }
@@ -40,7 +40,11 @@
     width: 150px;
     height: auto;
   }
-  
+  .logo:hover{
+      
+      transform: scale(1.1);
+      transition: 0.5s;
+  }
   .main {
     position: absolute;
     width: 50vw;
