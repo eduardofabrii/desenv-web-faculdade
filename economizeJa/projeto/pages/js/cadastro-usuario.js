@@ -3,7 +3,43 @@ function mostrarFormulario(tipo) {
     formularios.forEach(form => form.style.display = 'none');
     
     document.getElementById(`form-${tipo}`).style.display = 'block';
+
+    switchimages(tipo);
 }
+
+function switchimages(tipo) {
+    var img = document.getElementById('fundo');
+    var imgmoto = document.getElementById('fundo');
+    
+    
+    // Troca a imagem com base no tipo
+    if (tipo === 'restaurante') {
+        img.src = "images/estabelecimento.jpg";
+    } else if (tipo === 'motoboy') {
+        imgmoto.src = "images/img-motoboy.jpg";
+    } else if (tipo === 'usuario') {
+        img.src = "images/frutasVermelhas.jpg"; // Imagem padrão
+    }
+
+    // Assegura que a imagem cubra toda a área sem distorções
+    imgmoto.style.objectFit = "cover";
+    imgmoto.style.width = "100vw";
+    imgmoto.style.height = "100vh";
+    imgmoto.style.position = "relative";
+    imgmoto.style.top = "0";
+    imgmoto.style.left = "0px";
+}
+
+
+
+// Ajustando os eventos para passar o tipo correto
+document.getElementById('btn-restaurante').addEventListener('click', function() {
+    switchimages('restaurante');
+});
+document.getElementById('btn-motoboy').addEventListener('click', function() {
+    switchimages('motoboy');
+});
+
 
 function cadastrarUsuario() {
     // Obter os valores dos inputs

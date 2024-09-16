@@ -4,14 +4,10 @@ const path = require('path');
 const app = express();
 
 app.use(express.json());
-
-
-
 app.use(express.static('./pages'));
 
-
-
 const USERS_FILE = path.join(__dirname, 'usuarios.json');
+const SUGESTIONS_FILE = path.join(__dirname, 'sugestions.json');
 
 // Função para ler usuários do arquivo JSON
 const readUsersFromFile = () => {
@@ -23,10 +19,47 @@ const readUsersFromFile = () => {
     }
 };
 
+// Função para ler sugestões do arquivo JSON
+const readSugestionsFromFile = () => {
+    if (fs.existsSync(SUGESTIONS_FILE)) {
+        const data = fs.readFileSync(SUGESTIONS_FILE, 'utf8');
+        return JSON.parse(data);
+    } else {
+        return [];
+    }
+};
+
+// Função para escrever sugestões no arquivo JSON
+const writeSugestionsToFile = (sugestions) => {
+    fs.writeFileSync(SUGESTIONS_FILE, JSON.stringify(sugestions, null, 2), 'utf8'); // Corrigido: SUGESTIONS_FILE em vez de USERS_FILE
+};
+
 // Função para escrever usuários no arquivo JSON
 const writeUsersToFile = (usuarios) => {
     fs.writeFileSync(USERS_FILE, JSON.stringify(usuarios, null, 2), 'utf8');
 };
+
+// Rota POST para adicionar uma nova sugestão
+app.post('/api/sugestoes', (req, res) => {
+    const { sugestion } = req.body; // Recebe a sugestão do body
+
+    if (!sugestion) {
+        return res.status(400).json({ error: 'Sugestão é obrigatória!' });
+    }
+
+    const sugestionlist = readSugestionsFromFile(); // Lê o arquivo de sugestões existente
+    sugestionlist.push({ sugestion, date: new Date().toISOString() }); // Adiciona a nova sugestão com uma data
+
+    writeSugestionsToFile(sugestionlist); // Escreve a nova lista de sugestões no arquivo
+
+    res.status(201).json(sugestionlist); // Retorna a lista atualizada de sugestões
+});
+
+// Rota GET para listar todas as sugestões
+app.get('/api/sugestoes', (req, res) => {
+    const sugestionlist = readSugestionsFromFile();
+    res.status(200).json(sugestionlist);
+});
 
 // Rota POST para adicionar um novo usuário
 app.post('/api/usuarios', (req, res) => {
@@ -50,11 +83,6 @@ app.get('/api/usuarios', (req, res) => {
     res.status(200).json(usuarios);
 });
 
-const port = 3000;
-app.listen(port, () => {
-    console.log(`Servidor rodando na porta ${port}`);
-});
-
 // Rota DELETE para excluir um usuário pelo CPF
 app.delete('/api/usuarios/:cpf', (req, res) => {
     const cpf = req.params.cpf;
@@ -73,7 +101,6 @@ app.delete('/api/usuarios/:cpf', (req, res) => {
 
     res.status(200).json({ message: 'Usuário excluído com sucesso!' });
 });
-
 
 // Rota PUT para atualizar um usuário pelo CPF
 app.put('/api/usuarios/:cpf', (req, res) => {
@@ -98,4 +125,10 @@ app.put('/api/usuarios/:cpf', (req, res) => {
     writeUsersToFile(usuarios);
 
     res.status(200).json(usuarios[index]);
+});
+
+// Iniciar o servidor
+const port = 3000;
+app.listen(port, () => {
+    console.log(`Servidor rodando na porta ${port}`);
 });
