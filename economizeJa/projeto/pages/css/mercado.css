@@ -97,6 +97,8 @@ footer > .container.text-center{
     transition:cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
+
+
 .footer{
    
     color: white;
@@ -114,8 +116,26 @@ footer > .container.text-center{
 
     
 }
- 
-
+.card-img-top{
+    border-radius: 40% !important;
+    width: 60% !important;
+    margin: 0 auto;
+    margin-top: 20px;
+}
+.card-img-top:hover{
+    transform:rotate(360deg);	
+    transition: 1s;
+}
+.card{
+    border: none  !important;
+    margin-bottom: 100px;
+    
+}
+.card:hover{
+    transform: scale(1.05);
+    transition: 0.5s;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
 
 .footer > .container{
     display: flex;
