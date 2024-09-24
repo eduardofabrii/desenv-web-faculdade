@@ -1,42 +1,12 @@
 [
   {
-    "nome": "JOSIANE",
-    "email": "joao@example.com",
-    "cpf": "11094880922",
-    "endereco": "Gentil",
-    "cidade": "Curitiba",
-    "telefone": "921615141789",
-    "senha": "Joao2006@",
-    "id": 1
-  },
-  {
-    "nome": "JOSIANE",
-    "email": "joao@example.com",
-    "cpf": "11094880922",
-    "endereco": "Gentil",
-    "cidade": "Curitiba",
-    "telefone": "921615141789",
-    "senha": "Joao2006@",
-    "id": 2
-  },
-  {
-    "nome": "EDUARDO HENRIQUE FABRI",
-    "email": "eduardofabrii@hotmail.com",
-    "cpf": "123495678",
-    "endereco": "Rua 1400",
-    "cidade": "Selecione",
+    "nome": "Eduardo Henrique Fabri",
+    "email": "eduardo@gmail.com",
+    "cpf": "13588182900",
+    "endereco": "Roberto Paulo, 15",
+    "cidade": "Curitiba, PR",
     "telefone": "47992792189",
-    "senha": "Teste#123",
-    "id": 3
-  },
-  {
-    "nome": "Marcia Tieppo",
-    "email": "marcia@gmail.com",
-    "cpf": "123456789",
-    "endereco": "Rua Joao Pedro",
-    "cidade": "Belo Horizonte",
-    "telefone": "1111111111",
     "senha": "Ff12345#",
-    "id": 4
+    "id": 1
   }
 ]
