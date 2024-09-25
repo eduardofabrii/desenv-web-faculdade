@@ -8,5 +8,15 @@
     "telefone": "47992792189",
     "senha": "Ff12345#",
     "id": 1
+  },
+  {
+    "nome": "Teste",
+    "email": "teste@gmail.com",
+    "cpf": "123456789",
+    "endereco": "Rua José Pereira",
+    "cidade": "SP",
+    "telefone": "12345678910",
+    "senha": "Ff12345#",
+    "id": 2
   }
 ]
