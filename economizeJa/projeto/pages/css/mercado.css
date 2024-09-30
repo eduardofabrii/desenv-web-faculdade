@@ -6,6 +6,12 @@
     box-sizing: border-box;
 }
 
+@import url('https://fonts.googleapis.com/css2?family=SUSE:wght@100..800&display=swap');
+
+:root{
+    --font-main: 'SUSE', sans-serif;
+}
+
 
 
 body {
@@ -13,6 +19,7 @@ body {
     background-size: cover;
     height: 100%;
     margin: 0;
+    font-family: var(--font-main) !important;
     
 }
 #nav{
@@ -116,11 +123,12 @@ footer > .container.text-center{
 
     
 }
-.card-img-top{
+.card-img{
     border-radius: 40% !important;
-    width: 60% !important;
-    margin: 0 auto;
-    margin-top: 20px;
+    width: 50% !important;
+    height: 60% !important;
+    margin-top: 10px !important;
+    margin: 0 auto
 }
 .card-img-top:hover{
     transform:rotate(360deg);	
@@ -129,6 +137,8 @@ footer > .container.text-center{
 .card{
     border: none  !important;
     margin-bottom: 100px;
+  
+
     
 }
 .card:hover{
