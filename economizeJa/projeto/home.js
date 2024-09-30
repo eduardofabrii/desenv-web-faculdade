@@ -1,43 +1,28 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
+const mysql = require('mysql');
 const app = express();
 
 app.use(express.json());
 app.use(express.static('./pages'));
 
-const USERS_FILE = path.join(__dirname, 'usuarios.json');
-const SUGESTIONS_FILE = path.join(__dirname, 'sugestions.json');
+// Configurar a conexão com o MySQL
+var connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'economizeja'
+});
 
-// Função para ler usuários do arquivo JSON
-const readUsersFromFile = () => {
-    if (fs.existsSync(USERS_FILE)) {
-        const data = fs.readFileSync(USERS_FILE, 'utf8');
-        return JSON.parse(data);
-    } else {
-        return [];
+// Conectar ao MySQL
+connection.connect((err) => {
+    if (err) {
+        console.error('Error connecting to MySQL:', err);
+        return;
     }
-};
-
-// Função para ler sugestões do arquivo JSON
-const readSugestionsFromFile = () => {
-    if (fs.existsSync(SUGESTIONS_FILE)) {
-        const data = fs.readFileSync(SUGESTIONS_FILE, 'utf8');
-        return JSON.parse(data);
-    } else {
-        return [];
-    }
-};
-
-// Função para escrever sugestões no arquivo JSON
-const writeSugestionsToFile = (sugestions) => {
-    fs.writeFileSync(SUGESTIONS_FILE, JSON.stringify(sugestions, null, 2), 'utf8'); // Corrigido: SUGESTIONS_FILE em vez de USERS_FILE
-};
-
-// Função para escrever usuários no arquivo JSON
-const writeUsersToFile = (usuarios) => {
-    fs.writeFileSync(USERS_FILE, JSON.stringify(usuarios, null, 2), 'utf8');
-};
+    console.log('Connected to MySQL database!');
+});
 
 // Rota POST para adicionar uma nova sugestão
 app.post('/api/sugestoes', (req, res) => {
@@ -47,84 +32,118 @@ app.post('/api/sugestoes', (req, res) => {
         return res.status(400).json({ error: 'Sugestão é obrigatória!' });
     }
 
-    const sugestionlist = readSugestionsFromFile(); // Lê o arquivo de sugestões existente
-    sugestionlist.push({ sugestion, date: new Date().toISOString() }); // Adiciona a nova sugestão com uma data
+    // Adicionar a sugestão ao banco de dados
+    const query = 'INSERT INTO Sugestoes (sugestion, date) VALUES (?, ?)';
+    connection.query(query, [sugestion, new Date().toISOString()], (err, results) => {
+        if (err) {
+            console.error('Error inserting suggestion:', err);
+            return res.status(500).json({ error: 'Erro ao adicionar sugestão.' });
+        }
 
-    writeSugestionsToFile(sugestionlist); // Escreve a nova lista de sugestões no arquivo
-
-    res.status(201).json(sugestionlist); // Retorna a lista atualizada de sugestões
+        res.status(201).json({ id: results.insertId, sugestion, date: new Date().toISOString() });
+    });
 });
 
 // Rota GET para listar todas as sugestões
 app.get('/api/sugestoes', (req, res) => {
-    const sugestionlist = readSugestionsFromFile();
-    res.status(200).json(sugestionlist);
+    const query = 'SELECT * FROM Sugestoes';
+    connection.query(query, (err, results) => {
+        if (err) {
+            console.error('Error fetching suggestions:', err);
+            return res.status(500).json({ error: 'Erro ao buscar sugestões.' });
+        }
+
+        res.status(200).json(results);
+    });
 });
 
 // Rota POST para adicionar um novo usuário
 app.post('/api/usuarios', (req, res) => {
-    const usuario = req.body;
+    const { nome, email, cpf, telefone, senha } = req.body;
 
-    if (!usuario.nome || !usuario.email) {
-        return res.status(400).json({ error: 'Nome e email são obrigatórios!' });
+    if (!nome || !email || !cpf || !telefone || !senha) {
+        return res.status(400).json({ error: 'Nome, email, cpf, telefone e senha são obrigatórios!' });
     }
 
-    const usuarios = readUsersFromFile();
-    usuario.id = usuarios.length + 1; // Atribuir um ID único ao novo usuário
-    usuarios.push(usuario);
-    writeUsersToFile(usuarios);
+    // Verificar se já existe um usuário com o mesmo CPF
+    connection.query('SELECT * FROM Usuario WHERE CPF = ?', [cpf], (error, results) => {
+        if (error) {
+            console.error('Error checking CPF:', error);
+            return res.status(500).json({ error: 'Erro ao verificar CPF.' });
+        }
 
-    res.status(201).json(usuarios);
+        if (results.length > 0) {
+            return res.status(409).json({ error: 'Já existe um usuário com o mesmo CPF!' });
+        }
+
+        // Inserir o novo usuário no banco de dados
+        const query = 'INSERT INTO Usuario (Nome, Email, Senha, CPF, Telefone) VALUES (?, ?, ?, ?, ?)';
+        connection.query(query, [nome, email, senha, cpf, telefone], (insertError, insertResults) => {
+            if (insertError) {
+                console.error('Error inserting user:', insertError);
+                return res.status(500).json({ error: 'Erro ao inserir usuário.' });
+            }
+
+            res.status(201).json({ message: 'Usuário adicionado com sucesso!', id: insertResults.insertId });
+        });
+    });
 });
 
 // Rota GET para listar todos os usuários
 app.get('/api/usuarios', (req, res) => {
-    const usuarios = readUsersFromFile();
-    res.status(200).json(usuarios);
+    const query = 'SELECT * FROM Usuario';
+    connection.query(query, (err, results) => {
+        if (err) {
+            console.error('Error fetching users:', err);
+            return res.status(500).json({ error: 'Erro ao buscar usuários.' });
+        }
+
+        res.status(200).json(results);
+    });
 });
 
 // Rota DELETE para excluir um usuário pelo CPF
 app.delete('/api/usuarios/:cpf', (req, res) => {
     const cpf = req.params.cpf;
 
-    let usuarios = readUsersFromFile();
+    // Excluir o usuário do banco de dados
+    connection.query('DELETE FROM Usuario WHERE CPF = ?', [cpf], (err, results) => {
+        if (err) {
+            console.error('Error deleting user:', err);
+            return res.status(500).json({ error: 'Erro ao excluir usuário.' });
+        }
 
-    // Filtrar para remover o usuário cujo CPF corresponde ao enviado na requisição
-    const novosUsuarios = usuarios.filter(usuario => usuario.cpf !== cpf);
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ error: 'Usuário não encontrado!' });
+        }
 
-    if (usuarios.length === novosUsuarios.length) {
-        return res.status(404).json({ error: 'Usuário não encontrado!' });
-    }
-
-    // Escrever a nova lista de usuários no arquivo JSON
-    writeUsersToFile(novosUsuarios);
-
-    res.status(200).json({ message: 'Usuário excluído com sucesso!' });
+        res.status(200).json({ message: 'Usuário excluído com sucesso!' });
+    });
 });
 
 // Rota PUT para atualizar um usuário pelo CPF
 app.put('/api/usuarios/:cpf', (req, res) => {
     const cpf = req.params.cpf;
-    const usuarioAtualizado = req.body;
+    const { nome, email, telefone, senha } = req.body;
 
-    if (!usuarioAtualizado.nome || !usuarioAtualizado.email) {
-        return res.status(400).json({ error: 'Nome e email são obrigatórios!' });
+    if (!nome || !email || !telefone || !senha) {
+        return res.status(400).json({ error: 'Nome, email, telefone e senha são obrigatórios!' });
     }
 
-    let usuarios = readUsersFromFile();
+    // Atualizar o usuário no banco de dados
+    const query = 'UPDATE Usuario SET Nome = ?, Email = ?, Telefone = ?, Senha = ? WHERE CPF = ?';
+    connection.query(query, [nome, email, telefone, senha, cpf], (err, results) => {
+        if (err) {
+            console.error('Error updating user:', err);
+            return res.status(500).json({ error: 'Erro ao atualizar usuário.' });
+        }
 
-    // Encontrar o índice do usuário a ser atualizado
-    const index = usuarios.findIndex(usuario => usuario.cpf === cpf);
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ error: 'Usuário não encontrado!' });
+        }
 
-    if (index === -1) {
-        return res.status(404).json({ error: 'Usuário não encontrado!' });
-    }
-
-    // Atualizar o usuário
-    usuarios[index] = usuarioAtualizado;
-    writeUsersToFile(usuarios);
-
-    res.status(200).json(usuarios[index]);
+        res.status(200).json({ message: 'Usuário atualizado com sucesso!' });
+    });
 });
 
 // Iniciar o servidor
