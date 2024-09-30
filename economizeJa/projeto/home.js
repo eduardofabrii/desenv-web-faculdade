@@ -1,21 +1,19 @@
 const express = require('express');
-const fs = require('fs');
-const path = require('path');
 const mysql = require('mysql');
 const app = express();
 
 app.use(express.json());
 app.use(express.static('./pages'));
 
-// Configurar a conexão com o MySQL
-var connection = mysql.createConnection({
+// Configuração da conexão com o MySQL
+const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: '',
     database: 'economizeja'
 });
 
-// Conectar ao MySQL
+// Conexão com o banco de dados
 connection.connect((err) => {
     if (err) {
         console.error('Error connecting to MySQL:', err);
@@ -24,40 +22,7 @@ connection.connect((err) => {
     console.log('Connected to MySQL database!');
 });
 
-// Rota POST para adicionar uma nova sugestão
-app.post('/api/sugestoes', (req, res) => {
-    const { sugestion } = req.body; // Recebe a sugestão do body
-
-    if (!sugestion) {
-        return res.status(400).json({ error: 'Sugestão é obrigatória!' });
-    }
-
-    // Adicionar a sugestão ao banco de dados
-    const query = 'INSERT INTO Sugestoes (sugestion, date) VALUES (?, ?)';
-    connection.query(query, [sugestion, new Date().toISOString()], (err, results) => {
-        if (err) {
-            console.error('Error inserting suggestion:', err);
-            return res.status(500).json({ error: 'Erro ao adicionar sugestão.' });
-        }
-
-        res.status(201).json({ id: results.insertId, sugestion, date: new Date().toISOString() });
-    });
-});
-
-// Rota GET para listar todas as sugestões
-app.get('/api/sugestoes', (req, res) => {
-    const query = 'SELECT * FROM Sugestoes';
-    connection.query(query, (err, results) => {
-        if (err) {
-            console.error('Error fetching suggestions:', err);
-            return res.status(500).json({ error: 'Erro ao buscar sugestões.' });
-        }
-
-        res.status(200).json(results);
-    });
-});
-
-// Rota POST para adicionar um novo usuário
+// ADICIONAR USUÁRIO
 app.post('/api/usuarios', (req, res) => {
     const { nome, email, cpf, telefone, senha } = req.body;
 
@@ -89,7 +54,7 @@ app.post('/api/usuarios', (req, res) => {
     });
 });
 
-// Rota GET para listar todos os usuários
+// GET para listar todos os usuários
 app.get('/api/usuarios', (req, res) => {
     const query = 'SELECT * FROM Usuario';
     connection.query(query, (err, results) => {
@@ -106,7 +71,6 @@ app.get('/api/usuarios', (req, res) => {
 app.delete('/api/usuarios/:cpf', (req, res) => {
     const cpf = req.params.cpf;
 
-    // Excluir o usuário do banco de dados
     connection.query('DELETE FROM Usuario WHERE CPF = ?', [cpf], (err, results) => {
         if (err) {
             console.error('Error deleting user:', err);
@@ -121,7 +85,7 @@ app.delete('/api/usuarios/:cpf', (req, res) => {
     });
 });
 
-// Rota PUT para atualizar um usuário pelo CPF
+// ATUALIZAR UM USUÁRIO PELO CPF
 app.put('/api/usuarios/:cpf', (req, res) => {
     const cpf = req.params.cpf;
     const { nome, email, telefone, senha } = req.body;
@@ -130,7 +94,6 @@ app.put('/api/usuarios/:cpf', (req, res) => {
         return res.status(400).json({ error: 'Nome, email, telefone e senha são obrigatórios!' });
     }
 
-    // Atualizar o usuário no banco de dados
     const query = 'UPDATE Usuario SET Nome = ?, Email = ?, Telefone = ?, Senha = ? WHERE CPF = ?';
     connection.query(query, [nome, email, telefone, senha, cpf], (err, results) => {
         if (err) {
@@ -146,8 +109,132 @@ app.put('/api/usuarios/:cpf', (req, res) => {
     });
 });
 
+// ADICIONAR RESTAURANTE
+app.post('/api/restaurantes', (req, res) => {
+    const { cnpj, nome_empresa, email, telefone, senha, nicho } = req.body;
+
+    if (!cnpj || !nome_empresa || !email || !telefone || !senha || !nicho) {
+        return res.status(400).json({ error: 'Todos os campos são obrigatórios!' });
+    }
+
+    const query = 'INSERT INTO Restaurante (CNPJ, Nome_Empresa, Email, Telefone, Senha, Nicho) VALUES (?, ?, ?, ?, ?, ?)';
+    connection.query(query, [cnpj, nome_empresa, email, telefone, senha, nicho], (err, results) => {
+        if (err) {
+            console.error('Error inserting restaurant:', err);
+            return res.status(500).json({ error: 'Erro ao adicionar restaurante.' });
+        }
+
+        res.status(201).json({ message: 'Restaurante adicionado com sucesso!', id: results.insertId });
+    });
+});
+
+// GET para listar todos os restaurantes
+app.get('/api/restaurantes', (req, res) => {
+    const query = 'SELECT * FROM Restaurante';
+    connection.query(query, (err, results) => {
+        if (err) {
+            console.error('Error fetching restaurants:', err);
+            return res.status(500).json({ error: 'Erro ao buscar restaurantes.' });
+        }
+
+        res.status(200).json(results);
+    });
+});
+
+// Rota DELETE para excluir um restaurante pelo CNPJ
+app.delete('/api/restaurantes/:cnpj', (req, res) => {
+    const cnpj = req.params.cnpj;
+
+    connection.query('DELETE FROM Restaurante WHERE CNPJ = ?', [cnpj], (err, results) => {
+        if (err) {
+            console.error('Error deleting restaurant:', err);
+            return res.status(500).json({ error: 'Erro ao excluir restaurante.' });
+        }
+
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ error: 'Restaurante não encontrado!' });
+        }
+
+        res.status(200).json({ message: 'Restaurante excluído com sucesso!' });
+    });
+});
+
+// ATUALIZAR RESTAURANTE PELO CNPJ
+app.put('/api/restaurantes/:cnpj', (req, res) => {
+    const cnpj = req.params.cnpj;
+    const { nome_empresa, email, telefone, senha, nicho } = req.body;
+
+    if (!nome_empresa || !email || !telefone || !senha || !nicho) {
+        return res.status(400).json({ error: 'Todos os campos são obrigatórios!' });
+    }
+
+    const query = 'UPDATE Restaurante SET Nome_Empresa = ?, Email = ?, Telefone = ?, Senha = ?, Nicho = ? WHERE CNPJ = ?';
+    connection.query(query, [nome_empresa, email, telefone, senha, nicho, cnpj], (err, results) => {
+        if (err) {
+            console.error('Error updating restaurant:', err);
+            return res.status(500).json({ error: 'Erro ao atualizar restaurante.' });
+        }
+
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ error: 'Restaurante não encontrado!' });
+        }
+
+        res.status(200).json({ message: 'Restaurante atualizado com sucesso!' });
+    });
+});
+
+// ADICIONAR MOTOBOY
+app.post('/api/motoboys', (req, res) => {
+    const { nome, cpf, telefone, email, senha } = req.body;
+
+    if (!nome || !cpf || !telefone || !email || !senha) {
+        return res.status(400).json({ error: 'Nome, CPF, telefone, email e senha são obrigatórios!' });
+    }
+
+    const query = 'INSERT INTO Motoboy (Nome, CPF, Telefone, Email, Senha) VALUES (?, ?, ?, ?, ?)';
+    connection.query(query, [nome, cpf, telefone, email, senha], (err, results) => {
+        if (err) {
+            console.error('Error inserting motoboy:', err);
+            return res.status(500).json({ error: 'Erro ao adicionar motoboy.' });
+        }
+
+        res.status(201).json({ message: 'Motoboy adicionado com sucesso!', id: results.insertId });
+    });
+});
+
+// GET para listar todos os motoboys
+app.get('/api/motoboys', (req, res) => {
+    const query = 'SELECT * FROM Motoboy';
+    connection.query(query, (err, results) => {
+        if (err) {
+            console.error('Error fetching motoboys:', err);
+            return res.status(500).json({ error: 'Erro ao buscar motoboys.' });
+        }
+
+        res.status(200).json(results);
+    });
+});
+
+// Rota DELETE para excluir um motoboy pelo CPF
+app.delete('/api/motoboys/:cpf', (req, res) => {
+    const cpf = req.params.cpf;
+
+    connection.query('DELETE FROM Motoboy WHERE CPF = ?', [cpf], (err, results) => {
+        if (err) {
+            console.error('Error deleting motoboy:', err);
+            return res.status(500).json({ error: 'Erro ao excluir motoboy.' });
+        }
+
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ error: 'Motoboy não encontrado!' });
+        }
+
+        res.status(200).json({ message: 'Motoboy excluído com sucesso!' });
+    });
+});
+
 // Iniciar o servidor
-const port = 3000;
-app.listen(port, () => {
-    console.log(`Servidor rodando na porta ${port}`);
+const PORT = 3000;
+app.listen(PORT, () => {
+    console.log(`Servidor rodando na porta ${PORT}`);
 });
