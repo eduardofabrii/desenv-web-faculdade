@@ -4,7 +4,7 @@ function cadastrarMotoboy() {
     const nome = document.getElementById('nome-motoboy').value.trim();
     const email = document.getElementById('email-motoboy').value.trim();
     const senha = document.getElementById('senha-motoboy').value.trim();
-    const cpf = document.getElementById('cpf-motoboy').value.trim();
+    const cpf = limparCPF(document.getElementById('cpf-motoboy').value.trim());
     const placa = document.getElementById('placa-motoboy').value.trim();
     const cnh = document.getElementById('cnh-motoboy').value.trim();
     const telefone = document.getElementById('telefone-motoboy').value.trim();
@@ -20,8 +20,12 @@ function cadastrarMotoboy() {
     const alertaCnhInvalida = document.getElementById('cnhInvalida-motoboy');
 
     // Funções de validação
+    function limparCPF(cpf) { return cpf.replace(/\D/g, ''); }
     function validarCPF(cpf) { return cpf.length === 11; }
-    function validarPlaca(placa) { const regexPlaca = /^[A-Z]{3}[0-9][A-Z][0-9]{2}|[A-Z]{3}[0-9]{4}$/; return regexPlaca.test(placa.toUpperCase()); }
+    function validarPlaca(placa) {
+        const regexPlaca = /^[A-Z]{3}[0-9][A-Z][0-9]{2}$|^[A-Z]{3}[0-9]{4}$/;
+        return regexPlaca.test(placa.toUpperCase());
+    }
     function validarCNH(cnh) { return cnh.length === 11; }
     function validarEmail(email) { const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; return regexEmail.test(email); }
     function validarTelefone(telefone) { const regexTelefone = /^\d{10,11}$/; return regexTelefone.test(telefone); }
@@ -36,45 +40,36 @@ function cadastrarMotoboy() {
     alertaPlacaInvalida.style.display = 'none';
     alertaCnhInvalida.style.display = 'none';
 
-    // Validações
-    if (!nome || !email || !senha || !cpf || !placa || !cnh || !telefone) {
-        alertaCamposObrigatorios.style.display = 'block';
-        return;
-    }
-    if (senha.length < 8 || senha.length > 16) {
-        alertaSenhaTamanho.style.display = 'block';
-        return;
-    }
-    if (!/[A-Z]/.test(senha) || !/[!@#$%^&*]/.test(senha)) {
-        alertaSenhaPadrao.style.display = 'block';
-        return;
-    }
-    if (!validarEmail(email)) {
-        alertaEmailInvalido.style.display = 'block';
-        return;
-    }
-    if (!validarCPF(cpf)) {
-        alertaCpfInvalido.style.display = 'block';
-        return;
-    }
-    if (!validarPlaca(placa)) {
-        alertaPlacaInvalida.style.display = 'block';
-        return;
-    }
-    if (!validarCNH(cnh)) {
-        alertaCnhInvalida.style.display = 'block';
-        return;
-    }
-    if (!validarTelefone(telefone)) {
-        alertaTelefoneInvalido.style.display = 'block';
-        return;
-    }
 
-    // Se tudo estiver válido, armazenar os dados no localStorage
+
+    // Se tudo estiver válido, enviar os dados para o servidor via POST
     const motoboy = { nome, email, senha, cpf, placa, cnh, telefone };
-    let motoboys = JSON.parse(localStorage.getItem('motoboys')) || [];
-    motoboys.push(motoboy);
-    localStorage.setItem('motoboys', JSON.stringify(motoboys));
-
-    alert('Motoboy cadastrado com sucesso!');
+    
+    fetch('/api/motoboys', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(motoboy),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            alert(`Erro: ${data.error}`);
+        } else {
+            alert('Motoboy cadastrado com sucesso!');
+            // Limpar campos após o cadastro
+            document.getElementById('nome-motoboy').value = '';
+            document.getElementById('email-motoboy').value = '';
+            document.getElementById('senha-motoboy').value = '';
+            document.getElementById('cpf-motoboy').value = '';
+            document.getElementById('placa-motoboy').value = '';
+            document.getElementById('cnh-motoboy').value = '';
+            document.getElementById('telefone-motoboy').value = '';
+        }
+    })
+    .catch(error => {
+        console.error('Erro ao cadastrar motoboy:', error);
+        alert('Ocorreu um erro ao cadastrar o motoboy. Tente novamente mais tarde.');
+    });
 }

@@ -1,17 +1,19 @@
 /* Reset e configuração básica */
 
-@import url('https://fonts.googleapis.com/css2?family=SUSE:wght@100..800&display=swap');
-
-:root{
-    --font-main: 'SUSE', sans-serif;
+@font-face {
+    font-family: 'Fonte'; /* Nome da fonte personalizada */
+    src: url('') format('truetype'); /* escolher e apagar o conteudo de fonts */
 }
 
+:root{
+    --font-main: 'Fonte', sans-serif; /* Atualizado para usar a fonte personalizada */
+}
 
 * {
     padding: 0;
     margin: 0;
     box-sizing: border-box;
-    font-family: var(--font-main) !important;
+    font-family: var(--font-main) !important; /* Usa a fonte personalizada em todo o site */
 }
 
 html, body {
@@ -23,9 +25,7 @@ body {
     background: url(../images/img-backgroundmain.png) no-repeat center center fixed;
     background-size: cover;
     overflow: auto;
-    
 }
-
 
 #nav{
     position: fixed;
@@ -33,15 +33,12 @@ body {
     z-index: 100;
     top : 0;	
     background-color: rgb(248, 248, 248) !important;   
-    
 }
-
 
 main {
     height: 95%; 
     position: relative;
     margin-top: 100px;
-   
 }
 
 section {    
@@ -70,7 +67,6 @@ body::-webkit-scrollbar-thumb:hover {
     border: none;
     border-radius: 0px;
     font-size: 2rem;
-    
 }
 
 .bi.bi-menu-button-wide:hover {
@@ -92,8 +88,6 @@ body::-webkit-scrollbar-thumb:hover {
 
 .container.my-7{
     border-radius: 10px;
-    
-   
 }
 
 #quem-somos{
@@ -107,7 +101,6 @@ body::-webkit-scrollbar-thumb:hover {
     justify-content: center;
     align-items: center;
     gap: 1rem;   
-   
 }
 
 .map-container{
@@ -115,7 +108,6 @@ body::-webkit-scrollbar-thumb:hover {
     height: 100%;
     border-radius: 10px;
     margin: 0px;
-
 }
 
 .sede {
@@ -127,7 +119,6 @@ body::-webkit-scrollbar-thumb:hover {
     border-radius: 10px;
     margin: 0px;
     padding: 0%;
-
 }
 
 .imgSede img {
@@ -142,7 +133,6 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 .footer{
-   
     color: white;
     padding: 30px;
     text-align: center;
@@ -155,11 +145,7 @@ body::-webkit-scrollbar-thumb:hover {
     align-items: flex-start;
     flex-direction: column;
     z-index: 100;
-
-    
 }
- 
-
 
 .footer > .container{
     display: flex;
@@ -178,10 +164,7 @@ hr.hr{
     font-size: 1.5rem;
     color: #ffffff;
     padding: 10px;
-    
     font-weight: lighter;
-   
-
 }
 
 .bi.bi-geo-alt-fill{
@@ -197,6 +180,7 @@ footer{
     width: 100%;
     background-color: #00000000;
 }
+
 .contato {
     display: flex;
     flex-direction: row;
@@ -204,9 +188,8 @@ footer{
     justify-content: space-around;
     margin-bottom: 100px;
     width: 100%;
-    
-    
 }
+
 .autoria{
     display: flex;
     align-items: space-around;
@@ -214,25 +197,24 @@ footer{
     margin-top: 50px;
     width: 100%;
     flex-direction: column;
-   
 }
+
 .autoria > p{
     color: white;
     font-size: 1.2rem;
 }
 
-.autoria  a {
+.autoria a {
     color: #007009;
     text-decoration: none;
     font-size: 2rem;
     transition: 0.5s;
-
 }
 
-.autoria  a:hover {
+.autoria a:hover {
     color: #ffffff;
-    
 }
+
 .footer > .container > .sugestoes{
     display: flex;
     flex-direction: row;
@@ -242,14 +224,15 @@ footer{
     width: 100%;
     margin-top: 55px;
 }
+
 .footer > .container > .sugestoes > input{
     width: 100%;
     padding: 10px;
     border-radius: 10px;
     border: none;
     margin-bottom: 10px;
-    
 }
+
 .footer > .container > .sugestoes > button{
     padding: 5px;
     border-radius: 10px;
@@ -264,62 +247,53 @@ footer{
 .footer > .container > .sugestoes > button:hover{
     background-color: rgb(255, 255, 255);
     transition:cubic-bezier(0.165, 0.84, 0.44, 1);
-   
     color: rgb(0, 0, 0);
 }
 
 .avaliacao{
-    
     display: flex;
     margin-left: 190px;
     align-items: center;
     flex-direction: column;
-    
 }
+
 .avaliacao h3{
-    
     font-size: 1.5rem;
     margin-bottom: 10px;
 }
 
 .stars {
     display: inline-block;
-  }
+}
 
-  .stars input[type="radio"] {
+.stars input[type="radio"] {
     display: none;
-  }
+}
 
-  .stars label {
+.stars label {
     font-size: 30px;
     color: #ffffff;
     cursor: pointer;
     transition: color 0.3s ease;
-  }
+}
 
-  .stars input[type="radio"]:checked ~ label {
+.stars input[type="radio"]:checked ~ label {
     color: gold;
-  }
+}
 
-  .stars label:hover,
-  .stars label:hover ~ label {
+.stars label:hover,
+.stars label:hover ~ label {
     color: gold;
-  }
+}
 
-  #thankYouMessage {
+#thankYouMessage {
     display: none;
     font-size: 18px;
     color: #ffdb3a;
-  }
+}
 
 .redes{
     flex-direction: row;
     justify-content: center;
     align-items: center;
 }
-
-
-
-    
-
-

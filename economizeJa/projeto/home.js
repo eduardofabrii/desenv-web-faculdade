@@ -183,24 +183,6 @@ app.put('/api/restaurantes/:cnpj', (req, res) => {
     });
 });
 
-// ADICIONAR MOTOBOY
-app.post('/api/motoboys', (req, res) => {
-    const { nome, cpf, telefone, email, senha } = req.body;
-
-    if (!nome || !cpf || !telefone || !email || !senha) {
-        return res.status(400).json({ error: 'Nome, CPF, telefone, email e senha são obrigatórios!' });
-    }
-
-    const query = 'INSERT INTO Motoboy (Nome, CPF, Telefone, Email, Senha) VALUES (?, ?, ?, ?, ?)';
-    connection.query(query, [nome, cpf, telefone, email, senha], (err, results) => {
-        if (err) {
-            console.error('Error inserting motoboy:', err);
-            return res.status(500).json({ error: 'Erro ao adicionar motoboy.' });
-        }
-
-        res.status(201).json({ message: 'Motoboy adicionado com sucesso!', id: results.insertId });
-    });
-});
 
 // GET para listar todos os motoboys
 app.get('/api/motoboys', (req, res) => {
