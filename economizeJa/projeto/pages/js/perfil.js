@@ -1,61 +1,71 @@
 function obterValorInput() {
-    // Obter os valores dos inputs
-    const nome1 = document.getElementById('nome-usuario').value;
-    const email1 = document.getElementById('email-usuario').value;
-    const cpf1= document.getElementById('cpf-usuario').value;
-    const endereco1 = document.getElementById('endereco-usuario').value;
-    const cidade1 = document.getElementById('cidade-usuario').value;
-    const telefone1 = document.getElementById('telefone-usuario').value;
-    const senha1 = document.getElementById('senha-usuario').value;
-  
-    // Verificar se todos os campos estão preenchidos
-    if (nome1 && email1 && cpf1 && endereco1 && cidade1 && telefone1 && senha1) {
+    const nome = document.getElementById('nome-usuario').value;
+    const email = document.getElementById('email-usuario').value;
+    const cpf = document.getElementById('cpf-usuario').value;
+    const telefone = document.getElementById('telefone-usuario').value;
+    const senha = document.getElementById('senha-usuario').value;
+
+    if (nome && email && cpf && telefone && senha) {
+        const novoUsuario = { nome, email, cpf, telefone, senha };
         
-        // Armazenar os dados no localStorage
-        const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
-        usuarios.push({ nome1, email1, cpf1, endereco1, cidade1, telefone1, senha1 });
-        localStorage.setItem('usuarios', JSON.stringify(usuarios));
-  
-        //Direcionar para a pagina perfil, mas sem abrir a pagina 
-        window.open('perfil.html', '_self');
-    } 
+        // Enviar dados para o backend usando Fetch API
+        fetch('/api/usuarios', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(novoUsuario),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+            } else {
+                alert(data.message);
+                window.open('perfil.html', '_self'); // Redirecionar para a página de perfil
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao adicionar usuário:', error);
+        });
+    }
 }
+
 
   // Função para carregar os dados armazenados na tabela
   function carregarUsuariosPerfil() {
-    const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
-    const tabelaUsuarios = document.getElementById('tabela-usuarios');
+    fetch('/api/usuarios')
+        .then(response => response.json())
+        .then(usuarios => {
+            const tabelaUsuarios = document.getElementById('tabela-usuarios');
+            tabelaUsuarios.innerHTML = '';
     
-    tabelaUsuarios.innerHTML = '';
+            usuarios.forEach(usuario => {
+                const row = tabelaUsuarios.insertRow();
+                row.insertCell(0).textContent = usuario.Nome;
+                row.insertCell(1).textContent = usuario.Email;
+                row.insertCell(2).textContent = usuario.CPF;
+                row.insertCell(3).textContent = usuario.Telefone;
     
-  
-    usuarios.forEach(usuario => {
-        const row = tabelaUsuarios.insertRow();
-        row.insertCell(0).textContent = usuario.nome;
-        row.insertCell(1).textContent = usuario.email;
-        row.insertCell(2).textContent = usuario.cpf;
-        row.insertCell(3).textContent = usuario.endereco;
-        row.insertCell(4).textContent = usuario.cidade;
-        row.insertCell(5).textContent = usuario.telefone;
-
-        // Criando a célula de Ações com os botões de Editar e Excluir
-        const acoesCell = row.insertCell(6);
-        acoesCell.innerHTML = `
-            <td class="Botoes">
-            <button class="btn btn-warning btn-sm" onclick="editarUsuario(this)">Editar</button>
-            <button class="btn btn-danger btn-sm" onclick="excluirUsuario(this)">Sair Conta</button>
-            </td>
-        `;
-    });
+                const acoesCell = row.insertCell(4);
+                acoesCell.innerHTML = `
+                    <td class="Botoes">
+                        <button class="btn btn-warning btn-sm" onclick="editarUsuario(this, '${usuario.CPF}')">Editar</button>
+                        <button class="btn btn-danger btn-sm" onclick="excluirUsuario('${usuario.CPF}')">Excluir Conta</button>
+                    </td>
+                `;
+            });
+        })
+        .catch(error => console.error('Erro ao carregar usuários:', error));
 }
 
-  function editarUsuario(botao) {
+
+function editarUsuario(botao, cpf) {
     const linha = botao.parentNode.parentNode;
     const colunas = linha.querySelectorAll('td');
     
-    // Exemplo simples: permite edição in-line
     colunas.forEach((coluna, index) => {
-        if (index < colunas.length - 1) { // Não permite edição da última coluna (Ações)
+        if (index < colunas.length - 1) { 
             const conteudoAtual = coluna.innerText;
             coluna.innerHTML = `<input type="text" value="${conteudoAtual}" class="form-control">`;
         }
@@ -63,7 +73,28 @@ function obterValorInput() {
 
     botao.innerText = 'Salvar';
     botao.onclick = function() {
-        salvarEdicao(linha);
+        const inputs = linha.querySelectorAll('input');
+        const nome = inputs[0].value;
+        const email = inputs[1].value;
+        const telefone = inputs[2].value;
+
+        fetch(`/api/usuarios/${cpf}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ nome, email, telefone, senha: 'senhaNova' }) // Mude 'senhaNova' conforme necessário
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+            } else {
+                alert(data.message);
+                carregarUsuariosPerfil(); // Recarregar a tabela após a edição
+            }
+        })
+        .catch(error => console.error('Erro ao editar usuário:', error));
     };
 }
 
@@ -80,26 +111,26 @@ function salvarEdicao(linha) {
     linha.querySelector('.btn-warning').onclick = function() {
         editarUsuario(this);
     };
+}  
+
+
+function excluirUsuario(cpf) {
+    if (confirm('Tem certeza que deseja excluir sua conta?')) {
+        fetch(`/api/usuarios/${cpf}`, {
+            method: 'DELETE',
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+            } else {
+                alert(data.message);
+                carregarUsuariosPerfil(); // Recarregar a tabela após a exclusão
+            }
+        })
+        .catch(error => console.error('Erro ao excluir usuário:', error));
+    }
 }
 
-
-function excluirUsuario(botao) {
-    alert('Tem certeza que deseja excluir sua conta?');
-    // Remove a linha da tabela
-    const linha = botao.parentNode.parentNode;
-    const nome = linha.cells[0].innerText;  // Ou use outro identificador único, como CPF ou email
-    linha.remove();
-
-    // Carregar os dados do localStorage
-    let usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
-
-    // Filtrar para remover o usuário excluído
-    usuarios = usuarios.filter(usuario => usuario.nome !== nome);
-
-    // Atualizar o localStorage
-    localStorage.setItem('usuarios', JSON.stringify(usuarios));
-
-    window.open('home.html');
-}
 
 carregarUsuariosPerfil();
