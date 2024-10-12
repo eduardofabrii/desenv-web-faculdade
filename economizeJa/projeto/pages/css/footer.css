@@ -1,34 +1,42 @@
-@import url('https://fonts.googleapis.com/css2?family=SUSE:wght@100..800&display=swap');
-
-:root{
-    --font-main: 'SUSE', sans-serif;
+.autoria {
+    display: inline-block; /* Para alinhamento horizontal */
+    margin: 10px;
 }
 
-
-body {
-    margin: 0;
-    font-family: var(--font-main);
+.redes a {
+    color: #fff; /* Ícones brancos */
+    margin: 0 10px; /* Espaçamento entre os ícones */
 }
 
-footer {
-    position: relative;
-    background-color: #333;
-    color: white;
-    text-align: center;
-    padding: 20px 0;
+.redes a:hover {
+    color: #f0a500; /* Cor dos ícones ao passar o mouse */
 }
 
-footer .wave {
-    position: absolute;
-    top: -50px; /* Ajuste conforme necessário */
-    width: 100%;
-    height: 100px;
-    background: url('https://www.svgrepo.com/show/309709/wave.svg') repeat-x;
-    background-size: contain;
-    transform: rotate(180deg);
+input.sugestoes {
+    width: 50px;
+    height: 50px;
 }
 
-footer .content {
-    position: relative;
-    z-index: 1;
+.hr {
+    border: 1px solid #f0a500; /* Linha de separação */
+    margin: 20px 0;
+}
+
+aside.avaliacao {
+    text-align: center; /* Centraliza o conteúdo do aside */
+    margin: 20px 0; /* Margem superior e inferior para espaçamento */
+}
+
+button#btnSugestion.btn.btn-primary {
+    width: 50px;
+    height: 45px;
+    color: #f0a500; /* Corrigido para incluir o '#' na cor */
+}
+
+/* Adicionando centralização para o aside de avaliação */
+.avalie-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centraliza o conteúdo horizontalmente */
+    justify-content: center; /* Centraliza o conteúdo verticalmente */
 }
