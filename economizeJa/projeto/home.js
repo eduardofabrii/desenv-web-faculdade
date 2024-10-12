@@ -73,6 +73,8 @@ app.post('/api/logout', (req, res) => {
     });
 });
 
+// ROTAS DE USUÁRIOS
+
 // ADICIONAR USUÁRIO
 app.post('/api/usuarios', (req, res) => {
     const { nome, email, cpf, telefone, senha } = req.body;
@@ -103,17 +105,6 @@ app.post('/api/usuarios', (req, res) => {
             res.status(201).json({ message: 'Usuário adicionado com sucesso!', id: insertResults.insertId });
         });
     });
-});
-
-// ROTA DE SESSÃO
-app.get('/api/sessao', (req, res) => {
-    const usuarioLogado = req.session.usuarioLogado; // Acessa o usuário logado da sessão
-
-    if (!usuarioLogado) {
-        return res.status(401).json({ error: 'Usuário não está logado.' });
-    }
-
-    res.status(200).json({ usuarioLogado }); // Retorna os dados do usuário
 });
 
 // GET para listar todos os usuários
@@ -195,6 +186,8 @@ app.put('/api/usuarios/:cpf', (req, res) => {
     });
 });
 
+// ROTAS DE RESTAURANTES
+
 // ADICIONAR RESTAURANTE
 app.post('/api/restaurantes', (req, res) => {
     const { cnpj, nome_empresa, email, telefone, senha, nicho } = req.body;
@@ -237,29 +230,58 @@ app.post('/api/login-restaurante', (req, res) => {
     });
 });
 
-// ROTA DE SESSÃO DO RESTAURANTE
-app.get('/api/sessao-restaurante', (req, res) => {
-    const restauranteLogado = req.session.restauranteLogado;
-
-    if (!restauranteLogado) {
-        return res.status(401).json({ error: 'Restaurante não está logado.' });
-    }
-
-    res.status(200).json({ restauranteLogado });
-});
-
-app.post('/api/sessao/reiniciar', (req, res) => {
-    // Aqui você deve limpar a sessão, dependendo de como você gerencia as sessões
-    req.session.destroy(err => {
+// GET para listar todos os restaurantes
+app.get('/api/restaurantes', (req, res) => {
+    const query = 'SELECT * FROM Restaurante';
+    connection.query(query, (err, results) => {
         if (err) {
-            return res.status(500).json({ error: 'Não foi possível reinicializar a sessão.' });
+            console.error('Error fetching restaurants:', err);
+            return res.status(500).json({ error: 'Erro ao buscar restaurantes.' });
         }
-        res.status(200).json({ message: 'Sessão reinicializada com sucesso.' });
+
+        res.status(200).json(results);
     });
 });
 
+// ATUALIZAR UM RESTAURANTE PELO CNPJ
+app.put('/api/restaurantes/:cnpj', (req, res) => {
+    const cnpj = req.params.cnpj;
+    const { nome_empresa, email, telefone, senha, nicho } = req.body;
 
-// Iniciando o servidor
+    const query = 'UPDATE Restaurante SET Nome_Empresa = ?, Email = ?, Telefone = ?, Senha = ?, Nicho = ? WHERE CNPJ = ?';
+    connection.query(query, [nome_empresa, email, telefone, senha, nicho, cnpj], (err, results) => {
+        if (err) {
+            console.error('Error updating restaurant:', err);
+            return res.status(500).json({ error: 'Erro ao atualizar restaurante.' });
+        }
+
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ error: 'Restaurante não encontrado!' });
+        }
+
+        res.status(200).json({ message: 'Restaurante atualizado com sucesso!' });
+    });
+});
+
+// DELETE para excluir um restaurante pelo CNPJ
+app.delete('/api/restaurantes/:cnpj', (req, res) => {
+    const cnpj = req.params.cnpj;
+
+    connection.query('DELETE FROM Restaurante WHERE CNPJ = ?', [cnpj], (err, results) => {
+        if (err) {
+            console.error('Error deleting restaurant:', err);
+            return res.status(500).json({ error: 'Erro ao excluir restaurante.' });
+        }
+
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ error: 'Restaurante não encontrado!' });
+        }
+
+        res.status(200).json({ message: 'Restaurante excluído com sucesso!' });
+    });
+});
+
+// Iniciar o servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);
