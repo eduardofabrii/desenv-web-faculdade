@@ -1,4 +1,4 @@
-// Função para carregar os dados dos usuários
+// Essa funcao so funciona para TODOS OS TIPOS - ja que no BD nao tem como filtrar por TIPO 
 function carregarUsuarios(filtro = '') {
     fetch('/api/usuarios') // Ajuste a URL conforme sua API
         .then(response => response.json())
@@ -8,19 +8,17 @@ function carregarUsuarios(filtro = '') {
 
             usuarios.forEach(usuario => {
                 // Filtra os usuários com base na seleção
-                if (filtro === '' || usuario.tipo === filtro) {
+                if (filtro === '' || usuario.Tipo === filtro) { // Assumindo que você tem um campo 'Tipo'
                     const row = tabelaUsuarios.insertRow();
-                    row.insertCell(0).textContent = usuario.nome;
-                    row.insertCell(1).textContent = usuario.email;
-                    row.insertCell(2).textContent = usuario.cpf;
-                    row.insertCell(3).textContent = usuario.endereco;
-                    row.insertCell(4).textContent = usuario.cidade;
-                    row.insertCell(5).textContent = usuario.telefone;
+                    row.insertCell(0).textContent = usuario.Nome; // Usando "Nome" com N maiúsculo
+                    row.insertCell(1).textContent = usuario.Email; // Usando "Email" com E maiúsculo
+                    row.insertCell(2).textContent = usuario.CPF; // Usando "CPF" com C maiúsculo
+                    row.insertCell(3).textContent = usuario.Telefone; // Usando "Telefone" com T maiúsculo
 
-                    const acoesCell = row.insertCell(6);
+                    const acoesCell = row.insertCell(4);
                     acoesCell.innerHTML = `
-                        <button class="btn btn-warning btn-sm" onclick="editarUsuario('${usuario.cpf}')">Editar</button>
-                        <button class="btn btn-danger btn-sm" onclick="excluirUsuario('${usuario.cpf}')">Excluir</button>
+                        <button class="btn btn-warning btn-sm" onclick="editarUsuario('${usuario.CPF}')">Editar</button>
+                        <button class="btn btn-danger btn-sm" onclick="excluirUsuario('${usuario.CPF}')">Excluir</button>
                     `;
                 }
             });
