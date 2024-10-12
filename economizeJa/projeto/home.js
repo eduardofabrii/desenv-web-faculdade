@@ -34,6 +34,29 @@ connection.connect((err) => {
     console.log('Connected to MySQL database!');
 });
 
+// ROTA PARA OBTER DADOS DA SESSÃO
+app.get('/api/sessao', (req, res) => {
+    if (req.session.usuarioLogado) {
+        return res.status(200).json({ usuarioLogado: req.session.usuarioLogado });
+    } else if (req.session.restauranteLogado) {
+        return res.status(200).json({ restauranteLogado: req.session.restauranteLogado });
+    } else {
+        return res.status(401).json({ message: 'Nenhum usuário logado.' });
+    }
+});
+
+// ROTA PARA REINICIALIZAR A SESSÃO (similar ao logout)
+app.post('/api/sessao/reiniciar', (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            console.error('Erro ao reinicializar sessão:', err);
+            return res.status(500).json({ error: 'Erro ao reinicializar sessão.' });
+        }
+        res.clearCookie('cpf'); // Limpa o cookie de CPF ou qualquer outro que você esteja usando
+        res.status(200).json({ message: 'Sessão reinicializada com sucesso.' });
+    });
+});
+
 // ROTA DE LOGIN
 app.post('/api/login', (req, res) => {
     const { cpf, senha } = req.body;
