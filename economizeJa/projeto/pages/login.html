@@ -10,7 +10,7 @@
 </head>
 <body>
   <div class="logo-container">
-    <a href="home.html"><img src="images/img-logoprincipal.png" alt="Logo" class="logo" style="width: 60px;""></a>
+    <a href="home.html"><img src="images/img-logoprincipal.png" alt="Logo" class="logo" style="width: 60px;"></a>
   </div>
 
   <div class="img-background">
@@ -19,12 +19,9 @@
 
   <main class="main">
     <div class="container">
-        <form id="form-login"  onsubmit="return validarLogin()" >
+        <form id="form-login">
             <div class="mb-3">
                 <h2>Login</h2>
-
-  
-                
                 <div class="mb-3">
                   <label for="cpf" class="form-label">CPF</label>
                   <input type="text" id="cpf-usuario" name="cpf" class="form-control">
@@ -35,19 +32,14 @@
                 </div>
                 
                 <section class="botao">
-                  <button type="submit" class="btn btn-primary" >Enviar</button>
+                  <button type="submit" class="btn btn-primary" id="btn-login">Enviar</button>
                 </section>
 
                 <label id="campoObrigatorio" class="labelValidacao" style="display:none;">Os campos são obrigatórios.</label>
 
                 <div id="alertas-usuario" class="alertas">
-
                   <label id="senhaTamanho-usuario" class="labelValidacao">A senha deve ter de 8 a 16 caracteres.</label>
-
                   <label id="senhaPadrao-usuario" class="labelValidacao">A senha deve ter 1 letra maiúscula e 1 caractere especial.</label>
-
-                  <label id="emailInvalido-usuario" class="labelValidacao">Email inválido.</label>
-
                 </div>
             
                 <label class="cadastro">Não possui cadastro? <a href="cadastro.html">Clique aqui</a></label>
@@ -56,10 +48,8 @@
     </div>
 </main>
 
-
-
-  <script src="js/login-usuario.js"></script>
-  <script src="js/validar-dados.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+<script src="js/login-usuario.js"></script>
+<script src="js/validar-dados.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
 </body>
 </html>

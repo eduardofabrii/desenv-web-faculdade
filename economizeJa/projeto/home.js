@@ -1,9 +1,21 @@
 const express = require('express');
 const mysql = require('mysql');
+const session = require('express-session'); // Adicionando o middleware de sessão
+const cookieParser = require('cookie-parser'); // Adicionando o cookie-parser
+
 const app = express();
 
 app.use(express.json());
 app.use(express.static('./pages'));
+app.use(cookieParser()); // Usando o middleware de cookies
+
+// Configuração da sessão
+app.use(session({
+    secret: 'seu-segredo', // Substitua por uma chave secreta forte
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } // Altere para true se usar HTTPS
+}));
 
 // Configuração da conexão com o MySQL
 const connection = mysql.createConnection({
@@ -20,6 +32,45 @@ connection.connect((err) => {
         return;
     }
     console.log('Connected to MySQL database!');
+});
+
+// ROTA DE LOGIN
+app.post('/api/login', (req, res) => {
+    const { cpf, senha } = req.body;
+    console.log('Tentativa de login:', cpf, senha); // Log do CPF e senha recebidos
+
+    if (!cpf || !senha) {
+        return res.status(400).json({ error: 'CPF e senha são obrigatórios!' });
+    }
+
+    // Consultar o banco de dados para verificar as credenciais
+    connection.query('SELECT * FROM Usuario WHERE CPF = ? AND Senha = ?', [cpf, senha], (error, results) => {
+        if (error) {
+            console.error('Error during login:', error);
+            return res.status(500).json({ error: 'Erro ao tentar fazer login.' });
+        }
+
+        console.log('Resultados da consulta:', results); // Log dos resultados da consulta
+
+        if (results.length > 0) {
+            req.session.usuarioLogado = results[0]; // Armazena o usuário na sessão
+            return res.status(200).json({ success: true, message: 'Login bem-sucedido' });
+        } else {
+            return res.status(401).json({ success: false, message: 'CPF ou senha inválidos!' });
+        }
+    });
+});
+
+// ROTA DE LOGOUT
+app.post('/api/logout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            console.error('Error during logout:', err);
+            return res.status(500).json({ error: 'Erro ao tentar sair.' });
+        }
+        res.clearCookie('cpf'); // Remove o cookie de CPF ao sair
+        res.json({ message: 'Logout bem-sucedido.' });
+    });
 });
 
 // ADICIONAR USUÁRIO
@@ -54,6 +105,17 @@ app.post('/api/usuarios', (req, res) => {
     });
 });
 
+// ROTA DE SESSÃO
+app.get('/api/sessao', (req, res) => {
+    const usuarioLogado = req.session.usuarioLogado; // Acessa o usuário logado da sessão
+
+    if (!usuarioLogado) {
+        return res.status(401).json({ error: 'Usuário não está logado.' });
+    }
+
+    res.status(200).json({ usuarioLogado }); // Retorna os dados do usuário
+});
+
 // GET para listar todos os usuários
 app.get('/api/usuarios', (req, res) => {
     const query = 'SELECT * FROM Usuario';
@@ -64,6 +126,30 @@ app.get('/api/usuarios', (req, res) => {
         }
 
         res.status(200).json(results);
+    });
+});
+
+// GET para consultar usuário pelo CPF
+app.get('/api/usuarios/:cpf', (req, res) => {
+    const cpf = req.params.cpf;
+
+    if (!cpf) {
+        return res.status(400).json({ error: 'CPF inválido.' });
+    }
+
+    // Consultar o banco de dados
+    connection.query('SELECT * FROM Usuario WHERE CPF = ?', [cpf], (error, results) => {
+        if (error) {
+            console.error('Erro ao consultar o banco de dados:', error); // Log do erro no console
+            return res.status(500).json({ error: 'Erro ao buscar usuário.' });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ error: 'Usuário não encontrado.' });
+        }
+
+        // Retorna o primeiro resultado
+        return res.json(results[0]);
     });
 });
 
@@ -128,95 +214,53 @@ app.post('/api/restaurantes', (req, res) => {
     });
 });
 
-// GET para listar todos os restaurantes
-app.get('/api/restaurantes', (req, res) => {
-    const query = 'SELECT * FROM Restaurante';
-    connection.query(query, (err, results) => {
-        if (err) {
-            console.error('Error fetching restaurants:', err);
-            return res.status(500).json({ error: 'Erro ao buscar restaurantes.' });
-        }
+// ROTA DE LOGIN DO RESTAURANTE
+app.post('/api/login-restaurante', (req, res) => {
+    const { cnpj, senha } = req.body;
 
-        res.status(200).json(results);
-    });
-});
-
-// Rota DELETE para excluir um restaurante pelo CNPJ
-app.delete('/api/restaurantes/:cnpj', (req, res) => {
-    const cnpj = req.params.cnpj;
-
-    connection.query('DELETE FROM Restaurante WHERE CNPJ = ?', [cnpj], (err, results) => {
-        if (err) {
-            console.error('Error deleting restaurant:', err);
-            return res.status(500).json({ error: 'Erro ao excluir restaurante.' });
-        }
-
-        if (results.affectedRows === 0) {
-            return res.status(404).json({ error: 'Restaurante não encontrado!' });
-        }
-
-        res.status(200).json({ message: 'Restaurante excluído com sucesso!' });
-    });
-});
-
-// ATUALIZAR RESTAURANTE PELO CNPJ
-app.put('/api/restaurantes/:cnpj', (req, res) => {
-    const cnpj = req.params.cnpj;
-    const { nome_empresa, email, telefone, senha, nicho } = req.body;
-
-    if (!nome_empresa || !email || !telefone || !senha || !nicho) {
-        return res.status(400).json({ error: 'Todos os campos são obrigatórios!' });
+    if (!cnpj || !senha) {
+        return res.status(400).json({ error: 'CNPJ e senha são obrigatórios!' });
     }
 
-    const query = 'UPDATE Restaurante SET Nome_Empresa = ?, Email = ?, Telefone = ?, Senha = ?, Nicho = ? WHERE CNPJ = ?';
-    connection.query(query, [nome_empresa, email, telefone, senha, nicho, cnpj], (err, results) => {
+    connection.query('SELECT * FROM Restaurante WHERE CNPJ = ? AND Senha = ?', [cnpj, senha], (error, results) => {
+        if (error) {
+            console.error('Error during restaurant login:', error);
+            return res.status(500).json({ error: 'Erro ao tentar fazer login.' });
+        }
+
+        if (results.length > 0) {
+            req.session.restauranteLogado = results[0];
+            return res.status(200).json({ success: true, message: 'Login bem-sucedido' });
+        } else {
+            return res.status(401).json({ success: false, message: 'CNPJ ou senha inválidos!' });
+        }
+    });
+});
+
+// ROTA DE SESSÃO DO RESTAURANTE
+app.get('/api/sessao-restaurante', (req, res) => {
+    const restauranteLogado = req.session.restauranteLogado;
+
+    if (!restauranteLogado) {
+        return res.status(401).json({ error: 'Restaurante não está logado.' });
+    }
+
+    res.status(200).json({ restauranteLogado });
+});
+
+app.post('/api/sessao/reiniciar', (req, res) => {
+    // Aqui você deve limpar a sessão, dependendo de como você gerencia as sessões
+    req.session.destroy(err => {
         if (err) {
-            console.error('Error updating restaurant:', err);
-            return res.status(500).json({ error: 'Erro ao atualizar restaurante.' });
+            return res.status(500).json({ error: 'Não foi possível reinicializar a sessão.' });
         }
-
-        if (results.affectedRows === 0) {
-            return res.status(404).json({ error: 'Restaurante não encontrado!' });
-        }
-
-        res.status(200).json({ message: 'Restaurante atualizado com sucesso!' });
+        res.status(200).json({ message: 'Sessão reinicializada com sucesso.' });
     });
 });
 
 
-// GET para listar todos os motoboys
-app.get('/api/motoboys', (req, res) => {
-    const query = 'SELECT * FROM Motoboy';
-    connection.query(query, (err, results) => {
-        if (err) {
-            console.error('Error fetching motoboys:', err);
-            return res.status(500).json({ error: 'Erro ao buscar motoboys.' });
-        }
-
-        res.status(200).json(results);
-    });
-});
-
-// Rota DELETE para excluir um motoboy pelo CPF
-app.delete('/api/motoboys/:cpf', (req, res) => {
-    const cpf = req.params.cpf;
-
-    connection.query('DELETE FROM Motoboy WHERE CPF = ?', [cpf], (err, results) => {
-        if (err) {
-            console.error('Error deleting motoboy:', err);
-            return res.status(500).json({ error: 'Erro ao excluir motoboy.' });
-        }
-
-        if (results.affectedRows === 0) {
-            return res.status(404).json({ error: 'Motoboy não encontrado!' });
-        }
-
-        res.status(200).json({ message: 'Motoboy excluído com sucesso!' });
-    });
-});
-
-// Iniciar o servidor
-const PORT = 3000;
+// Iniciando o servidor
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);
 });

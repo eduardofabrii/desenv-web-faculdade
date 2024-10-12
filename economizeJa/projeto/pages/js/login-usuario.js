@@ -1,29 +1,44 @@
-function validarLogin() {
-    const senha = document.getElementById("senha-usuario").value.trim();
-    const cpf = document.getElementById("cpf-usuario").value.trim();
-    
-    const campoObrigatorio = document.getElementById("campoObrigatorio");
+document.getElementById('form-login').addEventListener('submit', async (event) => {
+    event.preventDefault(); // Evita o envio padrão do formulário
 
-    campoObrigatorio.style.display = "none";
-    
-    if (senha === "" || cpf === "") {
-        campoObrigatorio.style.display = "block";
-        return false;
-    }
+    const cpf = document.getElementById('cpf-usuario').value;
+    const senha = document.getElementById('senha-usuario').value;
 
-   
-    const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
-    const usuarioEncontrado = usuarios.find(usuario => usuario.senha === senha && usuario.cpf === cpf);
-
-    if (usuarioEncontrado) {
-        
-        window.open('homeUsuario.html', '_blank');
-        
+    if (!cpf || !senha) {
+        document.getElementById('campoObrigatorio').style.display = 'block';
+        return;
     } else {
-        
-        alert("Senha ou CPF inválidos. Por favor, cadastre-se.");
-        return false;
+        document.getElementById('campoObrigatorio').style.display = 'none';
     }
-}
 
+    console.log('Dados do login:', { cpf, senha }); // Log dos dados enviados
 
+    try {
+        const response = await fetch('/api/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ cpf, senha }),
+        });
+
+        // Verifique se a resposta é OK
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error('Erro de resposta:', errorData); // Log da resposta de erro
+            throw new Error(errorData.message || 'Erro ao fazer login.');
+        }
+
+        const data = await response.json();
+        console.log('Login bem-sucedido:', data);
+        
+        // Armazena o CPF e o nome do usuário no Local Storage
+        localStorage.setItem('usuarioLogado', JSON.stringify(data));
+
+        // Redireciona para a página de perfil após o login bem-sucedido
+        window.location.href = 'perfil.html';
+    } catch (error) {
+        console.error('Erro:', error.message);
+        alert('CPF ou senha inválidos!');
+    }
+});
