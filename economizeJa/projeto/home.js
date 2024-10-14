@@ -304,6 +304,110 @@ app.delete('/api/restaurantes/:cnpj', (req, res) => {
     });
 });
 
+<<<<<<< Updated upstream
+=======
+// ATUALIZAR RESTAURANTE PELO CNPJ
+app.put('/api/restaurantes/:cnpj', (req, res) => {
+    const cnpj = req.params.cnpj;
+    const { nome_empresa, email, telefone, senha, nicho } = req.body;
+
+    if (!nome_empresa || !email || !telefone || !senha || !nicho) {
+        return res.status(400).json({ error: 'Todos os campos são obrigatórios!' });
+    }
+
+    const query = 'UPDATE Restaurante SET Nome_Empresa = ?, Email = ?, Telefone = ?, Senha = ?, Nicho = ? WHERE CNPJ = ?';
+    connection.query(query, [nome_empresa, email, telefone, senha, nicho, cnpj], (err, results) => {
+        if (err) {
+            console.error('Error updating restaurant:', err);
+            return res.status(500).json({ error: 'Erro ao atualizar restaurante.' });
+        }
+
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ error: 'Restaurante não encontrado!' });
+        }
+
+        res.status(200).json({ message: 'Restaurante atualizado com sucesso!' });
+    });
+});
+
+
+// GET para listar todos os motoboys
+app.get('/api/motoboys', (req, res) => {
+    const query = 'SELECT * FROM Motoboy';
+    connection.query(query, (err, results) => {
+        if (err) {
+            console.error('Error fetching motoboys:', err);
+            return res.status(500).json({ error: 'Erro ao buscar motoboys.' });
+        }
+
+        res.status(200).json(results);
+    });
+});
+
+// ADICIONAR MOTOBOY
+app.post('/api/motoboys', (req, res) => {
+    const { cpf, nome, email, telefone, senha, placa_moto } = req.body;
+
+    if (!cpf || !nome || !email || !telefone || !senha || !placa_moto) {
+        return res.status(400).json({ error: 'Todos os campos são obrigatórios!' });
+    }
+
+    const query = 'INSERT INTO Motoboy (CPF, Nome, Email, Telefone, Senha, Placa_Moto) VALUES (?, ?, ?, ?, ?, ?)';
+    connection.query(query, [cpf, nome, email, telefone, senha, placa_moto], (err, results) => {
+        if (err) {
+            console.error('Error inserting motoboy:', err);
+            return res.status(500).json({ error: 'Erro ao adicionar motoboy.' });
+        }
+
+        res.status(201).json({ message: 'Motoboy adicionado com sucesso!', id: results.insertId });
+    });
+});
+
+
+// Rota DELETE para excluir um motoboy pelo CPF
+app.delete('/api/motoboys/:cpf', (req, res) => {
+    const cpf = req.params.cpf;
+
+    connection.query('DELETE FROM Motoboy WHERE CPF = ?', [cpf], (err, results) => {
+        if (err) {
+            console.error('Error deleting motoboy:', err);
+            return res.status(500).json({ error: 'Erro ao excluir motoboy.' });
+        }
+
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ error: 'Motoboy não encontrado!' });
+        }
+
+        res.status(200).json({ message: 'Motoboy excluído com sucesso!' });
+    });
+});
+
+// ATUALIZAR MOTOBOY PELO CPF
+app.put('/api/motoboys/:cpf', (req, res) => {
+    const cpf = req.params.cpf;
+    const { nome, email, telefone, senha, placa_moto } = req.body;
+
+    if (!nome || !email || !telefone || !senha || !placa_moto) {
+        return res.status(400).json({ error: 'Todos os campos são obrigatórios!' });
+    }
+
+    const query = 'UPDATE Motoboy SET Nome = ?, Email = ?, Telefone = ?, Senha = ?, Placa_Moto = ? WHERE CPF = ?';
+    connection.query(query, [nome, email, telefone, senha, placa_moto, cpf], (err, results) => {
+        if (err) {
+            console.error('Error updating motoboy:', err);
+            return res.status(500).json({ error: 'Erro ao atualizar motoboy.' });
+        }
+
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ error: 'Motoboy não encontrado!' });
+        }
+
+        res.status(200).json({ message: 'Motoboy atualizado com sucesso!' });
+    });
+});
+
+
+>>>>>>> Stashed changes
 // Iniciar o servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

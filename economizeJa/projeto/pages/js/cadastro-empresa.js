@@ -1,4 +1,3 @@
-// Função para cadastrar empresa/restaurante
 function cadastrarEmpresa() {
     const nome = document.getElementById('nome-restaurante').value;
     const email = document.getElementById('email-restaurante').value;
@@ -10,20 +9,34 @@ function cadastrarEmpresa() {
 
     // Verificar se todos os campos estão preenchidos
     if (nome && email && cnpj && endereco && cidade && telefone && senha) {
-        // Imprimir no console para verificar os dados
-        console.log({ nome, email, cnpj, endereco, cidade, telefone, senha });
+        const empresa = { nome, email, cnpj, endereco, cidade, telefone, senha };
 
-        // Armazenar os dados no localStorage
-        const empresas = JSON.parse(localStorage.getItem('empresas')) || [];
-        empresas.push({ nome, email, cnpj, endereco, cidade, telefone, senha });
-        localStorage.setItem('empresas', JSON.stringify(empresas));
-
-        // Redirecionar para a página de lista de empresas
-        window.open('lista-empresas.html', '_blank');
+        // Enviar dados para o backend via fetch
+        fetch('/api/empresas', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(empresa),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(`Erro: ${data.error}`);
+            } else {
+                alert('Empresa cadastrada com sucesso!');
+                window.open('lista-empresas.html', '_blank');
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao cadastrar empresa:', error);
+            alert('Ocorreu um erro ao cadastrar a empresa. Tente novamente mais tarde.');
+        });
     } else {
         alert('Por favor, preencha todos os campos.');
     }
 }
+
 
 // Função para carregar as empresas armazenadas na tabela
 function carregarEmpresas() {
