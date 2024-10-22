@@ -1,4 +1,4 @@
-function cadastrarEmpresa() {
+function cadastrarEstabelecimento() {
     const nome = document.getElementById('nome-restaurante').value;
     const email = document.getElementById('email-restaurante').value;
     const cnpj = document.getElementById('cnpj-restaurante').value;
@@ -9,28 +9,28 @@ function cadastrarEmpresa() {
 
     // Verificar se todos os campos estão preenchidos
     if (nome && email && cnpj && endereco && cidade && telefone && senha) {
-        const empresa = { nome, email, cnpj, endereco, cidade, telefone, senha };
+        const estabelecimento = { nome, email, cnpj, endereco, cidade, telefone, senha };
 
         // Enviar dados para o backend via fetch
-        fetch('/api/empresas', {
+        fetch('/api/estabelecimentos', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(empresa),
+            body: JSON.stringify(estabelecimento),
         })
         .then(response => response.json())
         .then(data => {
             if (data.error) {
                 alert(`Erro: ${data.error}`);
             } else {
-                alert('Empresa cadastrada com sucesso!');
-                window.open('lista-empresas.html', '_blank');
+                alert('Estabelecimento cadastrado com sucesso!');
+                window.open('lista-empresa.html', '_blank');
             }
         })
         .catch(error => {
-            console.error('Erro ao cadastrar empresa:', error);
-            alert('Ocorreu um erro ao cadastrar a empresa. Tente novamente mais tarde.');
+            console.error('Erro ao cadastrar estabelecimento:', error);
+            alert('Ocorreu um erro ao cadastrar o estabelecimento. Tente novamente mais tarde.');
         });
     } else {
         alert('Por favor, preencha todos os campos.');

@@ -1,23 +1,16 @@
 const express = require('express');
 const mysql = require('mysql');
-const session = require('express-session'); // Adicionando o middleware de sessão
-const cookieParser = require('cookie-parser'); // Adicionando o cookie-parser
+const cookieParser = require('cookie-parser');
+const nodemailer = require('nodemailer');
+
 
 const app = express();
 
 app.use(express.json());
 app.use(express.static('./pages'));
-app.use(cookieParser()); // Usando o middleware de cookies
+app.use(cookieParser());
 
-// Configuração da sessão
-app.use(session({
-    secret: 'seu-segredo', // Substitua por uma chave secreta forte
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false } // Altere para true se usar HTTPS
-}));
 
-// Configuração da conexão com o MySQL
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -25,7 +18,6 @@ const connection = mysql.createConnection({
     database: 'economizeja'
 });
 
-// Conexão com o banco de dados
 connection.connect((err) => {
     if (err) {
         console.error('Error connecting to MySQL:', err);
@@ -34,16 +26,24 @@ connection.connect((err) => {
     console.log('Connected to MySQL database!');
 });
 
+
+
 // ROTA PARA OBTER DADOS DA SESSÃO
 app.get('/api/sessao', (req, res) => {
     if (req.session.usuarioLogado) {
         return res.status(200).json({ usuarioLogado: req.session.usuarioLogado });
     } else if (req.session.restauranteLogado) {
         return res.status(200).json({ restauranteLogado: req.session.restauranteLogado });
+    } else if (req.session.motoboyLogado) {
+        return res.status(200).json({ motoboyLogado: req.session.motoboyLogado });
     } else {
         return res.status(401).json({ message: 'Nenhum usuário logado.' });
     }
 });
+
+
+
+
 
 // ROTA PARA REINICIALIZAR A SESSÃO (similar ao logout)
 app.post('/api/sessao/reiniciar', (req, res) => {
@@ -52,37 +52,36 @@ app.post('/api/sessao/reiniciar', (req, res) => {
             console.error('Erro ao reinicializar sessão:', err);
             return res.status(500).json({ error: 'Erro ao reinicializar sessão.' });
         }
-        res.clearCookie('cpf'); // Limpa o cookie de CPF ou qualquer outro que você esteja usando
+        res.clearCookie('cpf');
         res.status(200).json({ message: 'Sessão reinicializada com sucesso.' });
     });
 });
 
-// ROTA DE LOGIN
-app.post('/api/login', (req, res) => {
+
+// ROTA DE LOGIN DO USUÁRIO
+app.post('/api/login/usuario', (req, res) => {
     const { cpf, senha } = req.body;
-    console.log('Tentativa de login:', cpf, senha); // Log do CPF e senha recebidos
+    console.log('Tentativa de login do usuário:', cpf);
 
     if (!cpf || !senha) {
         return res.status(400).json({ error: 'CPF e senha são obrigatórios!' });
     }
 
-    // Consultar o banco de dados para verificar as credenciais
     connection.query('SELECT * FROM Usuario WHERE CPF = ? AND Senha = ?', [cpf, senha], (error, results) => {
         if (error) {
-            console.error('Error during login:', error);
+            console.error('Error during user login:', error);
             return res.status(500).json({ error: 'Erro ao tentar fazer login.' });
         }
 
-        console.log('Resultados da consulta:', results); // Log dos resultados da consulta
-
         if (results.length > 0) {
-            req.session.usuarioLogado = results[0]; // Armazena o usuário na sessão
-            return res.status(200).json({ success: true, message: 'Login bem-sucedido' });
+            req.session.usuarioLogado = results[0];
+            return res.status(200).json({ success: true, message: 'Login do usuário bem-sucedido' });
         } else {
             return res.status(401).json({ success: false, message: 'CPF ou senha inválidos!' });
         }
     });
 });
+
 
 // ROTA DE LOGOUT
 app.post('/api/logout', (req, res) => {
@@ -91,7 +90,7 @@ app.post('/api/logout', (req, res) => {
             console.error('Error during logout:', err);
             return res.status(500).json({ error: 'Erro ao tentar sair.' });
         }
-        res.clearCookie('cpf'); // Remove o cookie de CPF ao sair
+        res.clearCookie('cpf');
         res.json({ message: 'Logout bem-sucedido.' });
     });
 });
@@ -106,7 +105,6 @@ app.post('/api/usuarios', (req, res) => {
         return res.status(400).json({ error: 'Nome, email, cpf, telefone e senha são obrigatórios!' });
     }
 
-    // Verificar se já existe um usuário com o mesmo CPF
     connection.query('SELECT * FROM Usuario WHERE CPF = ?', [cpf], (error, results) => {
         if (error) {
             console.error('Error checking CPF:', error);
@@ -117,7 +115,9 @@ app.post('/api/usuarios', (req, res) => {
             return res.status(409).json({ error: 'Já existe um usuário com o mesmo CPF!' });
         }
 
-        // Inserir o novo usuário no banco de dados
+
+
+
         const query = 'INSERT INTO Usuario (Nome, Email, Senha, CPF, Telefone) VALUES (?, ?, ?, ?, ?)';
         connection.query(query, [nome, email, senha, cpf, telefone], (insertError, insertResults) => {
             if (insertError) {
@@ -125,10 +125,13 @@ app.post('/api/usuarios', (req, res) => {
                 return res.status(500).json({ error: 'Erro ao inserir usuário.' });
             }
 
+            
+
             res.status(201).json({ message: 'Usuário adicionado com sucesso!', id: insertResults.insertId });
         });
     });
 });
+
 
 // GET para listar todos os usuários
 app.get('/api/usuarios', (req, res) => {
@@ -151,10 +154,9 @@ app.get('/api/usuarios/:cpf', (req, res) => {
         return res.status(400).json({ error: 'CPF inválido.' });
     }
 
-    // Consultar o banco de dados
     connection.query('SELECT * FROM Usuario WHERE CPF = ?', [cpf], (error, results) => {
         if (error) {
-            console.error('Erro ao consultar o banco de dados:', error); // Log do erro no console
+            console.error('Erro ao consultar o banco de dados:', error);
             return res.status(500).json({ error: 'Erro ao buscar usuário.' });
         }
 
@@ -162,7 +164,6 @@ app.get('/api/usuarios/:cpf', (req, res) => {
             return res.status(404).json({ error: 'Usuário não encontrado.' });
         }
 
-        // Retorna o primeiro resultado
         return res.json(results[0]);
     });
 });
@@ -209,127 +210,62 @@ app.put('/api/usuarios/:cpf', (req, res) => {
     });
 });
 
-// ROTAS DE RESTAURANTES
+// ROTAS DE MOTOBOY
 
-// ADICIONAR RESTAURANTE
-app.post('/api/restaurantes', (req, res) => {
-    const { cnpj, nome_empresa, email, telefone, senha, nicho } = req.body;
+// ROTA DE LOGIN DO MOTOBOY
+app.post('/api/login/motoboy', (req, res) => {
+    const { cpf, senha } = req.body;
 
-    if (!cnpj || !nome_empresa || !email || !telefone || !senha || !nicho) {
-        return res.status(400).json({ error: 'Todos os campos são obrigatórios!' });
+    if (!cpf || !senha) {
+        return res.status(400).json({ error: 'CPF e senha são obrigatórios!' });
     }
 
-    const query = 'INSERT INTO Restaurante (CNPJ, Nome_Empresa, Email, Telefone, Senha, Nicho) VALUES (?, ?, ?, ?, ?, ?)';
-    connection.query(query, [cnpj, nome_empresa, email, telefone, senha, nicho], (err, results) => {
-        if (err) {
-            console.error('Error inserting restaurant:', err);
-            return res.status(500).json({ error: 'Erro ao adicionar restaurante.' });
-        }
-
-        res.status(201).json({ message: 'Restaurante adicionado com sucesso!', id: results.insertId });
-    });
-});
-
-// ROTA DE LOGIN DO RESTAURANTE
-app.post('/api/login-restaurante', (req, res) => {
-    const { cnpj, senha } = req.body;
-
-    if (!cnpj || !senha) {
-        return res.status(400).json({ error: 'CNPJ e senha são obrigatórios!' });
-    }
-
-    connection.query('SELECT * FROM Restaurante WHERE CNPJ = ? AND Senha = ?', [cnpj, senha], (error, results) => {
+    connection.query('SELECT * FROM Motoboy WHERE CPF = ? AND Senha = ?', [cpf, senha], (error, results) => {
         if (error) {
-            console.error('Error during restaurant login:', error);
-            return res.status(500).json({ error: 'Erro ao tentar fazer login.' });
+            console.error('Erro ao consultar o banco de dados:', error);
+            return res.status(500).json({ error: 'Erro ao buscar motoboy.' });
         }
 
         if (results.length > 0) {
-            req.session.restauranteLogado = results[0];
-            return res.status(200).json({ success: true, message: 'Login bem-sucedido' });
+            req.session.motoboyLogado = results[0]; // Salva as informações do motoboy na sessão
+            return res.status(200).json({ success: true, message: 'Login do motoboy bem-sucedido' });
         } else {
-            return res.status(401).json({ success: false, message: 'CNPJ ou senha inválidos!' });
+            return res.status(401).json({ success: false, message: 'CPF ou senha inválidos!' });
         }
     });
 });
 
-// GET para listar todos os restaurantes
-app.get('/api/restaurantes', (req, res) => {
-    const query = 'SELECT * FROM Restaurante';
-    connection.query(query, (err, results) => {
-        if (err) {
-            console.error('Error fetching restaurants:', err);
-            return res.status(500).json({ error: 'Erro ao buscar restaurantes.' });
-        }
 
-        res.status(200).json(results);
-    });
-});
 
-// ATUALIZAR UM RESTAURANTE PELO CNPJ
-app.put('/api/restaurantes/:cnpj', (req, res) => {
-    const cnpj = req.params.cnpj;
-    const { nome_empresa, email, telefone, senha, nicho } = req.body;
+// ADICIONAR MOTOBOY
+app.post('/api/motoboys', (req, res) => {
+    const { nome, cpf, senha, telefone } = req.body;
 
-    const query = 'UPDATE Restaurante SET Nome_Empresa = ?, Email = ?, Telefone = ?, Senha = ?, Nicho = ? WHERE CNPJ = ?';
-    connection.query(query, [nome_empresa, email, telefone, senha, nicho, cnpj], (err, results) => {
-        if (err) {
-            console.error('Error updating restaurant:', err);
-            return res.status(500).json({ error: 'Erro ao atualizar restaurante.' });
-        }
-
-        if (results.affectedRows === 0) {
-            return res.status(404).json({ error: 'Restaurante não encontrado!' });
-        }
-
-        res.status(200).json({ message: 'Restaurante atualizado com sucesso!' });
-    });
-});
-
-// DELETE para excluir um restaurante pelo CNPJ
-app.delete('/api/restaurantes/:cnpj', (req, res) => {
-    const cnpj = req.params.cnpj;
-
-    connection.query('DELETE FROM Restaurante WHERE CNPJ = ?', [cnpj], (err, results) => {
-        if (err) {
-            console.error('Error deleting restaurant:', err);
-            return res.status(500).json({ error: 'Erro ao excluir restaurante.' });
-        }
-
-        if (results.affectedRows === 0) {
-            return res.status(404).json({ error: 'Restaurante não encontrado!' });
-        }
-
-        res.status(200).json({ message: 'Restaurante excluído com sucesso!' });
-    });
-});
-
-<<<<<<< Updated upstream
-=======
-// ATUALIZAR RESTAURANTE PELO CNPJ
-app.put('/api/restaurantes/:cnpj', (req, res) => {
-    const cnpj = req.params.cnpj;
-    const { nome_empresa, email, telefone, senha, nicho } = req.body;
-
-    if (!nome_empresa || !email || !telefone || !senha || !nicho) {
-        return res.status(400).json({ error: 'Todos os campos são obrigatórios!' });
+    if (!nome || !cpf || !senha || !telefone) {
+        return res.status(400).json({ error: 'Nome, CPF, senha e telefone são obrigatórios!' });
     }
 
-    const query = 'UPDATE Restaurante SET Nome_Empresa = ?, Email = ?, Telefone = ?, Senha = ?, Nicho = ? WHERE CNPJ = ?';
-    connection.query(query, [nome_empresa, email, telefone, senha, nicho, cnpj], (err, results) => {
-        if (err) {
-            console.error('Error updating restaurant:', err);
-            return res.status(500).json({ error: 'Erro ao atualizar restaurante.' });
+    connection.query('SELECT * FROM Motoboy WHERE CPF = ?', [cpf], (error, results) => {
+        if (error) {
+            console.error('Error checking CPF:', error);
+            return res.status(500).json({ error: 'Erro ao verificar CPF.' });
         }
 
-        if (results.affectedRows === 0) {
-            return res.status(404).json({ error: 'Restaurante não encontrado!' });
+        if (results.length > 0) {
+            return res.status(409).json({ error: 'Já existe um motoboy com o mesmo CPF!' });
         }
 
-        res.status(200).json({ message: 'Restaurante atualizado com sucesso!' });
+        const query = 'INSERT INTO Motoboy (Nome, CPF, Senha, Telefone) VALUES (?, ?, ?, ?)';
+        connection.query(query, [nome, cpf, senha, telefone], (insertError, insertResults) => {
+            if (insertError) {
+                console.error('Error inserting motoboy:', insertError);
+                return res.status(500).json({ error: 'Erro ao inserir motoboy.' });
+            }
+
+            res.status(201).json({ message: 'Motoboy adicionado com sucesso!', id: insertResults.insertId });
+        });
     });
 });
-
 
 // GET para listar todos os motoboys
 app.get('/api/motoboys', (req, res) => {
@@ -344,25 +280,27 @@ app.get('/api/motoboys', (req, res) => {
     });
 });
 
-// ADICIONAR MOTOBOY
-app.post('/api/motoboys', (req, res) => {
-    const { cpf, nome, email, telefone, senha, placa_moto } = req.body;
+// GET para consultar motoboy pelo CPF
+app.get('/api/motoboys/:cpf', (req, res) => {
+    const cpf = req.params.cpf;
 
-    if (!cpf || !nome || !email || !telefone || !senha || !placa_moto) {
-        return res.status(400).json({ error: 'Todos os campos são obrigatórios!' });
+    if (!cpf) {
+        return res.status(400).json({ error: 'CPF inválido.' });
     }
 
-    const query = 'INSERT INTO Motoboy (CPF, Nome, Email, Telefone, Senha, Placa_Moto) VALUES (?, ?, ?, ?, ?, ?)';
-    connection.query(query, [cpf, nome, email, telefone, senha, placa_moto], (err, results) => {
-        if (err) {
-            console.error('Error inserting motoboy:', err);
-            return res.status(500).json({ error: 'Erro ao adicionar motoboy.' });
+    connection.query('SELECT * FROM Motoboy WHERE CPF = ?', [cpf], (error, results) => {
+        if (error) {
+            console.error('Erro ao consultar o banco de dados:', error);
+            return res.status(500).json({ error: 'Erro ao buscar motoboy.' });
         }
 
-        res.status(201).json({ message: 'Motoboy adicionado com sucesso!', id: results.insertId });
+        if (results.length === 0) {
+            return res.status(404).json({ error: 'Motoboy não encontrado.' });
+        }
+
+        return res.json(results[0]);
     });
 });
-
 
 // Rota DELETE para excluir um motoboy pelo CPF
 app.delete('/api/motoboys/:cpf', (req, res) => {
@@ -382,17 +320,17 @@ app.delete('/api/motoboys/:cpf', (req, res) => {
     });
 });
 
-// ATUALIZAR MOTOBOY PELO CPF
+// ATUALIZAR UM MOTOBOY PELO CPF
 app.put('/api/motoboys/:cpf', (req, res) => {
     const cpf = req.params.cpf;
-    const { nome, email, telefone, senha, placa_moto } = req.body;
+    const { nome, telefone, senha } = req.body;
 
-    if (!nome || !email || !telefone || !senha || !placa_moto) {
-        return res.status(400).json({ error: 'Todos os campos são obrigatórios!' });
+    if (!nome || !telefone || !senha) {
+        return res.status(400).json({ error: 'Nome, telefone e senha são obrigatórios!' });
     }
 
-    const query = 'UPDATE Motoboy SET Nome = ?, Email = ?, Telefone = ?, Senha = ?, Placa_Moto = ? WHERE CPF = ?';
-    connection.query(query, [nome, email, telefone, senha, placa_moto, cpf], (err, results) => {
+    const query = 'UPDATE Motoboy SET Nome = ?, Telefone = ?, Senha = ? WHERE CPF = ?';
+    connection.query(query, [nome, telefone, senha, cpf], (err, results) => {
         if (err) {
             console.error('Error updating motoboy:', err);
             return res.status(500).json({ error: 'Erro ao atualizar motoboy.' });
@@ -406,9 +344,7 @@ app.put('/api/motoboys/:cpf', (req, res) => {
     });
 });
 
-
->>>>>>> Stashed changes
-// Iniciar o servidor
+// RODAR O SERVIDOR
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);

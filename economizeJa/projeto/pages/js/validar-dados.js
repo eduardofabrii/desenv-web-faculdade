@@ -1,6 +1,5 @@
 
   
-  
   function validarPadraoSenha(event) {
     const senha = event.target.value;
     const senhaMinLength = 8;

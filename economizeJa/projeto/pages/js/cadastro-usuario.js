@@ -1,228 +1,198 @@
+// Função para mostrar o formulário correspondente ao tipo
 function mostrarFormulario(tipo) {
   const formularios = document.querySelectorAll(".form-container");
-  formularios.forEach((form) => (form.style.display = "none"));
-
+  formularios.forEach(form => (form.style.display = "none"));
   document.getElementById(`form-${tipo}`).style.display = "block";
-
-  switchimages(tipo);
+  switchImages(tipo);
 }
 
-function switchimages(tipo) {
-  var img = document.getElementById("fundo");
-  var imgmoto = document.getElementById("fundo");
+// Função para trocar as imagens de fundo
+function switchImages(tipo) {
+  const img = document.getElementById("fundo");
+  const images = {
+    restaurante: "images/estabelecimento.jpg",
+    motoboy: "images/img-motoboy.jpg",
+    usuario: "images/frutasVermelhas.jpg"
+  };
+  img.src = images[tipo] || images.usuario; // Imagem padrão
 
-  // Troca a imagem com base no tipo
-  if (tipo === "restaurante") {
-    img.src = "images/estabelecimento.jpg";
-  } else if (tipo === "motoboy") {
-    imgmoto.src = "images/img-motoboy.jpg";
-  } else if (tipo === "usuario") {
-    img.src = "images/frutasVermelhas.jpg"; // Imagem padrão
-  }
-
-  // Assegura que a imagem cubra toda a área sem distorções
-  imgmoto.style.objectFit = "cover";
-  imgmoto.style.width = "100vw";
-  imgmoto.style.height = "100vh";
-  imgmoto.style.position = "relative";
-  imgmoto.style.top = "0";
-  imgmoto.style.left = "0px";
+  // Estilizar a imagem
+  img.style.objectFit = "cover";
+  img.style.width = "100vw";
+  img.style.height = "100vh";
+  img.style.position = "relative";
+  img.style.top = "0";
+  img.style.left = "0px";
 }
 
-// Ajustando os eventos para passar o tipo correto
-document
-  .getElementById("btn-restaurante")
-  .addEventListener("click", function () {
-    switchimages("restaurante");
-  });
-document.getElementById("btn-motoboy").addEventListener("click", function () {
-  switchimages("motoboy");
-});
+// Adicionando eventos de clique para botões
+document.getElementById("btn-restaurante").addEventListener("click", () => switchImages("restaurante"));
+document.getElementById("btn-motoboy").addEventListener("click", () => switchImages("motoboy"));
 
+// Função para cadastrar um usuário
 function cadastrarUsuario() {
-  // Obter os valores dos inputs
-  const nome = document.getElementById("nome-usuario").value;
-  const email = document.getElementById("email-usuario").value;
-  const cpf = document.getElementById("cpf-usuario").value;
-  const endereco = document.getElementById("endereco-usuario").value;
-  const cidade = document.getElementById("cidade-usuario").value;
-  const telefone = document.getElementById("telefone-usuario").value;
-  const senha = document.getElementById("senha-usuario").value;
+  const usuario = obterDadosUsuario();
 
-  // Verificar se todos os campos estão preenchidos
-  if (nome && email && cpf && endereco && cidade && telefone && senha) {
-    // Montar o objeto para enviar à API e salvar no localStorage
-    const usuario = { nome, email, cpf, endereco, cidade, telefone, senha };
-
-    // Armazenar os dados no localStorage
-    const usuariosLocal = JSON.parse(localStorage.getItem("usuarios")) || [];
-    usuariosLocal.push(usuario);
-    localStorage.setItem("usuarios", JSON.stringify(usuariosLocal));
-
-    // Fazer a requisição POST à API
-    fetch("/api/usuarios", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(usuario),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Usuário cadastrado com sucesso:", data);
-        window.open("login.html", "_blank");
-      })
-      .catch((error) => {
-        console.error("Erro ao cadastrar o usuário:", error);
-        alert("Ocorreu um erro ao cadastrar o usuário.");
-      });
+  if (verificarCampos(usuario)) {
+    salvarUsuarioLocalStorage(usuario);
+    enviarUsuarioParaAPI(usuario);
   } else {
     alert("Por favor, preencha todos os campos.");
   }
+}
+
+// Função para obter os dados do usuário
+function obterDadosUsuario() {
+  return {
+    nome: document.getElementById("nome-usuario").value,
+    email: document.getElementById("email-usuario").value,
+    cpf: document.getElementById("cpf-usuario").value,
+    endereco: document.getElementById("endereco-usuario").value,
+    cidade: document.getElementById("cidade-usuario").value,
+    telefone: document.getElementById("telefone-usuario").value,
+    senha: document.getElementById("senha-usuario").value,
+  };
+}
+
+// Função para verificar se todos os campos estão preenchidos
+function verificarCampos(usuario) {
+  return Object.values(usuario).every(campo => campo !== "");
+}
+
+// Função para salvar o usuário no localStorage
+function salvarUsuarioLocalStorage(usuario) {
+  const usuariosLocal = JSON.parse(localStorage.getItem("usuarios")) || [];
+  usuariosLocal.push(usuario);
+  localStorage.setItem("usuarios", JSON.stringify(usuariosLocal));
+}
+
+// Função para enviar o usuário para a API
+function enviarUsuarioParaAPI(usuario) {
+  fetch("/api/usuarios", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(usuario),
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log("Usuário cadastrado com sucesso:", data);
+    window.open("login.html", "_blank");
+  })
+  .catch(error => {
+    console.error("Erro ao cadastrar o usuário:", error);
+    alert("Ocorreu um erro ao cadastrar o usuário.");
+  });
 }
 
 // Função para carregar os dados armazenados na tabela
 function carregarUsuarios() {
   const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
   const tabelaUsuarios = document.getElementById("tabela-usuarios");
-
   tabelaUsuarios.innerHTML = "";
 
-  usuarios.forEach((usuario) => {
+  usuarios.forEach(usuario => {
     const row = tabelaUsuarios.insertRow();
-    row.insertCell(0).textContent = usuario.nome;
-    row.insertCell(1).textContent = usuario.email;
-    row.insertCell(2).textContent = usuario.cpf;
-    row.insertCell(3).textContent = usuario.endereco;
-    row.insertCell(4).textContent = usuario.cidade;
-    row.insertCell(5).textContent = usuario.telefone;
+    Object.values(usuario).forEach((valor, index) => {
+      row.insertCell(index).textContent = valor;
+    });
 
     // Criando a célula de Ações com os botões de Editar e Excluir
-    const acoesCell = row.insertCell(6);
+    const acoesCell = row.insertCell(Object.values(usuario).length);
     acoesCell.innerHTML = `
-        <button class="btn btn-warning btn-sm" onclick="editarUsuario(this)">Editar</button>
-        <button class="btn btn-danger btn-sm" onclick="excluirUsuario(this)">Excluir</button>
+      <button class="btn btn-warning btn-sm" onclick="editarUsuario(this)">Editar</button>
+      <button class="btn btn-danger btn-sm" onclick="excluirUsuario(this)">Excluir</button>
     `;
   });
 }
 
+// Função para editar um usuário
 function editarUsuario(botao) {
-  const linha = botao.parentNode.parentNode;
+  const linha = botao.closest("tr");
   const colunas = linha.querySelectorAll("td");
 
-  // Exemplo simples: permite edição in-line
   colunas.forEach((coluna, index) => {
-    if (index < colunas.length - 1) {
-      // Não permite edição da última coluna (Ações)
+    if (index < colunas.length - 1) { // Não permite edição da última coluna (Ações)
       const conteudoAtual = coluna.innerText;
       coluna.innerHTML = `<input type="text" value="${conteudoAtual}" class="form-control">`;
     }
   });
 
   botao.innerText = "Salvar";
-  botao.onclick = function () {
-    salvarEdicao(linha);
-  };
+  botao.onclick = () => salvarEdicao(linha);
 }
 
+// Função para salvar a edição de um usuário
 function salvarEdicao(linha) {
   const inputs = linha.querySelectorAll("input");
   const usuarioAtualizado = {};
 
   inputs.forEach((input, index) => {
-    const valorEditado = input.value;
-    linha.cells[index].innerText = valorEditado;
-
-    // Adicionar os dados editados ao objeto `usuarioAtualizado`
-    switch (index) {
-      case 0:
-        usuarioAtualizado.nome = valorEditado;
-        break;
-      case 1:
-        usuarioAtualizado.email = valorEditado;
-        break;
-      case 2:
-        usuarioAtualizado.cpf = valorEditado; // Mantemos o CPF como chave de identificação
-        break;
-      case 3:
-        usuarioAtualizado.endereco = valorEditado;
-        break;
-      case 4:
-        usuarioAtualizado.cidade = valorEditado;
-        break;
-      case 5:
-        usuarioAtualizado.telefone = valorEditado;
-        break;
-    }
+    usuarioAtualizado[index] === 2 // Mantemos o CPF como chave de identificação
+      ? usuarioAtualizado.cpf = input.value
+      : usuarioAtualizado[["nome", "email", "endereco", "cidade", "telefone"][index]] = input.value;
+    linha.cells[index].innerText = input.value; // Atualiza a tabela
   });
 
-  // Atualizar o localStorage
+  atualizarLocalStorage(usuarioAtualizado);
+  linha.querySelector(".btn-warning").innerText = "Editar";
+  linha.querySelector(".btn-warning").onclick = () => editarUsuario(this);
+}
+
+// Função para atualizar o localStorage
+function atualizarLocalStorage(usuarioAtualizado) {
   let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
-  const indexUsuario = usuarios.findIndex(
-    (usuario) => usuario.cpf === usuarioAtualizado.cpf
-  );
+  const indexUsuario = usuarios.findIndex(usuario => usuario.cpf === usuarioAtualizado.cpf);
 
   if (indexUsuario !== -1) {
     usuarios[indexUsuario] = usuarioAtualizado;
     localStorage.setItem("usuarios", JSON.stringify(usuarios));
   }
-
-  // Alterar o botão para 'Editar' novamente
-  linha.querySelector(".btn-warning").innerText = "Editar";
-  linha.querySelector(".btn-warning").onclick = function () {
-    editarUsuario(this);
-  };
 }
 
+// Função para excluir um usuário
 function excluirUsuario(botao) {
-  const linha = botao.parentNode.parentNode;
+  const linha = botao.closest("tr");
   const cpf = linha.cells[2].innerText;
 
   fetch(`/api/usuarios/${cpf}`, {
     method: "DELETE",
   })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log("Usuário excluído com sucesso:", data);
-      linha.remove();
-
-      let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
-      usuarios = usuarios.filter((usuario) => usuario.cpf !== cpf);
-      localStorage.setItem("usuarios", JSON.stringify(usuarios));
-    })
-    .catch((error) => {
-      console.error("Erro ao excluir o usuário:", error);
-      alert("Ocorreu um erro ao excluir o usuário.");
-    });
+  .then(response => response.json())
+  .then(data => {
+    console.log("Usuário excluído com sucesso:", data);
+    linha.remove();
+    atualizarUsuariosLocalStorage(cpf);
+  })
+  .catch(error => {
+    console.error("Erro ao excluir o usuário:", error);
+    alert("Ocorreu um erro ao excluir o usuário.");
+  });
 }
 
+// Função para atualizar o localStorage após exclusão
+function atualizarUsuariosLocalStorage(cpf) {
+  let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+  usuarios = usuarios.filter(usuario => usuario.cpf !== cpf);
+  localStorage.setItem("usuarios", JSON.stringify(usuarios));
+}
+
+// Função para buscar usuários na tabela
 function buscarUsuarios() {
   const searchInput = document.getElementById("searchInput");
   const filter = searchInput.value.toLowerCase();
   const rows = document.querySelectorAll("#tabela-usuarios tr");
 
-  rows.forEach((row) => {
+  rows.forEach(row => {
     const cells = row.getElementsByTagName("td");
-    let match = false;
-
-    for (let i = 0; i < cells.length - 1; i++) {
-      // Excluir a última coluna (ações)
-      if (cells[i].textContent.toLowerCase().includes(filter)) {
-        match = true;
-        break;
-      }
-    }
-
-    if (match) {
-      row.style.display = "";
-    } else {
-      row.style.display = "none";
-    }
+    const match = Array.from(cells).some(cell => cell.textContent.toLowerCase().includes(filter));
+    row.style.display = match ? "" : "none";
   });
 }
 
-document
-  .getElementById("searchInput")
-  .addEventListener("input", buscarUsuarios);
+// Adicionando evento de busca
+document.getElementById("searchInput").addEventListener("input", buscarUsuarios);
 
+// Carregando usuários ao iniciar
 carregarUsuarios();
