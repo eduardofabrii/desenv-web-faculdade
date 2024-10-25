@@ -1,15 +1,19 @@
 const express = require('express');
 const mysql = require('mysql');
 const cookieParser = require('cookie-parser');
+const session = require('express-session'); // Importando express-session
 const nodemailer = require('nodemailer');
-
 
 const app = express();
 
 app.use(express.json());
 app.use(express.static('./pages'));
 app.use(cookieParser());
-
+app.use(session({ // Configurando a sessão
+    secret: 'seu-segredo-aqui',
+    resave: false,
+    saveUninitialized: true,
+}));
 
 const connection = mysql.createConnection({
     host: 'localhost',
@@ -26,8 +30,6 @@ connection.connect((err) => {
     console.log('Connected to MySQL database!');
 });
 
-
-
 // ROTA PARA OBTER DADOS DA SESSÃO
 app.get('/api/sessao', (req, res) => {
     if (req.session.usuarioLogado) {
@@ -41,10 +43,6 @@ app.get('/api/sessao', (req, res) => {
     }
 });
 
-
-
-
-
 // ROTA PARA REINICIALIZAR A SESSÃO (similar ao logout)
 app.post('/api/sessao/reiniciar', (req, res) => {
     req.session.destroy(err => {
@@ -56,7 +54,6 @@ app.post('/api/sessao/reiniciar', (req, res) => {
         res.status(200).json({ message: 'Sessão reinicializada com sucesso.' });
     });
 });
-
 
 // ROTA DE LOGIN DO USUÁRIO
 app.post('/api/login/usuario', (req, res) => {
@@ -82,7 +79,6 @@ app.post('/api/login/usuario', (req, res) => {
     });
 });
 
-
 // ROTA DE LOGOUT
 app.post('/api/logout', (req, res) => {
     req.session.destroy(err => {
@@ -94,8 +90,6 @@ app.post('/api/logout', (req, res) => {
         res.json({ message: 'Logout bem-sucedido.' });
     });
 });
-
-// ROTAS DE USUÁRIOS
 
 // ADICIONAR USUÁRIO
 app.post('/api/usuarios', (req, res) => {
@@ -115,9 +109,6 @@ app.post('/api/usuarios', (req, res) => {
             return res.status(409).json({ error: 'Já existe um usuário com o mesmo CPF!' });
         }
 
-
-
-
         const query = 'INSERT INTO Usuario (Nome, Email, Senha, CPF, Telefone) VALUES (?, ?, ?, ?, ?)';
         connection.query(query, [nome, email, senha, cpf, telefone], (insertError, insertResults) => {
             if (insertError) {
@@ -125,13 +116,10 @@ app.post('/api/usuarios', (req, res) => {
                 return res.status(500).json({ error: 'Erro ao inserir usuário.' });
             }
 
-            
-
             res.status(201).json({ message: 'Usuário adicionado com sucesso!', id: insertResults.insertId });
         });
     });
 });
-
 
 // GET para listar todos os usuários
 app.get('/api/usuarios', (req, res) => {
@@ -210,8 +198,6 @@ app.put('/api/usuarios/:cpf', (req, res) => {
     });
 });
 
-// ROTAS DE MOTOBOY
-
 // ROTA DE LOGIN DO MOTOBOY
 app.post('/api/login/motoboy', (req, res) => {
     const { cpf, senha } = req.body;
@@ -235,8 +221,6 @@ app.post('/api/login/motoboy', (req, res) => {
     });
 });
 
-
-
 // ADICIONAR MOTOBOY
 app.post('/api/motoboys', (req, res) => {
     const { nome, cpf, senha, telefone } = req.body;
@@ -247,7 +231,7 @@ app.post('/api/motoboys', (req, res) => {
 
     connection.query('SELECT * FROM Motoboy WHERE CPF = ?', [cpf], (error, results) => {
         if (error) {
-            console.error('Error checking CPF:', error);
+            console.error('Erro ao consultar o banco de dados:', error);
             return res.status(500).json({ error: 'Erro ao verificar CPF.' });
         }
 
@@ -258,7 +242,7 @@ app.post('/api/motoboys', (req, res) => {
         const query = 'INSERT INTO Motoboy (Nome, CPF, Senha, Telefone) VALUES (?, ?, ?, ?)';
         connection.query(query, [nome, cpf, senha, telefone], (insertError, insertResults) => {
             if (insertError) {
-                console.error('Error inserting motoboy:', insertError);
+                console.error('Erro ao inserir motoboy:', insertError);
                 return res.status(500).json({ error: 'Erro ao inserir motoboy.' });
             }
 
@@ -267,12 +251,12 @@ app.post('/api/motoboys', (req, res) => {
     });
 });
 
-// GET para listar todos os motoboys
+// ROTA PARA LISTAR TODOS OS MOTOBOYS
 app.get('/api/motoboys', (req, res) => {
     const query = 'SELECT * FROM Motoboy';
     connection.query(query, (err, results) => {
         if (err) {
-            console.error('Error fetching motoboys:', err);
+            console.error('Erro ao buscar motoboys:', err);
             return res.status(500).json({ error: 'Erro ao buscar motoboys.' });
         }
 
@@ -280,7 +264,7 @@ app.get('/api/motoboys', (req, res) => {
     });
 });
 
-// GET para consultar motoboy pelo CPF
+// ROTA PARA CONSULTAR MOTOBOY PELO CPF
 app.get('/api/motoboys/:cpf', (req, res) => {
     const cpf = req.params.cpf;
 
@@ -302,25 +286,7 @@ app.get('/api/motoboys/:cpf', (req, res) => {
     });
 });
 
-// Rota DELETE para excluir um motoboy pelo CPF
-app.delete('/api/motoboys/:cpf', (req, res) => {
-    const cpf = req.params.cpf;
-
-    connection.query('DELETE FROM Motoboy WHERE CPF = ?', [cpf], (err, results) => {
-        if (err) {
-            console.error('Error deleting motoboy:', err);
-            return res.status(500).json({ error: 'Erro ao excluir motoboy.' });
-        }
-
-        if (results.affectedRows === 0) {
-            return res.status(404).json({ error: 'Motoboy não encontrado!' });
-        }
-
-        res.status(200).json({ message: 'Motoboy excluído com sucesso!' });
-    });
-});
-
-// ATUALIZAR UM MOTOBOY PELO CPF
+// ROTA PARA ATUALIZAR UM MOTOBOY PELO CPF
 app.put('/api/motoboys/:cpf', (req, res) => {
     const cpf = req.params.cpf;
     const { nome, telefone, senha } = req.body;
@@ -332,7 +298,7 @@ app.put('/api/motoboys/:cpf', (req, res) => {
     const query = 'UPDATE Motoboy SET Nome = ?, Telefone = ?, Senha = ? WHERE CPF = ?';
     connection.query(query, [nome, telefone, senha, cpf], (err, results) => {
         if (err) {
-            console.error('Error updating motoboy:', err);
+            console.error('Erro ao atualizar motoboy:', err);
             return res.status(500).json({ error: 'Erro ao atualizar motoboy.' });
         }
 
@@ -344,8 +310,73 @@ app.put('/api/motoboys/:cpf', (req, res) => {
     });
 });
 
-// RODAR O SERVIDOR
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Servidor rodando na porta ${PORT}`);
+// ROTA PARA EXCLUIR UM MOTOBOY PELO CPF
+app.delete('/api/motoboys/:cpf', (req, res) => {
+    const cpf = req.params.cpf;
+
+    connection.query('DELETE FROM Motoboy WHERE CPF = ?', [cpf], (err, results) => {
+        if (err) {
+            console.error('Erro ao excluir motoboy:', err);
+            return res.status(500).json({ error: 'Erro ao excluir motoboy.' });
+        }
+
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ error: 'Motoboy não encontrado!' });
+        }
+
+        res.status(200).json({ message: 'Motoboy excluído com sucesso!' });
+    });
+});
+// Iniciar o servidor
+app.listen(3000, () => {
+    console.log('Servidor rodando na porta 3000');
+});
+
+// Configuração do transporte do Nodemailer usando Mailtrap
+const transporter = nodemailer.createTransport({
+    host: 'sandbox.smtp.mailtrap.io', // Servidor SMTP do Mailtrap
+    port: 2525, // Porta SMTP
+    auth: {
+        user: '8a245929897b00', // Nome de usuário do Mailtrap
+        pass: '25d0a0f996a420', // Senha do Mailtrap
+    },
+});
+
+// Função para enviar email
+const sendEmail = async (to, subject, text) => {
+    const mailOptions = {
+        from: 'jao@gmail.com', // Email de origem
+        to: to, // Email do destinatário
+        subject: subject, // Assunto do email
+        text: text, // Corpo do email
+    };
+
+    // Envio do email
+    try {
+        const info = await transporter.sendMail(mailOptions);
+        console.log('Email enviado:', info.response);
+        return { success: true, response: info.response };
+    } catch (error) {
+        console.error('Erro ao enviar email:', error);
+        return { success: false, error: error.message };
+    }
+};
+
+// Rota para enviar email
+app.post('/api/enviar-email', (req, res) => {
+    const { destinatario, assunto, mensagem } = req.body;
+
+    // Validação dos campos
+    if (!destinatario || !assunto || !mensagem) {
+        return res.status(400).json({ error: 'Destinatário, assunto e mensagem são obrigatórios!' });
+    }
+
+    sendEmail(destinatario, assunto, mensagem)
+        .then(result => {
+            if (result.success) {
+                res.status(200).json({ message: 'Email enviado com sucesso!', info: result.response });
+            } else {
+                res.status(500).json({ message: 'Falha ao enviar email', error: result.error });
+            }
+        });
 });

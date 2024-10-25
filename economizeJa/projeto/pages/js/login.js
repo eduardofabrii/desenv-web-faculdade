@@ -32,7 +32,15 @@ document.getElementById('form-login').addEventListener('submit', async (event) =
 
         const data = await response.json();
         console.log('Login bem-sucedido:', data);
-        
+
+        // Verifica se o CPF é o do administrador
+        const adminCpf = '123.456.789'; // Substitua pelo CPF do admin
+        if (cpf === adminCpf) {
+            // Redireciona para a página do administrador
+            window.location.href = 'paginaAdmin.html';
+            return;
+        }
+
         // Armazena os dados no Local Storage de acordo com o tipo de usuário
         localStorage.setItem(tipoUsuario === 'usuario' ? 'usuarioLogado' : 'motoboyLogado', JSON.stringify(data));
 

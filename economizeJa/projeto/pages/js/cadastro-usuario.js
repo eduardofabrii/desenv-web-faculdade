@@ -78,11 +78,35 @@ function enviarUsuarioParaAPI(usuario) {
   .then(response => response.json())
   .then(data => {
     console.log("Usuário cadastrado com sucesso:", data);
+    
+    // Enviar email para o usuário
+    sendEmail(usuario.email, 'Bem-vindo ao nosso serviço!', 'Obrigado por se cadastrar!');
+    
     window.open("login.html", "_blank");
   })
   .catch(error => {
     console.error("Erro ao cadastrar o usuário:", error);
     alert("Ocorreu um erro ao cadastrar o usuário.");
+  });
+}
+
+// Função para enviar email
+function sendEmail(to, subject, text) {
+  // Exemplo simples de envio via fetch. 
+  // Você deve implementar a lógica de envio de email no seu backend.
+  fetch('/api/send-email', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ to, subject, text }),
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log("Email enviado com sucesso:", data);
+  })
+  .catch(error => {
+    console.error("Erro ao enviar email:", error);
   });
 }
 
