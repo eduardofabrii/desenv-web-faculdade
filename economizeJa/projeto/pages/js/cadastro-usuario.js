@@ -1,3 +1,5 @@
+const send = require("../../home");
+
 // Função para mostrar o formulário correspondente ao tipo
 function mostrarFormulario(tipo) {
   const formularios = document.querySelectorAll(".form-container");
@@ -66,48 +68,42 @@ function salvarUsuarioLocalStorage(usuario) {
   localStorage.setItem("usuarios", JSON.stringify(usuariosLocal));
 }
 
-// Função para enviar o usuário para a API
 function enviarUsuarioParaAPI(usuario) {
-  fetch("/api/usuarios", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(usuario),
-  })
-  .then(response => response.json())
-  .then(data => {
-    console.log("Usuário cadastrado com sucesso:", data);
-    
-    // Enviar email para o usuário
-    sendEmail(usuario.email, 'Bem-vindo ao nosso serviço!', 'Obrigado por se cadastrar!');
-    
-    window.open("login.html", "_blank");
-  })
-  .catch(error => {
-    console.error("Erro ao cadastrar o usuário:", error);
-    alert("Ocorreu um erro ao cadastrar o usuário.");
-  });
+    fetch("/api/usuarios", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(usuario),
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("Usuário cadastrado com sucesso:", data);
+        enviarEmailParaUsuario(usuario.email);
+        window.open("login.html", "_blank");
+    })
+    .catch(error => {
+        console.error("Erro ao cadastrar o usuário:", error);
+        alert("Ocorreu um erro ao cadastrar o usuário.");
+    });
 }
 
-// Função para enviar email
-function sendEmail(to, subject, text) {
-  // Exemplo simples de envio via fetch. 
-  // Você deve implementar a lógica de envio de email no seu backend.
-  fetch('/api/send-email', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ to, subject, text }),
-  })
-  .then(response => response.json())
-  .then(data => {
-    console.log("Email enviado com sucesso:", data);
-  })
-  .catch(error => {
-    console.error("Erro ao enviar email:", error);
-  });
+// Função no front para enviar e-mail
+function enviarEmailParaUsuario(email) {
+    fetch('/api/sendEmail', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            email: email,
+            subject: 'Bem-vindo!',
+            text: 'Obrigado por se cadastrar!',
+        }),
+    })
+    .then(response => response.json())
+    .then(data => console.log(data.message))
+    .catch(error => console.error('Erro ao enviar e-mail:', error));
 }
 
 // Função para carregar os dados armazenados na tabela
@@ -129,6 +125,7 @@ function carregarUsuarios() {
       <button class="btn btn-danger btn-sm" onclick="excluirUsuario(this)">Excluir</button>
     `;
   });
+  
 }
 
 // Função para editar um usuário
@@ -193,6 +190,8 @@ function excluirUsuario(botao) {
     console.error("Erro ao excluir o usuário:", error);
     alert("Ocorreu um erro ao excluir o usuário.");
   });
+  onclick="excluirUsuario(this)"
+
 }
 
 // Função para atualizar o localStorage após exclusão

@@ -55,6 +55,40 @@ app.post('/api/sessao/reiniciar', (req, res) => {
     });
 });
 
+
+const transporter = nodemailer.createTransport({
+    host: 'sandbox.smtp.mailtrap.io',
+    port: 2525,
+    auth: {
+        user: '2ecab2324d3bbb',
+        pass: 'bcf8f8d0052ae2'
+    }
+});
+
+// Função para enviar o e-mail
+const sendEmail = (to, subject, text) => {
+    transporter.sendMail({
+        from: 'jvitor@gmail.com',
+        to: to,
+        subject: subject,
+        text: text
+    }, (error, info) => {
+        if (error) {
+            console.error('Erro ao enviar e-mail:', error);
+        } else {
+            console.log('E-mail enviado:', info.response);
+        }
+    });
+};
+
+// Rota para envio de e-mail individual
+app.post('/api/sendEmail', (req, res) => {
+    const { email, subject, text } = req.body;
+
+    sendEmail(email, subject || 'Bem-vindo ao nosso serviço!', text || 'Obrigado por se cadastrar!');
+    res.json({ message: 'E-mail enviado com sucesso!' });
+});
+
 // ROTA DE LOGIN DO USUÁRIO
 app.post('/api/login/usuario', (req, res) => {
     const { cpf, senha } = req.body;
@@ -101,7 +135,7 @@ app.post('/api/usuarios', (req, res) => {
 
     connection.query('SELECT * FROM Usuario WHERE CPF = ?', [cpf], (error, results) => {
         if (error) {
-            console.error('Error checking CPF:', error);
+            console.error('Erro ao verificar CPF:', error);
             return res.status(500).json({ error: 'Erro ao verificar CPF.' });
         }
 
@@ -112,10 +146,11 @@ app.post('/api/usuarios', (req, res) => {
         const query = 'INSERT INTO Usuario (Nome, Email, Senha, CPF, Telefone) VALUES (?, ?, ?, ?, ?)';
         connection.query(query, [nome, email, senha, cpf, telefone], (insertError, insertResults) => {
             if (insertError) {
-                console.error('Error inserting user:', insertError);
+                console.error('Erro ao inserir usuário:', insertError);
                 return res.status(500).json({ error: 'Erro ao inserir usuário.' });
             }
 
+            sendEmail(email, 'Bem-vindo ao nosso serviço!', 'Obrigado por se cadastrar!');
             res.status(201).json({ message: 'Usuário adicionado com sucesso!', id: insertResults.insertId });
         });
     });
@@ -332,51 +367,4 @@ app.listen(3000, () => {
     console.log('Servidor rodando na porta 3000');
 });
 
-// Configuração do transporte do Nodemailer usando Mailtrap
-const transporter = nodemailer.createTransport({
-    host: 'sandbox.smtp.mailtrap.io', // Servidor SMTP do Mailtrap
-    port: 2525, // Porta SMTP
-    auth: {
-        user: '8a245929897b00', // Nome de usuário do Mailtrap
-        pass: '25d0a0f996a420', // Senha do Mailtrap
-    },
-});
-
-// Função para enviar email
-const sendEmail = async (to, subject, text) => {
-    const mailOptions = {
-        from: 'jao@gmail.com', // Email de origem
-        to: to, // Email do destinatário
-        subject: subject, // Assunto do email
-        text: text, // Corpo do email
-    };
-
-    // Envio do email
-    try {
-        const info = await transporter.sendMail(mailOptions);
-        console.log('Email enviado:', info.response);
-        return { success: true, response: info.response };
-    } catch (error) {
-        console.error('Erro ao enviar email:', error);
-        return { success: false, error: error.message };
-    }
-};
-
-// Rota para enviar email
-app.post('/api/enviar-email', (req, res) => {
-    const { destinatario, assunto, mensagem } = req.body;
-
-    // Validação dos campos
-    if (!destinatario || !assunto || !mensagem) {
-        return res.status(400).json({ error: 'Destinatário, assunto e mensagem são obrigatórios!' });
-    }
-
-    sendEmail(destinatario, assunto, mensagem)
-        .then(result => {
-            if (result.success) {
-                res.status(200).json({ message: 'Email enviado com sucesso!', info: result.response });
-            } else {
-                res.status(500).json({ message: 'Falha ao enviar email', error: result.error });
-            }
-        });
-});
+sendEmail('juliapbaqueta@gmail.com', 'Bem-vindo ao nosso serviço!', 'Obrigado por se cadastrar!');
