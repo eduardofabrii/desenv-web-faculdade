@@ -86,6 +86,7 @@ function atualizarUsuarios() {
                 email: cells[1].innerText,
                 cpf: cells[2].innerText,
                 telefone: cells[3].innerText,
+                codigo: cells[4].innerText
             };
             usuarios.push(usuario);
         }

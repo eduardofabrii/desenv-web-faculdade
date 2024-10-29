@@ -65,29 +65,35 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-// Função para enviar o e-mail
 const sendEmail = (to, subject, text) => {
-    transporter.sendMail({
-        from: 'jvitor@gmail.com',
-        to: to,
-        subject: subject,
-        text: text
-    }, (error, info) => {
-        if (error) {
-            console.error('Erro ao enviar e-mail:', error);
-        } else {
-            console.log('E-mail enviado:', info.response);
-        }
+    return new Promise((resolve, reject) => {
+        transporter.sendMail({ from: 'jvitor@gmail.com', to, subject, text }, (error, info) => {
+            if (error) {
+                console.error('Erro ao enviar e-mail:', error);
+                reject(error);
+            } else {
+                console.log('E-mail enviado:', info.response);
+                resolve(info.response);
+            }
+        });
     });
 };
 
+
 // Rota para envio de e-mail individual
-app.post('/api/sendEmail', (req, res) => {
+app.post('/api/sendEmail', async (req, res) => {
     const { email, subject, text } = req.body;
 
-    sendEmail(email, subject || 'Bem-vindo ao nosso serviço!', text || 'Obrigado por se cadastrar!');
-    res.json({ message: 'E-mail enviado com sucesso!' });
+   
+
+    try {
+        await sendEmail(email, subject || 'Bem-vindo ao nosso serviço!', text || 'Obrigado por se cadastrar!');
+        res.json({ message: 'E-mail enviado com sucesso!' });
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao enviar e-mail.' });
+    }
 });
+
 
 // ROTA DE LOGIN DO USUÁRIO
 app.post('/api/login/usuario', (req, res) => {
@@ -143,14 +149,16 @@ app.post('/api/usuarios', (req, res) => {
             return res.status(409).json({ error: 'Já existe um usuário com o mesmo CPF!' });
         }
 
-        const query = 'INSERT INTO Usuario (Nome, Email, Senha, CPF, Telefone) VALUES (?, ?, ?, ?, ?)';
-        connection.query(query, [nome, email, senha, cpf, telefone], (insertError, insertResults) => {
+        var code = Math.random().toString(36).slice(2, 7);
+
+        const query = 'INSERT INTO Usuario (Nome, Email, Senha, CPF, Telefone, codigo, status) VALUES (?, ?, ?, ?, ?, ?, 0)';
+        connection.query(query, [nome, email, senha, cpf, telefone, code], (insertError, insertResults) => {
             if (insertError) {
                 console.error('Erro ao inserir usuário:', insertError);
                 return res.status(500).json({ error: 'Erro ao inserir usuário.' });
             }
 
-            sendEmail(email, 'Bem-vindo ao nosso serviço!', 'Obrigado por se cadastrar!');
+            sendEmail(email, 'Bem-vindo ao nosso serviço!', 'Obrigado por se cadastrar! valide seu codigo ' + code);
             res.status(201).json({ message: 'Usuário adicionado com sucesso!', id: insertResults.insertId });
         });
     });
@@ -258,9 +266,10 @@ app.post('/api/login/motoboy', (req, res) => {
 
 // ADICIONAR MOTOBOY
 app.post('/api/motoboys', (req, res) => {
-    const { nome, cpf, senha, telefone } = req.body;
+    const { nome, cpf, senha, telefone, email, placa, cnh } = req.body;
 
-    if (!nome || !cpf || !senha || !telefone) {
+
+    if (!nome || !cpf || !senha || !telefone || !email || !placa || !cnh) {
         return res.status(400).json({ error: 'Nome, CPF, senha e telefone são obrigatórios!' });
     }
 
@@ -274,8 +283,8 @@ app.post('/api/motoboys', (req, res) => {
             return res.status(409).json({ error: 'Já existe um motoboy com o mesmo CPF!' });
         }
 
-        const query = 'INSERT INTO Motoboy (Nome, CPF, Senha, Telefone) VALUES (?, ?, ?, ?)';
-        connection.query(query, [nome, cpf, senha, telefone], (insertError, insertResults) => {
+        const query = 'INSERT INTO Motoboy (Nome, CPF, Senha, Telefone, Email, Placa, CNH) VALUES (?, ?, ?, ?, ?, ?, ?)';
+        connection.query(query, [nome, cpf, senha, telefone, email, placa, cnh], (insertError, insertResults) => {
             if (insertError) {
                 console.error('Erro ao inserir motoboy:', insertError);
                 return res.status(500).json({ error: 'Erro ao inserir motoboy.' });
@@ -324,14 +333,15 @@ app.get('/api/motoboys/:cpf', (req, res) => {
 // ROTA PARA ATUALIZAR UM MOTOBOY PELO CPF
 app.put('/api/motoboys/:cpf', (req, res) => {
     const cpf = req.params.cpf;
-    const { nome, telefone, senha } = req.body;
+    const { nome, telefone, senha, email, placa, cnh } = req.body;
 
-    if (!nome || !telefone || !senha) {
+
+    if (!nome || !telefone || !senha  ) {
         return res.status(400).json({ error: 'Nome, telefone e senha são obrigatórios!' });
     }
 
-    const query = 'UPDATE Motoboy SET Nome = ?, Telefone = ?, Senha = ? WHERE CPF = ?';
-    connection.query(query, [nome, telefone, senha, cpf], (err, results) => {
+    const query = 'UPDATE Motoboy SET Nome = ?, Telefone = ?, Senha = ?, Email = ? WHERE CPF = ?';
+    connection.query(query, [nome, telefone, senha, cpf, email, placa, cnh], (err, results) => {
         if (err) {
             console.error('Erro ao atualizar motoboy:', err);
             return res.status(500).json({ error: 'Erro ao atualizar motoboy.' });
@@ -341,8 +351,8 @@ app.put('/api/motoboys/:cpf', (req, res) => {
             return res.status(404).json({ error: 'Motoboy não encontrado!' });
         }
 
-        res.status(200).json({ message: 'Motoboy atualizado com sucesso!' });
-    });
+        res.status(200).json({ message: 'Motoboy atualizado com sucesso!' });
+     });
 });
 
 // ROTA PARA EXCLUIR UM MOTOBOY PELO CPF
@@ -367,4 +377,3 @@ app.listen(3000, () => {
     console.log('Servidor rodando na porta 3000');
 });
 
-sendEmail('juliapbaqueta@gmail.com', 'Bem-vindo ao nosso serviço!', 'Obrigado por se cadastrar!');
