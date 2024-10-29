@@ -1,75 +1,101 @@
 // Função para carregar e exibir os usuários na tabela
-function carregarUsuarios() {
+async function carregarUsuarios() {
     const tabela = document.getElementById('tabela-usuarios');
     tabela.innerHTML = ''; // Limpa a tabela antes de adicionar novos dados
 
-    // Recupera os dados do localStorage
-    let usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+    // Faz uma solicitação GET para buscar os dados do banco de dados
+    try {
+        const response = await fetch('/api/usuarios');
+        const usuarios = await response.json();
 
-    // Adiciona uma linha na tabela para cada usuário
-    usuarios.forEach(usuario => {
-        const linha = document.createElement('tr');
-        linha.innerHTML = `
-            <td>${usuario.nome}</td>
-            <td>${usuario.email}</td>
-            <td>${usuario.cpf}</td>
-            <td>${usuario.telefone}</td>
-            <td>
-                <button class="btn btn-warning btn-sm" onclick="editarUsuario(this)">Editar</button>
-                <button class="btn btn-danger btn-sm" onclick="excluirUsuario(this)">Excluir</button>
-            </td>
-        `;
-        tabela.appendChild(linha);
-    });
+        // Adiciona uma linha na tabela para cada usuário
+        usuarios.forEach(usuario => {
+            const linha = document.createElement('tr');
+            linha.innerHTML = `
+                <td>${usuario.Nome}</td>
+                <td>${usuario.Email}</td>
+                <td>${usuario.CPF}</td>
+                <td>${usuario.Telefone}</td>
+                <td>
+                    <button class="btn btn-warning btn-sm" onclick="editarUsuario(this, '${usuario.CPF}')">Editar</button>
+                    <button class="btn btn-danger btn-sm" onclick="excluirUsuario('${usuario.CPF}')">Excluir</button>
+                </td>
+            `;
+            tabela.appendChild(linha);
+        });
+    } catch (error) {
+        console.error('Erro ao carregar usuários:', error);
+    }
 }
-
 // Função para editar um usuário
-function editarUsuario(botao) {
+function editarUsuario(botao, cpf) {
     const linha = botao.parentNode.parentNode;
     const colunas = linha.querySelectorAll('td');
-    
-    // Permite edição in-line
+
+    // Permite edição in-line para os campos, exceto o CPF
     colunas.forEach((coluna, index) => {
         if (index < colunas.length - 1) { // Não permite edição da última coluna (Ações)
             const conteudoAtual = coluna.innerText;
-            coluna.innerHTML = `<input type="text" value="${conteudoAtual}" class="form-control">`;
+            // Se for a coluna do CPF, mantém como texto, caso contrário, cria um input
+            if (index === 2) { // Supondo que o CPF seja o terceiro índice (0-Base)
+                coluna.innerHTML = `<span>${conteudoAtual}</span>`;
+            } else {
+                coluna.innerHTML = `<input type="text" value="${conteudoAtual}" class="form-control">`;
+            }
         }
     });
 
     botao.innerText = 'Salvar';
-    botao.onclick = function() {
-        salvarEdicaoUsuario(linha);
+    botao.onclick = function () {
+        salvarEdicaoUsuario(linha, cpf);
     };
 }
 
-// Função para salvar a edição de um usuário
-function salvarEdicaoUsuario(linha) {
+
+async function salvarEdicaoUsuario(linha, cpf) {
     const inputs = linha.querySelectorAll('input');
-    
-    inputs.forEach((input, index) => {
-        const valorEditado = input.value;
-        linha.cells[index].innerText = valorEditado;
-    });
-
-    linha.querySelector('.btn-warning').innerText = 'Editar';
-    linha.querySelector('.btn-warning').onclick = function() {
-        editarUsuario(this);
+    const usuarioEditado = {
+        nome: inputs[0].value,
+        email: inputs[1].value,
+        cpf: cpf,  // O CPF deve ser mantido, não deve ser alterado.
+        telefone: inputs[2].value
     };
 
-    // Atualiza o localStorage
-    atualizarUsuarios();
+    // Validação de campos
+    if (!usuarioEditado.nome || !usuarioEditado.email || !usuarioEditado.telefone) {
+        alert('Por favor, preencha todos os campos!');
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/usuarios/${cpf}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(usuarioEditado)
+        });
+
+        if (!response.ok) {
+            const errorResponse = await response.json();
+            throw new Error('Falha ao atualizar usuário: ' + JSON.stringify(errorResponse));
+        }
+
+        // Atualiza a tabela novamente após a edição
+        await carregarUsuarios();  // Garante que a tabela seja recarregada com os dados mais recentes
+
+        // Restaura o botão para "Editar"
+        linha.querySelector('button').innerText = 'Editar';
+    } catch (error) {
+        console.error('Erro ao salvar edição:', error);
+    }
 }
-
 // Função para excluir um usuário
-function excluirUsuario(botao) {
-    const linha = botao.parentNode.parentNode;
-    const email = linha.cells[1].innerText;  // Usando o email como identificador único
-    linha.remove();
-
-    // Atualizar o localStorage
-    let usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
-    usuarios = usuarios.filter(usuario => usuario.email !== email);
-    localStorage.setItem('usuarios', JSON.stringify(usuarios));
+async function excluirUsuario(cpf) {
+    try {
+        await fetch(`/api/usuarios/${cpf}`, { method: 'DELETE' });
+        carregarUsuarios(); // Recarrega os dados para atualizar a tabela
+    } catch (error) {
+        console.error('Erro ao excluir usuário:', error);
+    }
 }
 
 // Função para atualizar os dados dos usuários no localStorage
@@ -86,13 +112,29 @@ function atualizarUsuarios() {
                 email: cells[1].innerText,
                 cpf: cells[2].innerText,
                 telefone: cells[3].innerText,
-                codigo: cells[4].innerText
+                senha: cells[4].innerText // Certifique-se de ter um campo de senha na tabela
             };
             usuarios.push(usuario);
         }
     });
 
-    localStorage.setItem('usuarios', JSON.stringify(usuarios));
+    // Faz a requisição ao servidor para salvar os dados
+    fetch('/api/usuarios', { // caminho atualizado para o endpoint
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(usuarios)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Erro ao salvar os dados no banco de dados.');
+        }
+        console.log('Dados salvos com sucesso!');
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+    });
 }
 
 // Chama a função para carregar os usuários quando a página é carregada
