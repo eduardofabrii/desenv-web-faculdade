@@ -440,5 +440,3 @@ app.delete('/api/produtos/:id', (req, res) => {
 app.listen(3000, () => {
     console.log('Servidor rodando na porta 3000');
 });
-
-sendEmail('juliapbaqueta@gmail.com', 'Bem-vindo ao nosso serviço!', 'Obrigado por se cadastrar!');
