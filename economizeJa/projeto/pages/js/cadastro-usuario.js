@@ -150,7 +150,7 @@ function salvarEdicao(linha) {
   const usuarioAtualizado = {};
 
   inputs.forEach((input, index) => {
-    usuarioAtualizado[index] === 2 // Mantemos o CPF como chave de identificação
+    usuarioAtualizado[index] === 2 
       ? usuarioAtualizado.cpf = input.value
       : usuarioAtualizado[["nome", "email", "endereco", "cidade", "telefone"][index]] = input.value;
     linha.cells[index].innerText = input.value; // Atualiza a tabela

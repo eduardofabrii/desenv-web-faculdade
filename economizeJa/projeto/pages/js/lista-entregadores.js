@@ -92,6 +92,7 @@ function atualizarMotoboys() {
                 placa: cells[4].innerText,
                 cnh: cells[5].innerText,
                 telefone: cells[6].innerText,
+                codigo: cells[7].innerText
             };
             motoboys.push(motoboy);
         }

@@ -46,7 +46,7 @@ function carrregarMotoboys() {
     motoboys.forEach((motoboy) => {
         const row = tabela.insertRow();
         row.insertCell(0).textContent = motoboy.nome;
-        row.insertCell(1).textContent = motoboy.emal;
+        row.insertCell(1).textContent = motoboy.email;
         row.insertCell(2).textContent = motoboy.cpf;
         row.insertCell(3).textContent = motoboy.placa;
         row.insertCell(4).textContent = motoboy.cnh;
@@ -185,5 +185,4 @@ function buscarMotoboy(){
 
 document.getElementById('searchInput').addEventListener('input', buscarMotoboy)
 
-    
-
+carrregarMotoboys
