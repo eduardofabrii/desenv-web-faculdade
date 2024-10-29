@@ -5,7 +5,7 @@
 # Tecnologias Utilizadas
 Front-end: HTML, Bootstrap, CSS, JavaScript <br>
 Back-end: Node.js <br>
-Banco de Dados: a definidir <br>
+Banco de Dados: MySQL <br>
 Controle de Versão: Git/GitHub
 
 # Equipe
