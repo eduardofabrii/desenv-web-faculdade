@@ -66,71 +66,45 @@
     </nav>
 
     <main>
-        <section id="product-list" class="py-5">
+        <section id="add-product" class="py-5">
             <div class="container">
-                <h2 class="text-center mb-4">Produtos Adicionados</h2>
-                <div class="row" id="produtosContainer"> <!-- Usando a classe row para o layout do Bootstrap -->
-                    <!-- Os produtos serão inseridos aqui dinamicamente -->
-                </div>
+                <h2 class="text-center mb-4">Adicionar Produto</h2>
+                <form id="produtoForm">
+                    <div class="mb-3">
+                        <label for="productName" class="form-label">Nome do Produto</label>
+                        <input type="text" class="form-control" id="productName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="productDescription" class="form-label">Descrição</label>
+                        <textarea class="form-control" id="productDescription" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="productPrice" class="form-label">Preço</label>
+                        <input type="number" class="form-control" id="productPrice" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="productImage" class="form-label">Imagem do Produto</label>
+                        <input type="file" class="form-control" id="productImage" accept="image/*" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Adicionar Produto</button>
+                </form>
             </div>
         </section>
-    </main>
-    
-    <section class="footer" id="avaliar">
-        <div class="container">
-          <aside class="avaliacao">
-            <h3>Avalie nosso projeto</h3>
-            <div class="stars">
-              <input type="radio" name="star" id="star5" value="5">
-              <label for="star5">★</label>
-              <input type="radio" name="star" id="star4" value="4">
-              <label for="star4">★</label>
-              <input type="radio" name="star" id="star3" value="3">
-              <label for="star3">★</label>
-              <input type="radio" name="star" id="star2" value="2">
-              <label for="star2">★</label>
-              <input type="radio" name="star" id="star1" value="1">
-              <label for="star1">★</label>
-            </div>
-            <div id="thankYouMessage">Obrigado pela sua avaliação!</div>
-          </aside>
-          <form action="post" class="sugestoes" onsubmit="enviarSugestion(event)"> 
-            <input type="text" placeholder="Sugestões" id="sugestion" >
-            <button class="btn btn-primary" id = "btnSugestion"><i class="bi bi-send"></i></button>
-          </form>
-        </div>
-       
-        <footer>
-          <div class="contato" id="contato">   
-              <main class="autoria">
-                  <p>João Vitor Correa Oliveira</p>
-                  <aside class="redes">
-                    <a href="mailto:jvitor.oliveira1803@gmail.com" target="_blank"><i class="bi bi-envelope-fill"></i></a>
-                    <a href="https://www.linkedin.com/in/jwoliveira/" target="_blank"><i class="bi bi-linkedin"></i></a>
-                    <a href="https://github.com/jvEcodev" target="_blank"><i class="bi bi-github"></i></a>
-                  </aside>
-              </main>
-              <main class="autoria">
-                <p>Eduardo Henrique Fabri</p>
-                <aside class="redes">
-                  <a href="mailto:eduardohfabri@gmail.com" target="_blank"><i class="bi bi-envelope-fill"></i></a>
-                  <a href="https://www.linkedin.com/in/eduardofabri/" target="_blank"><i class="bi bi-linkedin"></i></a>
-                  <a href="https://github.com/eduardofabrii" target="_blank"><i class="bi bi-github"></i></a>
-                </aside>
-            </main>
-            <main class="autoria">
-              <p>Renan Herculano</p>
-              <aside class="redes">
-                <a href="mailto:Renan.kaspermaya19americo@gmail.com" target="_blank"><i class="bi bi-envelope-fill"></i></a>
-                <a href="https://www.linkedin.com/in/renan-americo-herculano-947021302/" target="_blank"><i class="bi bi-linkedin"></i></a>
-                <a href="https://github.com/RenanH19" target="_blank"><i class="bi bi-github"></i></a>
-              </aside>
-          </main>
-          </div>
-      </footer>
-    </section>    
 
-    <script src="js/mercado-registrarproduto.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-aBwgFNiNfr8h6d20xgTgC5KIM9nM9+QkI8WvBC4hXih5f4M9GR9Uu7YQDdFpqGm8" crossorigin="anonymous"></script>
-</body>
+        <section id="product-list" class="py-5">
+            <div class="container">
+                <h2 class="text-center mb-4">Produtos Cadastrados</h2>
+                <div id="produtosContainer" class="row"></div>
+            </div>
+        </section>
+        
+        <footer>
+            <div class="container">
+                <p class="text-center">&copy; 2024 EconomizeJá - Todos os direitos reservados.</p>
+            </div>
+        </footer>
+
+        <script src="js/mercado-registrarproduto.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-HK+0NT3As9EoYB48KfbZhW/7ZxYFcBb4ZcJ8gCqgi0VjBb+nBQFOkTxSU1w7z69B" crossorigin="anonymous"></script>
+    </body>
 </html>

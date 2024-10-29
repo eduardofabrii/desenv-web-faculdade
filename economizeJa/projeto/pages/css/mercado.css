@@ -56,6 +56,11 @@ body::-webkit-scrollbar-thumb:hover {
     border: none;
 }
 
+.btn.btn-primary:hover{
+    background-color: #196b20 !important;
+    transition: 0.5s;
+}
+
 /* Estilo para o botão primário */
 .bi.bi-menu-button-wide {
     background-color: transparent;
@@ -98,7 +103,6 @@ footer > .container.text-center{
 }
 
 .container.text-center a:hover{
-    
     background-color: white;
     color: #196B20;
     transition:cubic-bezier(0.165, 0.84, 0.44, 1);
@@ -106,8 +110,7 @@ footer > .container.text-center{
 
 
 
-.footer{
-   
+.footer{  
     color: white;
     padding: 30px;
     text-align: center;
@@ -120,32 +123,24 @@ footer > .container.text-center{
     align-items: flex-start;
     flex-direction: column;
     z-index: 100;
-
+}
     
+.card {
+    overflow: hidden; /* Garante que a imagem não ultrapasse o contêiner */
 }
-.card-img{
-    border-radius: 40% !important;
-    width: 50% !important;
-    height: 60% !important;
-    margin-top: 10px !important;
-    margin: 0 auto
-}
-.card-img-top:hover{
-    transform:rotate(360deg);	
-    transition: 1s;
-}
-.card{
-    border: none  !important;
-    margin-bottom: 100px;
-  
 
-    
+.card-img-top {
+    width: 70%; /* Ajuste a porcentagem conforme o espaço desejado */
+    margin: 0 auto;
+    display: block;
+    transition: transform 0.5s, box-shadow 0.5s;
 }
-.card:hover{
-    transform: scale(1.05);
-    transition: 0.5s;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+
+.card:hover .card-img-top {
+    transform: scale(1.05); /* Aumenta a imagem ao passar o mouse */
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
 }
+
 
 .footer > .container{
     display: flex;

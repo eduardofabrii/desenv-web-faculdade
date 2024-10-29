@@ -362,6 +362,80 @@ app.delete('/api/motoboys/:cpf', (req, res) => {
         res.status(200).json({ message: 'Motoboy excluído com sucesso!' });
     });
 });
+
+// ADICIONAR PRODUTO
+app.post('/api/produtos', (req, res) => {
+    const { nome, preco, descricao, quantidade } = req.body;
+
+    if (!nome || !preco || !descricao || !quantidade) {
+        return res.status(400).json({ error: 'Nome, preço, descrição e quantidade são obrigatórios!' });
+    }
+
+    const query = 'INSERT INTO Produto (Nome, Preco, Descricao, Quantidade) VALUES (?, ?, ?, ?)';
+    connection.query(query, [nome, preco, descricao, quantidade], (insertError, insertResults) => {
+        if (insertError) {
+            console.error('Erro ao inserir produto:', insertError);
+            return res.status(500).json({ error: 'Erro ao inserir produto.' });
+        }
+
+        res.status(201).json({ message: 'Produto adicionado com sucesso!', id: insertResults.insertId });
+    });
+});
+
+// GET para listar todos os produtos
+app.get('/api/produtos', (req, res) => {
+    const query = 'SELECT * FROM Produto';
+    connection.query(query, (err, results) => {
+        if (err) {
+            console.error('Erro ao buscar produtos:', err);
+            return res.status(500).json({ error: 'Erro ao buscar produtos.' });
+        }
+
+        res.status(200).json(results);
+    });
+});
+
+// ROTA PARA CONSULTAR PRODUTO PELO ID
+app.get('/api/produtos/:id', (req, res) => {
+    const id = req.params.id;
+
+    if (!id) {
+        return res.status(400).json({ error: 'ID inválido.' });
+    }
+
+    connection.query('SELECT * FROM Produto WHERE ID = ?', [id], (error, results) => {
+        if (error) {
+            console.error('Erro ao consultar o banco de dados:', error);
+            return res.status(500).json({ error: 'Erro ao buscar produto.' });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ error: 'Produto não encontrado.' });
+        }
+
+        return res.json(results[0]);
+    });
+});
+
+// ROTA PARA EXCLUIR UM PRODUTO PELO ID
+app.delete('/api/produtos/:id', (req, res) => {
+    const id = req.params.id;
+
+    connection.query('DELETE FROM Produto WHERE ID = ?', [id], (err, results) => {
+        if (err) {
+            console.error('Erro ao excluir produto:', err);
+            return res.status(500).json({ error: 'Erro ao excluir produto.' });
+        }
+
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ error: 'Produto não encontrado!' });
+        }
+
+        res.status(200).json({ message: 'Produto excluído com sucesso!' });
+    });
+});
+
+
 // Iniciar o servidor
 app.listen(3000, () => {
     console.log('Servidor rodando na porta 3000');
