@@ -1,14 +1,35 @@
+const inputPesquisar = document.getElementById('searchInput');
+
+function inputPesquisarUsuarios() {
+    const filtro = inputPesquisar.value.toUpperCase();
+    const tabela = document.getElementById('tabela-usuarios');	
+    const linhas = tabela.getElementsByTagName('tr');
+
+    for (let i = 0; i < linhas.length; i++) {
+        const colunas = linhas[i].getElementsByTagName('td');
+        let encontrou = false;
+
+        for (let j = 0; j < colunas.length - 1; j++) {
+            const texto = colunas[j].innerText.toUpperCase();
+            if (texto.indexOf(filtro) > -1) {
+                encontrou = true;
+                break;
+            }
+        }
+        linhas[i].style.display = encontrou ? '' : 'none';
+    }
+}
+
+
 // Função para carregar e exibir os usuários na tabela
 async function carregarUsuarios() {
     const tabela = document.getElementById('tabela-usuarios');
-    tabela.innerHTML = ''; // Limpa a tabela antes de adicionar novos dados
+    tabela.innerHTML = ''; 
 
-    // Faz uma solicitação GET para buscar os dados do banco de dados
     try {
         const response = await fetch('/api/usuarios');
         const usuarios = await response.json();
 
-        // Adiciona uma linha na tabela para cada usuário
         usuarios.forEach(usuario => {
             const linha = document.createElement('tr');
             linha.innerHTML = `
@@ -136,6 +157,7 @@ function atualizarUsuarios() {
         console.error('Erro:', error);
     });
 }
+
 
 // Chama a função para carregar os usuários quando a página é carregada
 window.onload = carregarUsuarios;

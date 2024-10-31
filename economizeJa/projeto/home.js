@@ -364,8 +364,99 @@ app.delete('/api/motoboys/:cpf', (req, res) => {
         res.status(200).json({ message: 'Motoboy excluído com sucesso!' });
     });
 });
+// ADICIONAR PRODUTO
+app.post('/api/produtos', (req, res) => {
+    const { nome, descricao, categoria } = req.body;
+
+    if (!nome || !descricao || !categoria) {
+        return res.status(400).json({ error: 'Nome, descrição e categoria são obrigatórios!' });
+    }
+
+    const query = 'INSERT INTO Produtos (Nome, Descricao, Categoria) VALUES (?, ?, ?)';
+    connection.query(query, [nome, descricao, categoria], (err, results) => {
+        if (err) {
+            console.error('Erro ao inserir produto:', err);
+            return res.status(500).json({ error: 'Erro ao inserir produto.' });
+        }
+        return res.status(201).json({ message: 'Produto adicionado com sucesso!', id: results.insertId });
+    });
+});
+
+// ROTA PARA LISTAR TODOS OS PRODUTOS
+app.get('/api/produtos', (req, res) => {
+    const query = 'SELECT * FROM Produtos';
+    connection.query(query, (err, results) => {
+        if (err) {
+            console.error('Erro ao buscar produtos:', err);
+            return res.status(500).json({ error: 'Erro ao buscar produtos.' });
+        }
+
+        res.status(200).json(results);
+    });
+});
+
+// ROTA PARA CONSULTAR PRODUTO PELO ID
+app.get('/api/produtos/:id', (req, res) => {
+    const id = req.params.id;
+
+    connection.query('SELECT * FROM Produtos WHERE ID_Produtos = ?', [id], (error, results) => {
+        if (error) {
+            console.error('Erro ao consultar o banco de dados:', error);
+            return res.status(500).json({ error: 'Erro ao buscar produto.' });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ error: 'Produto não encontrado.' });
+        }
+
+        return res.json(results[0]);
+    });
+});
+
+// ROTA PARA ATUALIZAR UM PRODUTO PELO ID
+app.put('/api/produtos/:id', (req, res) => {
+    const id = req.params.id;
+    const { nome, descricao, categoria } = req.body;
+
+    if (!nome || !descricao || !categoria) {
+        return res.status(400).json({ error: 'Nome, descrição e categoria são obrigatórios!' });
+    }
+
+    const query = 'UPDATE Produtos SET Nome = ?, Descricao = ?, Categoria = ? WHERE ID_Produtos = ?';
+    connection.query(query, [nome, descricao, categoria, id], (err, results) => {
+        if (err) {
+            console.error('Erro ao atualizar produto:', err);
+            return res.status(500).json({ error: 'Erro ao atualizar produto.' });
+        }
+
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ error: 'Produto não encontrado!' });
+        }
+
+        res.status(200).json({ message: 'Produto atualizado com sucesso!' });
+    });
+});
+
+// ROTA PARA EXCLUIR UM PRODUTO PELO ID
+app.delete('/api/produtos/:id', (req, res) => {
+    const id = req.params.id;
+
+    connection.query('DELETE FROM Produtos WHERE ID_Produtos = ?', [id], (err, results) => {
+        if (err) {
+            console.error('Erro ao excluir produto:', err);
+            return res.status(500).json({ error: 'Erro ao excluir produto.' });
+        }
+
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ error: 'Produto não encontrado!' });
+        }
+
+        res.status(200).json({ message: 'Produto excluído com sucesso!' });
+    });
+});
 
 // Iniciar o servidor
-app.listen(3000, () => {
-    console.log('Servidor rodando na porta 3000');
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Servidor rodando na porta ${PORT}`);
 });
