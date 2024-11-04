@@ -9,7 +9,7 @@ const app = express();
 app.use(express.json());
 app.use(express.static('./pages'));
 app.use(cookieParser());
-app.use(session({ // Configurando a sessão
+app.use(session({ 
     secret: 'seu-segredo-aqui',
     resave: false,
     saveUninitialized: true,
@@ -49,6 +49,8 @@ app.post('/api/sessao/reiniciar', (req, res) => {
         if (err) {
             console.error('Erro ao reinicializar sessão:', err);
             return res.status(500).json({ error: 'Erro ao reinicializar sessão.' });
+
+
         }
         res.clearCookie('cpf');
         res.status(200).json({ message: 'Sessão reinicializada com sucesso.' });
@@ -366,14 +368,14 @@ app.delete('/api/motoboys/:cpf', (req, res) => {
 });
 // ADICIONAR PRODUTO
 app.post('/api/produtos', (req, res) => {
-    const { nome, descricao, categoria } = req.body;
+    const { Nome, Descricao, Nicho, Preco } = req.body;
 
-    if (!nome || !descricao || !categoria) {
-        return res.status(400).json({ error: 'Nome, descrição e categoria são obrigatórios!' });
+    if (!Nome || !Descricao || !Nicho || !Preco) {
+        return res.status(400).json({ error: 'Nome, descrição, categoria e preço são obrigatórios!' });
     }
 
-    const query = 'INSERT INTO Produtos (Nome, Descricao, Categoria) VALUES (?, ?, ?)';
-    connection.query(query, [nome, descricao, categoria], (err, results) => {
+    const query = 'INSERT INTO Produtos (Nome, Descricao, Nicho, Preco) VALUES (?, ?, ?, ?)';
+    connection.query(query, [Nome, Descricao, Nicho, Preco], (err, results) => {
         if (err) {
             console.error('Erro ao inserir produto:', err);
             return res.status(500).json({ error: 'Erro ao inserir produto.' });
@@ -390,7 +392,6 @@ app.get('/api/produtos', (req, res) => {
             console.error('Erro ao buscar produtos:', err);
             return res.status(500).json({ error: 'Erro ao buscar produtos.' });
         }
-
         res.status(200).json(results);
     });
 });
@@ -416,14 +417,14 @@ app.get('/api/produtos/:id', (req, res) => {
 // ROTA PARA ATUALIZAR UM PRODUTO PELO ID
 app.put('/api/produtos/:id', (req, res) => {
     const id = req.params.id;
-    const { nome, descricao, categoria } = req.body;
+    const { Nome, Descricao, Nicho, Preco } = req.body;
 
-    if (!nome || !descricao || !categoria) {
-        return res.status(400).json({ error: 'Nome, descrição e categoria são obrigatórios!' });
+    if (!Nome || !Descricao || !Nicho || !Preco) {
+        return res.status(400).json({ error: 'Nome, descrição, categoria e preço são obrigatórios!' });
     }
 
-    const query = 'UPDATE Produtos SET Nome = ?, Descricao = ?, Categoria = ? WHERE ID_Produtos = ?';
-    connection.query(query, [nome, descricao, categoria, id], (err, results) => {
+    const query = 'UPDATE Produtos SET Nome = ?, Descricao = ?, Nicho = ?, Preco = ? WHERE ID_Produtos = ?';
+    connection.query(query, [Nome, Descricao, Nicho, Preco, id], (err, results) => {
         if (err) {
             console.error('Erro ao atualizar produto:', err);
             return res.status(500).json({ error: 'Erro ao atualizar produto.' });

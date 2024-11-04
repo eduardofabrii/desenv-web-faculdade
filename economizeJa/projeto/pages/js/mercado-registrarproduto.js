@@ -1,198 +1,177 @@
-// Inicializa a lista de produtos
-const produtos = JSON.parse(localStorage.getItem('products')) || [];
+async function adicionarProduto(event) {
+    event.preventDefault();
 
-// Cria o botão para carregar todos os produtos
-const carregarTodosBtn = document.createElement('button');
-carregarTodosBtn.innerText = 'Carregar Todos os Produtos';
-carregarTodosBtn.className = 'btn btn-primary mt-4';
-carregarTodosBtn.onclick = carregarTodosProdutos; // Chama a função para carregar todos os produtos
-produtosContainer.prepend(carregarTodosBtn); // Adiciona o botão ao início do container
+    // Captura a imagem e converte para uma URL temporária
+    const imageInput = document.getElementById("productImage");
+    const imageFile = imageInput.files[0];
+    const imageURL = imageFile ? URL.createObjectURL(imageFile) : ''; // Não usar padrão aqui
 
-const imagemPadrao = 'images/img-caixa-bombons.jpg'; // Substitua pelo caminho da sua imagem padrão
+    // Captura os outros campos
+    const nome = document.getElementById("productName").value;
+    const nicho = document.getElementById("productCategory").value;
+    const descricao = document.getElementById("productDescription").value;
+    const preco = parseFloat(document.getElementById("productPrice").value);
 
-// Adiciona um produto padrão se não houver produtos
-if (produtos.length === 0) {
-    produtos.push({
-        id: Date.now(), // Usando timestamp como ID único
-        name: 'Caixa de Bombons',
-        description: 'Caixa com 12 bombons sortidos',
-        price: '49.99',
-        image: imagemPadrao
-    });
-    localStorage.setItem('products', JSON.stringify(produtos)); // Salva no localStorage
-}
-
-function carregarProdutosRegistro() {
-    const produtosContainer = document.getElementById('produtosContainer');
-    
-    // Limpa o container
-    produtosContainer.innerHTML = ''; // Isso é necessário para não duplicar os produtos
-
-    // Exibe os produtos existentes
-    produtos.forEach((produto, index) => {
-        const produtoCard = `
-            <div class="col-md-4">
-                <div class="card" style="margin-bottom: 20px;">
-                    <img src="${produto.image}" class="card-img-top" alt="${produto.name}" style="height: 400px; object-fit: cover;" />
-                    <div class="card-body">
-                        <span id="nameDisplay-${index}">${produto.name}</span>
-                        <input type="text" value="${produto.name}" class="form-control mb-2" readonly id="name-${index}" style="display: none;" />
-                        <br />
-                        <span id="descriptionDisplay-${index}">${produto.description}</span>
-                        <input type="text" value="${produto.description}" class="form-control mb-2" readonly id="description-${index}" style="display: none;" />
-                        <br />
-                        <span id="priceDisplay-${index}"><strong>R$</strong> ${produto.price}</span>
-                        <input type="number" value="${produto.price}" class="form-control mb-2" readonly id="price-${index}" style="display: none;" />
-                        <br />
-                        <button class="btn btn-warning mt-2" onclick="toggleEdit(${index}, event)">Editar</button>
-                        <button class="btn btn-danger mt-2" onclick="removerProduto(${index})">Remover</button>
-                    </div>
-                </div>
-            </div>
-        `;
-        produtosContainer.innerHTML += produtoCard;
-    });
-}
-
-
-// Função para carregar todos os produtos
-function carregarTodosProdutos() {
-    const todosOsProdutos = JSON.parse(localStorage.getItem('products')) || [];
-    produtos.length = 0; // Limpa a lista atual
-    produtos.push(...todosOsProdutos); // Adiciona todos os produtos à lista atual
-    salvarProdutos(); // Salva as alterações
-}
-
-// Função para alternar entre editar e salvar
-function toggleEdit(index, event) {
-    const nameInput = document.getElementById(`name-${index}`);
-    const descriptionInput = document.getElementById(`description-${index}`);
-    const priceInput = document.getElementById(`price-${index}`);
-    const nameDisplay = document.getElementById(`nameDisplay-${index}`);
-    const descriptionDisplay = document.getElementById(`descriptionDisplay-${index}`);
-    const priceDisplay = document.getElementById(`priceDisplay-${index}`);
-    const button = event.target; // Pega o botão que foi clicado
-
-    if (button.innerText === 'Editar') {
-        // Mostra os campos de entrada e esconde os textos
-        nameInput.style.display = 'block';
-        descriptionInput.style.display = 'block';
-        priceInput.style.display = 'block';
-        nameDisplay.style.display = 'none';
-        descriptionDisplay.style.display = 'none';
-        priceDisplay.style.display = 'none';
-        button.innerText = 'Salvar'; // Muda o texto do botão
-        nameInput.removeAttribute('readonly'); // Permite edição
-        descriptionInput.removeAttribute('readonly'); // Permite edição
-        priceInput.removeAttribute('readonly'); // Permite edição
-        nameInput.focus(); // Foca no campo de entrada para facilitar a edição
-    } else {
-        // Salva as alterações
-        produtos[index].name = nameInput.value;
-        produtos[index].description = descriptionInput.value;
-        produtos[index].price = priceInput.value;
-
-        // Atualiza a exibição
-        atualizarDisplay(index, nameInput, descriptionInput, priceInput, button);
-        salvarProdutos(); // Salva as alterações
-    }
-}
-
-// Função para atualizar a exibição após a edição
-function atualizarDisplay(index, nameInput, descriptionInput, priceInput, button) {
-    const nameDisplay = document.getElementById(`nameDisplay-${index}`);
-    const descriptionDisplay = document.getElementById(`descriptionDisplay-${index}`);
-    const priceDisplay = document.getElementById(`priceDisplay-${index}`);
-    
-    // Esconde os campos de entrada e mostra os textos
-    nameInput.style.display = 'none';
-    descriptionInput.style.display = 'none';
-    priceInput.style.display = 'none';
-    nameDisplay.innerText = nameInput.value; // Atualiza o texto com o novo valor
-    descriptionDisplay.innerText = descriptionInput.value;
-    priceDisplay.innerHTML = `<strong>R$</strong> ${priceInput.value}`; // Atualiza o preço com o símbolo em negrito
-    nameDisplay.style.display = 'block';
-    descriptionDisplay.style.display = 'block';
-    priceDisplay.style.display = 'block';
-    button.innerText = 'Editar'; // Muda o texto do botão de volta para "Editar"
-}
-
-// Função para carregar produtos no "Mercado" (somente com opção de adicionar ao carrinho)
-function carregarProdutosMercado() {
-    const produtosContainer = document.getElementById('produtosContainer');
-    produtosContainer.innerHTML = ''; // Limpa o container
-
-    produtos.forEach(produto => {
-        const produtoCard = `
-            <div class="col-md-4">
-                <div class="card" style="margin-bottom: 20px;">
-                    <img src="${produto.image || imagemPadrao}" class="card-img-top" alt="${produto.name}" style="height: 400px; object-fit: cover;" />
-                    <div class="card-body">
-                        <h5 class="card-title">${produto.name}</h5>
-                        <p class="price"><strong>R$</strong> ${produto.price}</p>
-                        <p>${produto.description}</p>
-                        <button class="btn btn-primary" onclick="adicionarAoCarrinho(${produto.id})">Adicionar ao Carrinho</button>
-                    </div>
-                </div>
-            </div>
-        `;
-        produtosContainer.innerHTML += produtoCard;
-    });
-}
-
-// Função para adicionar um produto ao localStorage
-document.getElementById('produtoForm')?.addEventListener('submit', function(event) {
-    event.preventDefault(); // Impede o envio padrão do formulário
-
-    const nomeProduto = document.getElementById('productName').value;
-    const descricaoProduto = document.getElementById('productDescription').value;
-    const precoProduto = document.getElementById('productPrice').value;
-    const imagemProdutoInput = document.getElementById('productImage');
-
-    const reader = new FileReader();
-    reader.onloadend = function() {
-        const novoProduto = {
-            id: Date.now(), // Usando timestamp como ID único
-            name: nomeProduto,
-            description: descricaoProduto,
-            price: precoProduto,
-            image: reader.result, // A imagem em formato Base64
-        };
-
-        produtos.push(novoProduto); // Adiciona o novo produto
-        localStorage.setItem('products', JSON.stringify(produtos)); // Salva no localStorage
-
-        document.getElementById('produtoForm').reset(); // Limpa o formulário
-        carregarProdutosRegistro(); // Recarrega a lista de produtos
+    // Dados do produto (sem a imagem)
+    const produto = {
+        Nome: nome,
+        Nicho: nicho,
+        Descricao: descricao,
+        Preco: preco,
+        Imagem: imageURL // Adiciona a imagem ao objeto produto
     };
 
-    if (imagemProdutoInput.files[0]) {
-        reader.readAsDataURL(imagemProdutoInput.files[0]); // Lê a imagem selecionada
+    try {
+        // Envia o produto para o backend
+        const response = await fetch('/api/produtos', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(produto),
+        });
+
+        if (response.ok) {
+            alert("Produto adicionado com sucesso!");
+            document.getElementById("produtoForm").reset();
+
+            // Salva a imagem no localStorage
+            localStorage.setItem(`imagem-${nome}`, imageURL);
+            carregarProdutos(); // Atualiza a lista de produtos
+        } else {
+            throw new Error("Erro ao adicionar produto.");
+        }
+    } catch (error) {
+        console.error(error);
+        alert(error.message);
     }
-});
-
-// Função para remover um produto
-function removerProduto(index) {
-    produtos.splice(index, 1); // Remove o produto da lista
-    salvarProdutos(); // Salva as alterações
 }
 
-// Função para salvar os produtos no localStorage e recarregar a lista
-function salvarProdutos() {
-    localStorage.setItem('products', JSON.stringify(produtos)); // Atualiza o localStorage
-    carregarProdutosRegistro(); // Recarrega a lista de produtos
+async function carregarProdutos() {
+    const response = await fetch('/api/produtos');
+    const produtos = await response.json();
+
+    const produtosContainer = document.getElementById("produtosContainer");
+    produtosContainer.innerHTML = ""; // Limpa a lista existente
+
+    if (produtos.length === 0) {
+        produtosContainer.innerHTML = "<p>Nenhum produto cadastrado.</p>";
+        return; // Sai da função se não houver produtos
+    }
+
+    for (const produto of produtos) {
+        const col = document.createElement("div");
+        col.className = "col-md-4 mb-3";
+
+        // Recupera a imagem do localStorage
+        const imagem = localStorage.getItem(`imagem-${produto.Nome}`) || '';
+
+        // Verifica se a imagem existe
+        if (imagem) {
+            try {
+                const imgResponse = await fetch(imagem);
+                if (imgResponse.ok) {
+                    col.innerHTML = `
+                        <div class="card">
+                            <img src="${imagem}" class="card-img-top" alt="${produto.Nome}" style="max-height: 200px; object-fit: cover;">
+                            <div class="card-body">
+                                <h5 class="card-title">${produto.Nome}</h5>
+                                <p class="card-text">${produto.Descricao}</p>
+                                <p class="card-text">Preço: R$ ${produto.Preco.toFixed(2)}</p>
+                                <p class="card-text">Nicho: ${produto.Nicho}</p>
+                                <button class="btn btn-primary" onclick="editarProduto(${produto.ID_Produtos})">Editar</button>
+                                <button class="btn btn-danger" onclick="excluirProduto(${produto.ID_Produtos})">Excluir</button>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // Se a imagem não for encontrada, exibe apenas uma mensagem genérica
+                    col.innerHTML = `<p>Imagem não disponível para ${produto.Nome}.</p>`;
+                }
+            } catch (error) {
+                console.error(error);
+                col.innerHTML = `<p>Erro ao carregar imagem para ${produto.Nome}.</p>`;
+            }
+        } else {
+            col.innerHTML = `<p>Imagem não fornecida para ${produto.Nome}.</p>`;
+        }
+
+        produtosContainer.appendChild(col);
+    }
 }
 
-// Função para adicionar um produto ao carrinho no "Mercado" (implementação futura)
-function adicionarAoCarrinho(produtoId) {
-    alert(`Produto com ID ${produtoId} adicionado ao carrinho!`); // Mensagem de alerta
+// Adiciona o evento de submit ao formulário
+document.getElementById("produtoForm").addEventListener("submit", adicionarProduto);
+
+
+
+// Função para editar um produto
+async function editarProduto(id) {
+    const nome = prompt("Novo Nome do Produto:");
+    const nicho = prompt("Novo Nicho:");
+    const descricao = prompt("Nova Descrição:");
+    const preco = parseFloat(prompt("Novo Preço:"));
+    
+    // Captura a imagem e converte para uma URL temporária
+    const imageInput = document.getElementById("productImage");
+    const imageFile = imageInput.files[0];
+    const imageURL = imageFile ? URL.createObjectURL(imageFile) : localStorage.getItem(`imagem-${id}`) || 'caminho/para/imagem/padrao.jpg';
+    
+    const produto = {
+        Nome: nome,
+        Nicho: nicho,
+        Descricao: descricao,
+        Preco: preco,
+        Imagem: imageURL // Adiciona a imagem ao objeto produto
+    };
+
+    try {
+        const response = await fetch(`/api/produtos/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(produto),
+        });
+
+        if (response.ok) {
+            // Atualiza a imagem no localStorage
+            localStorage.setItem(`imagem-${id}`, imageURL);
+            alert("Produto editado com sucesso!");
+            carregarProdutos(); // Recarrega a lista de produtos
+        } else {
+            throw new Error("Erro ao editar produto.");
+        }
+    } catch (error) {
+        console.error(error);
+        alert(error.message);
+    }
 }
 
-// Inicialize o carregamento
-if (window.location.pathname.includes('registrar-produtos.html')) {
-    carregarProdutosRegistro(); // Carrega produtos para registrar
+// Função para excluir um produto
+async function excluirProduto(id) {
+    if (confirm("Tem certeza que deseja excluir este produto?")) {
+        try {
+            const response = await fetch(`/api/produtos/${id}`, {
+                method: 'DELETE',
+            });
+
+            if (response.ok) {
+                localStorage.removeItem(`imagem-${id}`); // Remove a imagem do localStorage ao excluir o produto
+                alert("Produto excluído com sucesso!");
+                carregarProdutos(); // Recarrega a lista de produtos
+            } else {
+                throw new Error("Erro ao excluir produto.");
+            }
+        } catch (error) {
+            console.error(error);
+            alert(error.message);
+        }
+    }
 }
 
-if (window.location.pathname.includes('mercado.html')) {
-    carregarProdutosMercado(); // Carrega produtos para o mercado
-}
+// Adiciona o evento de submit ao formulário
+document.getElementById("produtoForm").addEventListener("submit", adicionarProduto);
+
+// Carrega os produtos ao iniciar a página
+carregarProdutos();
