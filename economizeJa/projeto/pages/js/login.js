@@ -73,4 +73,22 @@ function alterarInput() {
       alert('CPF ou CNPJ e senha inválidos!');
     }
   });
+
   
+  function switchImages() {
+    const select = document.getElementById('tipoUsuario').value;
+  
+    if (select == "usuario"){
+      document.getElementById("fundo").src = "images/frutasVermelhas.jpg";
+    }
+    else if (select == "motoboy"){
+      document.getElementById("fundo").src = "images/img-motoboy.jpg";
+    }
+    else if (select == "estabelecimento"){
+      document.getElementById("fundo").src = "images/estabelecimento.jpg";
+    }
+   
+  }
+  
+  const select = document.getElementById('tipoUsuario');
+  select.addEventListener('change', switchImages);
