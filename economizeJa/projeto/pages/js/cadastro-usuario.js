@@ -27,11 +27,9 @@ function switchImages(tipo) {
   img.style.left = "0px";
 }
 
-// Adicionando eventos de clique para botões
 document.getElementById("btn-restaurante").addEventListener("click", () => switchImages("restaurante"));
 document.getElementById("btn-motoboy").addEventListener("click", () => switchImages("motoboy"));
 
-// Função para cadastrar um usuário
 function cadastrarUsuario() {
   const usuario = obterDadosUsuario();
 
@@ -43,7 +41,7 @@ function cadastrarUsuario() {
   }
 }
 
-// Função para obter os dados do usuário
+
 function obterDadosUsuario() {
   return {
     nome: document.getElementById("nome-usuario").value,
@@ -56,12 +54,10 @@ function obterDadosUsuario() {
   };
 }
 
-// Função para verificar se todos os campos estão preenchidos
 function verificarCampos(usuario) {
   return Object.values(usuario).every(campo => campo !== "");
 }
 
-// Função para salvar o usuário no localStorage
 function salvarUsuarioLocalStorage(usuario) {
   const usuariosLocal = JSON.parse(localStorage.getItem("usuarios")) || [];
   usuariosLocal.push(usuario);
@@ -88,7 +84,6 @@ function enviarUsuarioParaAPI(usuario) {
     });
 }
 
-// Função no front para enviar e-mail
 function enviarEmailParaUsuario(email) {
     fetch('/api/sendEmail', {
         method: 'POST',
@@ -106,7 +101,6 @@ function enviarEmailParaUsuario(email) {
     .catch(error => console.error('Erro ao enviar e-mail:', error));
 }
 
-// Função para carregar os dados armazenados na tabela
 function carregarUsuarios() {
   const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
   const tabelaUsuarios = document.getElementById("tabela-usuarios");
@@ -118,7 +112,6 @@ function carregarUsuarios() {
       row.insertCell(index).textContent = valor;
     });
 
-    // Criando a célula de Ações com os botões de Editar e Excluir
     const acoesCell = row.insertCell(Object.values(usuario).length);
     acoesCell.innerHTML = `
       <button class="btn btn-warning btn-sm" onclick="editarUsuario(this)">Editar</button>
@@ -128,13 +121,12 @@ function carregarUsuarios() {
   
 }
 
-// Função para editar um usuário
 function editarUsuario(botao) {
   const linha = botao.closest("tr");
   const colunas = linha.querySelectorAll("td");
 
   colunas.forEach((coluna, index) => {
-    if (index < colunas.length - 1) { // Não permite edição da última coluna (Ações)
+    if (index < colunas.length - 1) { 
       const conteudoAtual = coluna.innerText;
       coluna.innerHTML = `<input type="text" value="${conteudoAtual}" class="form-control">`;
     }
@@ -144,7 +136,6 @@ function editarUsuario(botao) {
   botao.onclick = () => salvarEdicao(linha);
 }
 
-// Função para salvar a edição de um usuário
 function salvarEdicao(linha) {
   const inputs = linha.querySelectorAll("input");
   const usuarioAtualizado = {};
@@ -153,7 +144,7 @@ function salvarEdicao(linha) {
     usuarioAtualizado[index] === 2 
       ? usuarioAtualizado.cpf = input.value
       : usuarioAtualizado[["nome", "email", "endereco", "cidade", "telefone"][index]] = input.value;
-    linha.cells[index].innerText = input.value; // Atualiza a tabela
+    linha.cells[index].innerText = input.value; 
   });
 
   atualizarLocalStorage(usuarioAtualizado);

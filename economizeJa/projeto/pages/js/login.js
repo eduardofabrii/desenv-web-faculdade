@@ -1,53 +1,76 @@
-// Frontend - Código de login atualizado
-document.getElementById('form-login').addEventListener('submit', async (event) => {
-    event.preventDefault(); // Evita o envio padrão do formulário
-
+function alterarInput() {
     const tipoUsuario = document.getElementById('tipoUsuario').value;
-    const cpf = document.getElementById('cpf').value.trim(); // Trim para remover espaços
-    const senha = document.getElementById('senha').value;
-
-    // Validação dos campos
-    if (!tipoUsuario || !cpf || !senha) {
-        document.getElementById('campoObrigatorio').style.display = 'block';
-        return;
+    const inputContainer = document.getElementById('inputCpfCnpj');
+  
+    if (tipoUsuario === 'estabelecimento') {
+      inputContainer.innerHTML = `
+        <label for="cnpj" class="form-label">CNPJ</label>
+        <input type="text" id="cnpj" name="cnpj" class="form-control" required>
+      `;
     } else {
-        document.getElementById('campoObrigatorio').style.display = 'none';
+      inputContainer.innerHTML = `
+        <label for="cpf" class="form-label">CPF</label>
+        <input type="text" id="cpf" name="cpf" class="form-control" required>
+      `;
     }
-
-    const endpoint = tipoUsuario === 'usuario' ? '/api/login/usuario' : '/api/login/motoboy'; // Definindo a rota
-
+  }
+  document.getElementById('form-login').addEventListener('submit', async (event) => {
+    event.preventDefault();
+  
+    const tipoUsuario = document.getElementById('tipoUsuario').value;
+    const cpf = tipoUsuario === 'estabelecimento' ? null : document.getElementById('cpf').value.trim();
+    const cnpj = tipoUsuario === 'estabelecimento' ? document.getElementById('cnpj').value.trim() : null;
+    const senha = document.getElementById('senha').value;
+  
+    if (!tipoUsuario || (!cpf && !cnpj) || !senha) {
+      document.getElementById('campoObrigatorio').style.display = 'block';
+      return;
+    } else {
+      document.getElementById('campoObrigatorio').style.display = 'none';
+    }
+  
+    const endpoint =
+      tipoUsuario === 'usuario' ? '/api/login/usuario' :
+      tipoUsuario === 'motoboy' ? '/api/login/motoboy' :
+      '/api/login/estabelecimento';
+  
     try {
-        const response = await fetch(endpoint, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ cpf, senha }), // Enviando CPF e senha
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'Erro ao fazer login.');
-        }
-
-        const data = await response.json();
-        console.log('Login bem-sucedido:', data);
-
-        // Verifica se o CPF é o do administrador
-        const adminCpf = '123.456.789'; // Substitua pelo CPF do admin
-        if (cpf === adminCpf) {
-            // Redireciona para a página do administrador
-            window.location.href = 'paginaAdmin.html';
-            return;
-        }
-
-        // Armazena os dados no Local Storage de acordo com o tipo de usuário
-        localStorage.setItem(tipoUsuario === 'usuario' ? 'usuarioLogado' : 'motoboyLogado', JSON.stringify(data));
-
-        // Redireciona para a página de perfil após o login bem-sucedido
-        window.location.href = tipoUsuario === 'usuario' ? 'home-logado.html' : 'homeEntregador.html';
+      const body = tipoUsuario === 'estabelecimento' ? { cnpj, senha } : { cpf, senha };
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Erro ao fazer login.');
+      }
+  
+      const data = await response.json();
+      console.log('Login bem-sucedido:', data);
+  
+      // Verifica se o CPF é do administrador
+      const adminCpf = '123.456.789'; // Substitua pelo CPF do admin
+      if (cpf === adminCpf) {
+        window.location.href = 'paginaAdmin.html';
+        return;
+      }
+  
+      // Armazena os dados no Local Storage
+      if (tipoUsuario === 'usuario') {
+        localStorage.setItem('usuarioLogado', JSON.stringify(data));
+        window.location.href = 'home-logado.html';
+      } else if (tipoUsuario === 'motoboy') {
+        localStorage.setItem('motoboyLogado', JSON.stringify(data));
+        window.location.href = 'homeEntregador.html';
+      } else if (tipoUsuario === 'estabelecimento') {
+        localStorage.setItem('estabelecimentoLogado', JSON.stringify(data));
+        window.location.href = 'homeEstabelecimento.html';
+      }
     } catch (error) {
-        console.error('Erro:', error.message);
-        alert('CPF ou senha inválidos!'); // Mensagem de erro
+      console.error('Erro:', error.message);
+      alert('CPF ou CNPJ e senha inválidos!');
     }
-});
+  });
+  

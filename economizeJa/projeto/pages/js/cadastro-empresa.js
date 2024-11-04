@@ -1,5 +1,6 @@
+// Função para cadastrar um novo estabelecimento
 function cadastrarEstabelecimento() {
-    const nome = document.getElementById('nome-restaurante').value;
+    const nome_empresa = document.getElementById('nome-restaurante').value;
     const email = document.getElementById('email-restaurante').value;
     const cnpj = document.getElementById('cnpj-restaurante').value;
     const endereco = document.getElementById('endereco-restaurante').value;
@@ -7,191 +8,117 @@ function cadastrarEstabelecimento() {
     const telefone = document.getElementById('telefone-restaurante').value;
     const senha = document.getElementById('senha-restaurante').value;
 
-    // Verificar se todos os campos estão preenchidos
-    if (nome && email && cnpj && endereco && cidade && telefone && senha) {
-        const estabelecimento = { nome, email, cnpj, endereco, cidade, telefone, senha };
-
-        // Enviar dados para o backend via fetch
-        fetch('/api/estabelecimentos', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(estabelecimento),
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                alert(`Erro: ${data.error}`);
-            } else {
-                alert('Estabelecimento cadastrado com sucesso!');
-                window.open('lista-empresa.html', '_blank');
-            }
-        })
-        .catch(error => {
-            console.error('Erro ao cadastrar estabelecimento:', error);
-            alert('Ocorreu um erro ao cadastrar o estabelecimento. Tente novamente mais tarde.');
-        });
-    } else {
-        alert('Por favor, preencha todos os campos.');
+    if (!nome_empresa || !email || !cnpj || !endereco || !cidade || !telefone || !senha) {
+        alert('Todos os campos são obrigatórios!');
+        return;
     }
-}
 
-
-// Função para carregar as empresas armazenadas na tabela
-function carregarEmpresas() {
-    const empresas = JSON.parse(localStorage.getItem('empresas')) || [];
-    const tabelaEmpresas = document.getElementById('form-cadastro-restaurante').getElementsByTagName('tbody')[0];
-    
-    tabelaEmpresas.innerHTML = ''; // Limpar a tabela antes de carregar os dados
-    
-    empresas.forEach(empresa => {
-        const row = tabelaEmpresas.insertRow();
-        row.insertCell(0).textContent = empresa.nome;
-        row.insertCell(1).textContent = empresa.email;
-        row.insertCell(2).textContent = empresa.cnpj;
-        row.insertCell(3).textContent = empresa.endereco;
-        row.insertCell(4).textContent = empresa.cidade;
-        row.insertCell(5).textContent = empresa.telefone;
-
-        // Criando a célula de Ações com os botões de Editar e Excluir
-        const acoesCell = row.insertCell(6);
-        acoesCell.innerHTML = `
-            <button class="btn btn-warning btn-sm" onclick="editarEmpresa(this)">Editar</button>
-            <button class="btn btn-danger btn-sm" onclick="excluirEmpresa(this)">Excluir</button>
-        `;
+    fetch('/api/estabelecimentos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome_empresa, email, cnpj, endereco, cidade, telefone, senha })
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('Erro ao cadastrar estabelecimento.');
+        return response.json();
+    })
+    .then(data => {
+        alert('Estabelecimento cadastrado com sucesso!');
+        carregarEstabelecimentos(); // Atualiza a lista de estabelecimentos
+    })
+    .catch(error => {
+        console.error('Erro ao cadastrar:', error);
+        alert('Erro ao cadastrar estabelecimento.');
     });
 }
 
-// Função para editar empresa/restaurante
-function editarEmpresa(botao) {
+// Função para carregar e exibir os estabelecimentos na tabela
+function carregarEstabelecimentos() {
+    fetch('/api/estabelecimentos')
+    .then(response => {
+        if (!response.ok) throw new Error('Erro ao buscar estabelecimentos.');
+        return response.json();
+    })
+    .then(estabelecimentos => {
+        const tabela = document.getElementById('tabela-empresas').getElementsByTagName('tbody')[0];
+        tabela.innerHTML = ''; // Limpa a tabela
+
+        estabelecimentos.forEach(empresa => {
+            const row = tabela.insertRow();
+            row.insertCell(0).innerText = empresa.nome_empresa;
+            row.insertCell(1).innerText = empresa.email;
+            row.insertCell(2).innerText = empresa.cnpj;
+            row.insertCell(3).innerText = empresa.endereco;
+            row.insertCell(4).innerText = empresa.cidade;
+            row.insertCell(5).innerText = empresa.telefone;
+
+            const actionsCell = row.insertCell(6);
+            actionsCell.innerHTML = `
+                <button class="btn btn-warning" onclick="editarEmpresa(this, '${empresa.cnpj}')">Editar</button>
+                <button class="btn btn-danger" onclick="excluirEmpresa('${empresa.cnpj}')">Excluir</button>
+            `;
+        });
+    })
+    .catch(error => {
+        console.error('Erro ao carregar estabelecimentos:', error);
+        alert('Erro ao buscar estabelecimentos.');
+    });
+}
+
+// Função para editar um estabelecimento
+function editarEmpresa(botao, cnpj) {
     const linha = botao.parentNode.parentNode;
-    const colunas = linha.querySelectorAll('td');
-    
-    colunas.forEach((coluna, index) => {
-        if (index < colunas.length - 1) { // Não editar a coluna de ações
-            const conteudoAtual = coluna.innerText;
-            coluna.innerHTML = `<input type="text" value="${conteudoAtual}" class="form-control">`;
+    const inputs = Array.from(linha.cells).slice(0, 6).map((cell, index) => {
+        if (index !== 2) { // Não permite edição do CNPJ
+            const conteudoAtual = cell.innerText;
+            cell.innerHTML = `<input type="text" value="${conteudoAtual}" class="form-control">`;
+            return cell.querySelector('input');
         }
-    });
+        return null;
+    }).filter(input => input !== null);
 
     botao.innerText = 'Salvar';
     botao.onclick = function() {
-        salvarEdicaoEmpresa(linha);
+        const [nome_empresa, email, endereco, cidade, telefone] = inputs.map(input => input.value);
+        if (!nome_empresa || !email || !endereco || !cidade || !telefone) {
+            alert('Todos os campos devem ser preenchidos!');
+            return;
+        }
+
+        fetch(`/api/estabelecimentos/${cnpj}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nome_empresa, email, endereco, cidade, telefone })
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Erro ao atualizar estabelecimento.');
+            alert('Estabelecimento atualizado com sucesso!');
+            carregarEstabelecimentos(); // Atualiza a lista
+        })
+        .catch(error => {
+            console.error('Erro ao atualizar:', error);
+            alert('Erro ao atualizar estabelecimento.');
+        });
     };
 }
 
-// Função para salvar as edições da empresa/restaurante
-function salvarEdicaoEmpresa(linha) {
-    const inputs = linha.querySelectorAll('input');
-    const empresas = JSON.parse(localStorage.getItem('empresas')) || [];
+// Função para excluir um estabelecimento
+function excluirEmpresa(cnpj) {
+    if (!confirm('Tem certeza que deseja excluir este estabelecimento?')) return;
 
-    inputs.forEach((input, index) => {
-        const valorEditado = input.value;
-        linha.cells[index].innerText = valorEditado;
-    });
-
-    const nomeEditado = linha.cells[0].innerText;
-
-    // Atualizar o localStorage com os valores editados
-    const empresaIndex = empresas.findIndex(empresa => empresa.nome === nomeEditado);
-    if (empresaIndex > -1) {
-        empresas[empresaIndex] = {
-            nome: linha.cells[0].innerText,
-            email: linha.cells[1].innerText,
-            cnpj: linha.cells[2].innerText,
-            endereco: linha.cells[3].innerText,
-            cidade: linha.cells[4].innerText,
-            telefone: linha.cells[5].innerText,
-            senha: empresas[empresaIndex].senha // Manter a senha original
-        };
-        localStorage.setItem('empresas', JSON.stringify(empresas));
-    }
-
-    linha.querySelector('.btn-warning').innerText = 'Editar';
-    linha.querySelector('.btn-warning').onclick = function() {
-        editarEmpresa(this);
-    };
-}
-
-// Função para excluir empresa/restaurante
-function excluirEmpresa(botao) {
-    const linha = botao.parentNode.parentNode;
-    const nome = linha.cells[0].innerText;
-    linha.remove();
-
-    let empresas = JSON.parse(localStorage.getItem('empresas')) || [];
-    empresas = empresas.filter(empresa => empresa.nome !== nome);
-
-    localStorage.setItem('empresas', JSON.stringify(empresas));
-}
-
-// Função para buscar empresas na tabela
-function buscarEmpresas() {
-    const searchInput = document.getElementById('searchInputEmpresa');
-    const filter = searchInput.value.toLowerCase();
-    const rows = document.querySelectorAll('#tabela-empresas tbody tr');
-
-    rows.forEach(row => {
-        const cells = row.getElementsByTagName('td');
-        let match = false;
-
-        for (let i = 0; i < cells.length - 1; i++) { 
-            if (cells[i].textContent.toLowerCase().includes(filter)) {
-                match = true;
-                break;
-            }
-        }
-
-        if (match) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
-        }
+    fetch(`/api/estabelecimentos/${cnpj}`, {
+        method: 'DELETE'
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('Erro ao excluir estabelecimento.');
+        alert('Estabelecimento excluído com sucesso!');
+        carregarEstabelecimentos(); // Atualiza a lista
+    })
+    .catch(error => {
+        console.error('Erro ao excluir:', error);
+        alert('Erro ao excluir estabelecimento.');
     });
 }
 
-// Função para validar o cadastro da empresa/restaurante
-function validarCadastroEmpresa() {
-    let camposValidos = true;
-    const alertas = document.querySelectorAll('#alertas-restaurante .labelValidacao');
-    
-    // Limpar alertas anteriores
-    alertas.forEach(alerta => alerta.style.display = 'none');
-
-    const nome = document.getElementById('nome-restaurante').value;
-    const email = document.getElementById('email-restaurante').value;
-    const senha = document.getElementById('senha-restaurante').value;
-    const cnpj = document.getElementById('cnpj-restaurante').value;
-    const telefone = document.getElementById('telefone-restaurante').value;
-
-    if (!nome || !email || !senha || !cnpj || !telefone) {
-        document.getElementById('campoObrigatorio-restaurante').style.display = 'block';
-        camposValidos = false;
-    }
-
-    // Validar senha
-    if (senha.length < 8 || senha.length > 16) {
-        document.getElementById('senhaTamanho-restaurante').style.display = 'block';
-        camposValidos = false;
-    }
-    // Adicione mais validações conforme necessário
-
-    return camposValidos;
-}
-
-function cadastrarRestaurante() {
-    if (validarCadastroEmpresa()) {
-        cadastrarEmpresa();
-    }
-}
-
-// Adicionar o evento de busca no input de pesquisa
-document.getElementById('searchInputEmpresa').addEventListener('input', buscarEmpresas);
-
-// Carregar empresas ao abrir a página
-document.addEventListener('DOMContentLoaded', function () {
-    if (window.location.pathname.endsWith('lista-empresas.html')) {
-        carregarEmpresas();
-    }
-});
+// Chama a função para carregar os estabelecimentos quando a página é carregada
+document.addEventListener('DOMContentLoaded', carregarEstabelecimentos);

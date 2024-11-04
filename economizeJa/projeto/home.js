@@ -38,8 +38,10 @@ app.get('/api/sessao', (req, res) => {
         return res.status(200).json({ restauranteLogado: req.session.restauranteLogado });
     } else if (req.session.motoboyLogado) {
         return res.status(200).json({ motoboyLogado: req.session.motoboyLogado });
+    } else if (req.session.estabelecimentoLogado) {
+        return res.status(200).json({ estabelecimentoLogado: req.session.estabelecimentoLogado });
     } else {
-        return res.status(401).json({ message: 'Nenhum usuário logado.' });
+        return res.status(404).json({ message: 'Nenhum usuário logado.' });
     }
 });
 
@@ -456,7 +458,134 @@ app.delete('/api/produtos/:id', (req, res) => {
     });
 });
 
-// Iniciar o servidor
+app.post('/api/login/estabelecimento', (req, res) => {
+    const { cnpj, senha } = req.body;
+
+    if (!cnpj || !senha) {
+        return res.status(400).json({ error: 'CNPJ e senha são obrigatórios!' });
+    }
+
+    connection.query('SELECT * FROM Estabelecimento WHERE CNPJ = ? AND Senha = ?', [cnpj, senha], (error, results) => {
+        if (error) {
+            console.error('Erro ao consultar o banco de dados:', error);
+            return res.status(500).json({ error: 'Erro ao buscar estabelecimento.' });
+        }
+
+        if (results.length > 0) {
+            req.session.estabelecimentoLogado = results[0];
+            return res.status(200).json({ success: true, message: 'Login do estabelecimento bem-sucedido' });
+        } else {
+            return res.status(401).json({ success: false, message: 'CNPJ ou senha inválidos!' });
+        }
+    });
+});
+
+// ADICIONAR ESTABELECIMENTO
+app.post('/api/estabelecimentos', (req, res) => {
+    const { nome_empresa, email, cnpj, endereco, cidade, telefone, senha } = req.body;
+
+    if (!nome_empresa || !email || !cnpj || !endereco || !cidade || !telefone || !senha) {
+        return res.status(400).json({ error: 'nome_empresa, email, cnpj, endereco, cidade, telefone e senha são obrigatórios!' });
+    }
+
+    // Verificar se o CNPJ já existe
+    connection.query('SELECT * FROM Estabelecimento WHERE CNPJ = ?', [cnpj], (error, results) => {
+        if (error) {
+            console.error('Erro ao verificar CNPJ:', error);
+            return res.status(500).json({ error: 'Erro ao verificar CNPJ.' });
+        }
+
+        if (results.length > 0) {
+            return res.status(409).json({ error: 'Já existe um estabelecimento com o mesmo CNPJ!' });
+        }
+
+        const query = 'INSERT INTO Estabelecimento (nome_empresa, Email, CNPJ, Endereco, Cidade, Telefone, Senha) VALUES (?, ?, ?, ?, ?, ?, ?)';
+        connection.query(query, [nome_empresa, email, cnpj, endereco, cidade, telefone, senha], (insertError, insertResults) => {
+            if (insertError) {
+                console.error('Erro ao inserir estabelecimento:', insertError);
+                return res.status(500).json({ error: 'Erro ao inserir estabelecimento.' });
+            }
+
+            // Enviar email de confirmação (se necessário)
+            res.status(201).json({ message: 'Estabelecimento cadastrado com sucesso!', id: insertResults.insertId });
+        });
+    });
+});
+
+app.get('/api/estabelecimentos', (req, res) => {
+    const query = 'SELECT * FROM Estabelecimento';
+    connection.query(query, (err, results) => {
+        if (err) {
+            console.error('Erro ao buscar estabelecimentos:', err);
+            return res.status(500).json({ error: 'Erro ao buscar estabelecimentos.' });
+        }
+
+        res.status(200).json(results);
+    });
+});
+
+app.get('/api/estabelecimentos/:cnpj', (req, res) => {
+    const cnpj = req.params.cnpj;
+
+    if (!cnpj) {
+        return res.status(400).json({ error: 'CNPJ inválido.' });
+    }
+
+    connection.query('SELECT * FROM Estabelecimento WHERE CNPJ = ?', [cnpj], (error, results) => {
+        if (error) {
+            console.error('Erro ao consultar o banco de dados:', error);
+            return res.status(500).json({ error: 'Erro ao buscar estabelecimento.' });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ error: 'Estabelecimento não encontrado.' });
+        }
+
+        return res.json(results[0]);
+    });
+});
+
+app.delete('/api/estabelecimentos/:cnpj', (req, res) => {
+    const cnpj = req.params.cnpj;
+
+    connection.query('DELETE FROM Estabelecimento WHERE CNPJ = ?', [cnpj], (err, results) => {
+        if (err) {
+            console.error('Erro ao excluir estabelecimento:', err);
+            return res.status(500).json({ error: 'Erro ao excluir estabelecimento.' });
+        }
+
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ error: 'Estabelecimento não encontrado!' });
+        }
+
+        res.status(200).json({ message: 'Estabelecimento excluído com sucesso!' });
+    });
+});
+
+app.put('/api/estabelecimentos/:cnpj', (req, res) => {
+    const cnpj = req.params.cnpj;
+    const { nome_empresa, email, endereco, cidade, telefone } = req.body;
+
+    if (!nome_empresa || !email || !endereco || !cidade || !telefone) {
+        return res.status(400).json({ error: 'nome_empresa, email, endereco, cidade e telefone são obrigatórios!' });
+    }
+
+    const query = 'UPDATE Estabelecimento SET nome_empresa = ?, Email = ?, Endereco = ?, Cidade = ?, Telefone = ? WHERE CNPJ = ?';
+    connection.query(query, [nome_empresa, email, endereco, cidade, telefone, cnpj], (err, results) => {
+        if (err) {
+            console.error('Erro ao atualizar estabelecimento:', err);
+            return res.status(500).json({ error: 'Erro ao atualizar estabelecimento.' });
+        }
+
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ error: 'Estabelecimento não encontrado!' });
+        }
+
+        res.status(200).json({ message: 'Estabelecimento atualizado com sucesso!' });
+    });
+});
+
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);
