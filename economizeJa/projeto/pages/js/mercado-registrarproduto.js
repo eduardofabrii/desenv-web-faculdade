@@ -4,7 +4,7 @@ async function adicionarProduto(event) {
     // Captura a imagem e converte para uma URL temporária
     const imageInput = document.getElementById("productImage");
     const imageFile = imageInput.files[0];
-    const imageURL = imageFile ? URL.createObjectURL(imageFile) : ''; // Não usar padrão aqui
+    const imageURL = imageFile ? URL.createObjectURL(imageFile) : '';
 
     // Captura os outros campos
     const nome = document.getElementById("productName").value;
@@ -12,17 +12,15 @@ async function adicionarProduto(event) {
     const descricao = document.getElementById("productDescription").value;
     const preco = parseFloat(document.getElementById("productPrice").value);
 
-    // Dados do produto (sem a imagem)
     const produto = {
         Nome: nome,
         Nicho: nicho,
         Descricao: descricao,
         Preco: preco,
-        Imagem: imageURL // Adiciona a imagem ao objeto produto
+        Imagem: imageURL
     };
 
     try {
-        // Envia o produto para o backend
         const response = await fetch('/api/produtos', {
             method: 'POST',
             headers: {
@@ -37,7 +35,7 @@ async function adicionarProduto(event) {
 
             // Salva a imagem no localStorage
             localStorage.setItem(`imagem-${nome}`, imageURL);
-            carregarProdutos(); // Atualiza a lista de produtos
+            carregarProdutos();
         } else {
             throw new Error("Erro ao adicionar produto.");
         }
@@ -48,81 +46,69 @@ async function adicionarProduto(event) {
 }
 
 async function carregarProdutos() {
-    const response = await fetch('/api/produtos');
-    const produtos = await response.json();
+    try {
+        const response = await fetch('/api/produtos');
+        const produtos = await response.json();
 
-    const produtosContainer = document.getElementById("produtosContainer");
-    produtosContainer.innerHTML = ""; // Limpa a lista existente
+        const produtosContainer = document.getElementById("produtosContainer");
+        produtosContainer.innerHTML = ""; // Limpa a lista existente
 
-    if (produtos.length === 0) {
-        produtosContainer.innerHTML = "<p>Nenhum produto cadastrado.</p>";
-        return; // Sai da função se não houver produtos
-    }
-
-    for (const produto of produtos) {
-        const col = document.createElement("div");
-        col.className = "col-md-4 mb-3";
-
-        // Recupera a imagem do localStorage
-        const imagem = localStorage.getItem(`imagem-${produto.Nome}`) || '';
-
-        // Verifica se a imagem existe
-        if (imagem) {
-            try {
-                const imgResponse = await fetch(imagem);
-                if (imgResponse.ok) {
-                    col.innerHTML = `
-                        <div class="card">
-                            <img src="${imagem}" class="card-img-top" alt="${produto.Nome}" style="max-height: 200px; object-fit: cover;">
-                            <div class="card-body">
-                                <h5 class="card-title">${produto.Nome}</h5>
-                                <p class="card-text">${produto.Descricao}</p>
-                                <p class="card-text">Preço: R$ ${produto.Preco.toFixed(2)}</p>
-                                <p class="card-text">Nicho: ${produto.Nicho}</p>
-                                <button class="btn btn-primary" onclick="editarProduto(${produto.ID_Produtos})">Editar</button>
-                                <button class="btn btn-danger" onclick="excluirProduto(${produto.ID_Produtos})">Excluir</button>
-                            </div>
-                        </div>
-                    `;
-                } else {
-                    // Se a imagem não for encontrada, exibe apenas uma mensagem genérica
-                    col.innerHTML = `<p>Imagem não disponível para ${produto.Nome}.</p>`;
-                }
-            } catch (error) {
-                console.error(error);
-                col.innerHTML = `<p>Erro ao carregar imagem para ${produto.Nome}.</p>`;
-            }
-        } else {
-            col.innerHTML = `<p>Imagem não fornecida para ${produto.Nome}.</p>`;
+        if (produtos.length === 0) {
+            produtosContainer.innerHTML = "<p>Nenhum produto cadastrado.</p>";
+            return;
         }
 
-        produtosContainer.appendChild(col);
+        for (const produto of produtos) {
+            const col = document.createElement("div");
+            col.className = "col-md-4 mb-3";
+
+            // Recupera a URL da imagem do localStorage ou usa uma imagem padrão
+            const imagem = localStorage.getItem(`imagem-${produto.Nome}`) || 'caminho/para/imagem/padrao.jpg';
+
+            col.innerHTML = `
+                <div class="card">
+                    <img src="${imagem}" class="card-img-top" alt="${produto.Nome}" style="max-height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">${produto.Nome}</h5>
+                        <p class="card-text">${produto.Descricao}</p>
+                        <p class="card-text">Preço: R$ ${produto.Preco.toFixed(2)}</p>
+                        <p class="card-text">Nicho: ${produto.Nicho}</p>
+                        <button class="btn btn-primary" onclick="editarProduto(${produto.ID_Produtos})">Editar</button>
+                        <button class="btn btn-danger" onclick="excluirProduto(${produto.ID_Produtos})">Excluir</button>
+                    </div>
+                </div>
+            `;
+
+            produtosContainer.appendChild(col);
+        }
+    } catch (error) {
+        console.error("Erro ao carregar produtos:", error);
+        alert("Erro ao carregar produtos.");
     }
 }
 
-// Adiciona o evento de submit ao formulário
-document.getElementById("produtoForm").addEventListener("submit", adicionarProduto);
-
-
-
-// Função para editar um produto
 async function editarProduto(id) {
     const nome = prompt("Novo Nome do Produto:");
     const nicho = prompt("Novo Nicho:");
     const descricao = prompt("Nova Descrição:");
     const preco = parseFloat(prompt("Novo Preço:"));
-    
-    // Captura a imagem e converte para uma URL temporária
+
+    // Verifica se há um novo arquivo de imagem selecionado
     const imageInput = document.getElementById("productImage");
     const imageFile = imageInput.files[0];
-    const imageURL = imageFile ? URL.createObjectURL(imageFile) : localStorage.getItem(`imagem-${id}`) || 'caminho/para/imagem/padrao.jpg';
-    
+    let imageURL = localStorage.getItem(`imagem-${id}`) || 'caminho/para/imagem/padrao.jpg';
+
+    if (imageFile) {
+        imageURL = URL.createObjectURL(imageFile); // Cria uma nova URL temporária se houver um novo arquivo
+        localStorage.setItem(`imagem-${id}`, imageURL); // Atualiza o localStorage
+    }
+
     const produto = {
         Nome: nome,
         Nicho: nicho,
         Descricao: descricao,
         Preco: preco,
-        Imagem: imageURL // Adiciona a imagem ao objeto produto
+        Imagem: imageURL
     };
 
     try {
@@ -135,10 +121,8 @@ async function editarProduto(id) {
         });
 
         if (response.ok) {
-            // Atualiza a imagem no localStorage
-            localStorage.setItem(`imagem-${id}`, imageURL);
             alert("Produto editado com sucesso!");
-            carregarProdutos(); // Recarrega a lista de produtos
+            carregarProdutos();
         } else {
             throw new Error("Erro ao editar produto.");
         }
@@ -148,7 +132,6 @@ async function editarProduto(id) {
     }
 }
 
-// Função para excluir um produto
 async function excluirProduto(id) {
     if (confirm("Tem certeza que deseja excluir este produto?")) {
         try {
@@ -159,7 +142,7 @@ async function excluirProduto(id) {
             if (response.ok) {
                 localStorage.removeItem(`imagem-${id}`); // Remove a imagem do localStorage ao excluir o produto
                 alert("Produto excluído com sucesso!");
-                carregarProdutos(); // Recarrega a lista de produtos
+                carregarProdutos();
             } else {
                 throw new Error("Erro ao excluir produto.");
             }

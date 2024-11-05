@@ -21,7 +21,7 @@ function inputPesquisarUsuarios() {
 }
 
 
-// Função para carregar e exibir os usuários na tabela
+
 async function carregarUsuarios() {
     const tabela = document.getElementById('tabela-usuarios');
     tabela.innerHTML = ''; 
