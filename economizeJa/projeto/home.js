@@ -368,6 +368,7 @@ app.delete('/api/motoboys/:cpf', (req, res) => {
         res.status(200).json({ message: 'Motoboy excluído com sucesso!' });
     });
 });
+
 // ADICIONAR PRODUTO
 app.post('/api/produtos', (req, res) => {
     const { Nome, Descricao, Nicho, Preco } = req.body;
@@ -416,24 +417,27 @@ app.get('/api/produtos/:id', (req, res) => {
     });
 });
 
-// ROTA PARA ATUALIZAR UM PRODUTO PELO ID
+// Atualizar Produto
 app.put('/api/produtos/:id', (req, res) => {
-    const id = req.params.id;
-    const { Nome, Descricao, Nicho, Preco } = req.body;
+    const produtoId = req.params.id;
+    const { Nome, Descricao, Preco } = req.body;
 
-    if (!Nome || !Descricao || !Nicho || !Preco) {
-        return res.status(400).json({ error: 'Nome, descrição, categoria e preço são obrigatórios!' });
+    if (!Nome || !Descricao || !Preco) {
+        return res.status(400).json({ error: 'Nome, descrição e preço são obrigatórios!' });
     }
 
-    const query = 'UPDATE Produtos SET Nome = ?, Descricao = ?, Nicho = ?, Preco = ? WHERE ID_Produtos = ?';
-    connection.query(query, [Nome, Descricao, Nicho, Preco, id], (err, results) => {
+    // Query SQL para atualizar o produto
+    const query = 'UPDATE Produtos SET Nome = ?, Descricao = ?, Preco = ? WHERE ID_Produtos = ?';
+    
+    connection.query(query, [Nome, Descricao, Preco, produtoId], (err, results) => {
         if (err) {
             console.error('Erro ao atualizar produto:', err);
             return res.status(500).json({ error: 'Erro ao atualizar produto.' });
         }
 
+        // Verifica se o produto foi encontrado e atualizado
         if (results.affectedRows === 0) {
-            return res.status(404).json({ error: 'Produto não encontrado!' });
+            return res.status(404).json({ error: 'Produto não encontrado.' });
         }
 
         res.status(200).json({ message: 'Produto atualizado com sucesso!' });

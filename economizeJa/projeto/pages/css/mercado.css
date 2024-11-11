@@ -30,6 +30,12 @@ body {
     background-color: rgb(248, 248, 248) !important;
     
 }
+
+.mb-4 {
+    margin-top: 5rem !important;
+    margin-bottom: 1rem !important;
+}
+
 body::-webkit-scrollbar {
     width: 12px;
     background: #ffffff;
@@ -46,7 +52,7 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 .text-center.py-5.bg-primary.text-white {
-   margin-top: 3rem;
+   margin-top: 7rem;
    background-color: #196b20a2 !important;
    
 }
