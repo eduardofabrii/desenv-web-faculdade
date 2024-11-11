@@ -36,7 +36,7 @@ async function realizarLogin(event) {
   const endpoint =
     tipoUsuario === 'usuario' ? '/api/login/usuario' :
     tipoUsuario === 'motoboy' ? '/api/login/motoboy' :
-    '/api/login/estabelecimento';  
+    '/api/login/estabelecimentos';  
 
   try {
     const body = tipoUsuario === 'estabelecimento' ? { cnpj, senha } : { cpf, senha };
