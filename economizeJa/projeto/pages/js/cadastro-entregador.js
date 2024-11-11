@@ -55,8 +55,8 @@ function carrregarMotoboys() {
         // Criando a célula de Ações com os botões de Editar e Excluir
         const acoesCell = row.insertCell(7);
         acoesCell.innerHTML = `
-            <button class="btn btn-warning btn-sm" onclick="editarMotoboy(this)">Editar</button>
-            <button class="btn btn-danger btn-sm" onclick="excluirMotoboy(this)">Excluir</button>
+            <button class="btn btn-warning btn-sm" onclick="editarMotoboy('${motoboy.ID_motboy}')">Editar</button>
+            <button class="btn btn-danger btn-sm" onclick="excluirMotoboy('${motoboy.ID_motboy}')">Excluir</button>
         `;
     });
 }

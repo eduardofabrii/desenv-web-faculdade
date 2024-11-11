@@ -13,7 +13,7 @@ function cadastrarEstabelecimento() {
         return;
     }
 
-    fetch('/api/estabelecimentos', {
+    fetch('/api/estabelecimento', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nome_empresa, email, cnpj, endereco, cidade, telefone, senha })
@@ -35,7 +35,7 @@ function cadastrarEstabelecimento() {
 
 
 function carregarEstabelecimentos() {
-    fetch('/api/estabelecimentos')
+    fetch('/api/estabelecimento')
     .then(response => {
         if (!response.ok) throw new Error(`Erro ao buscar estabelecimentos: ${response.statusText}`);
         return response.json();
@@ -87,7 +87,7 @@ function editarEmpresa(botao, cnpj) {
             return;
         }
 
-        fetch(`/api/estabelecimentos/${cnpj}`, {
+        fetch(`/api/estabelecimento/${cnpj}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ nome_empresa, email, endereco, cidade, telefone })
@@ -108,7 +108,7 @@ function excluirEmpresa(ID_Estabelecimento) {
     if (!confirm('Tem certeza que deseja excluir este estabelecimento?')) return;
 
     console.log('Excluindo estabelecimento:', ID_Estabelecimento);
-    fetch(`/api/estabelecimentos/${ID_Estabelecimento}`, {
+    fetch(`/api/estabelecimento/${ID_Estabelecimento}`, {
         method: 'DELETE'
     })
     .then(response => {

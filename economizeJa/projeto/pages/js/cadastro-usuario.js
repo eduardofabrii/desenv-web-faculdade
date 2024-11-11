@@ -114,8 +114,8 @@ function carregarUsuarios() {
 
     const acoesCell = row.insertCell(Object.values(usuario).length);
     acoesCell.innerHTML = `
-      <button class="btn btn-warning btn-sm" onclick="editarUsuario(this)">Editar</button>
-      <button class="btn btn-danger btn-sm" onclick="excluirUsuario(this)">Excluir</button>
+      <button class="btn btn-warning btn-sm" onclick="editarUsuario('${usuario.ID_usuario}')">Editar</button>
+      <button class="btn btn-danger btn-sm" onclick="excluirUsuario('${usuario.ID_usuario}')">Excluir</button>
     `;
   });
   
