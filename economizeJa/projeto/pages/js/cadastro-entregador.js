@@ -24,6 +24,7 @@ function cadastrarMotoboy() {
             .then((response) => response .json())
             .then((data) => {
                 console.log('Motoboy cadastrado com sucesso:', data);
+                enviarEmailParaMotoboy(motoboy.email);
                 window.open('login.html', '_blank');
                
             })
@@ -35,6 +36,23 @@ function cadastrarMotoboy() {
         } else {
             alert('Por favor, preencha todos os campos.');
         }
+}
+
+function enviarEmailParaMotoboy(email) {
+    fetch('/api/sendEmail', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            email: email,
+            subject: 'Bem-vindo!',
+            text: 'Obrigado por se cadastrar!',
+        }),
+    })
+    .then(response => response.json())
+    .then(data => console.log(data.message))
+    .catch(error => console.error('Erro ao enviar e-mail:', error));
 }
 
 function carrregarMotoboys() {
@@ -55,8 +73,8 @@ function carrregarMotoboys() {
         // Criando a célula de Ações com os botões de Editar e Excluir
         const acoesCell = row.insertCell(7);
         acoesCell.innerHTML = `
-            <button class="btn btn-warning btn-sm" onclick="editarMotoboy('${motoboy.ID_motboy}')">Editar</button>
-            <button class="btn btn-danger btn-sm" onclick="excluirMotoboy('${motoboy.ID_motboy}')">Excluir</button>
+            <button class="btn btn-warning btn-sm" onclick="editarMotoboy('${motoboy.ID_motoboy}')">Editar</button>
+            <button class="btn btn-danger btn-sm" onclick="excluirMotoboy('${motoboy.ID_motoboy}')">Excluir</button>
         `;
     });
 }

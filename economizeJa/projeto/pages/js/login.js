@@ -36,7 +36,7 @@ async function realizarLogin(event) {
   const endpoint =
     tipoUsuario === 'usuario' ? '/api/login/usuario' :
     tipoUsuario === 'motoboy' ? '/api/login/motoboy' :
-    '/api/login/estabelecimento';  // Certifique-se de que esta rota está correta no backend.
+    '/api/login/estabelecimento';  
 
   try {
     const body = tipoUsuario === 'estabelecimento' ? { cnpj, senha } : { cpf, senha };
@@ -54,7 +54,12 @@ async function realizarLogin(event) {
     const data = await response.json();
     console.log('Login bem-sucedido:', data);
 
-    // Redirecionamento e armazenamento de dados com base no tipo de usuário
+  
+    if (tipoUsuario === 'motoboy' && data.nome) {
+      localStorage.setItem('motoboyNome', data.nome); 
+    }
+
+ 
     const redirectionMap = {
       'usuario': 'home-logado.html',
       'motoboy': 'homeEntregador.html',
@@ -64,7 +69,7 @@ async function realizarLogin(event) {
     const storageKey = `${tipoUsuario}Logado`;
     localStorage.setItem(storageKey, JSON.stringify(data));
 
-    // Redireciona para a página correspondente
+   
     window.location.href = redirectionMap[tipoUsuario];
 
   } catch (error) {
@@ -73,5 +78,5 @@ async function realizarLogin(event) {
   }
 }
 
-// Adiciona o evento de submissão ao formulário
+
 document.getElementById('form-login').addEventListener('submit', realizarLogin);

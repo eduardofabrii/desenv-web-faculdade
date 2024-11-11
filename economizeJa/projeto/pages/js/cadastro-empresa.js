@@ -8,29 +8,52 @@ function cadastrarEstabelecimento() {
     const telefone = document.getElementById('telefone-restaurante').value;
     const senha = document.getElementById('senha-restaurante').value;
 
-    if (!nome_empresa || !email || !cnpj || !endereco || !cidade || !telefone || !senha) {
-        alert('Todos os campos são obrigatórios!');
-        return;
-    }
+    if (nome_empresa && email && cnpj && endereco && cidade && telefone && senha) {
+        const estabelecimento = { nome_empresa, email, cnpj, endereco, cidade, telefone, senha };
 
-    fetch('/api/estabelecimento', {
+        const estabelecimentos = JSON.parse(localStorage.getItem('estabelecimentos')) || [];
+        estabelecimentos.push(estabelecimento);
+        localStorage.setItem('estabelecimentos', JSON.stringify(estabelecimentos));
+
+        fetch('/api/estabelecimento', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(estabelecimento),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Estabelecimento cadastrado com sucesso:', data);
+            enviarEmailParaEstabelecimento(estabelecimento.email);
+            window.open('login.html', '_blank');
+        })
+        .catch(error => {
+            console.error('Erro ao cadastrar o estabelecimento:', error);
+            alert('Ocorreu um erro ao cadastrar o estabelecimento.');
+        });
+
+        } else {
+            alert('Por favor, preencha todos os campos.');
+        }
+}
+
+
+function enviarEmailParaEstabelecimento(email) {
+    fetch('/api/sendEmail', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nome_empresa, email, cnpj, endereco, cidade, telefone, senha })
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            email: email,
+            subject: 'Bem-vindo!',
+            text: 'Obrigado por se cadastrar!',
+        }),
     })
-    .then(response => {
-        if (!response.ok) throw new Error(`Erro ao cadastrar estabelecimento: ${response.statusText}`);
-        return response.json();
-    })
-    .then(data => {
-        alert('Estabelecimento cadastrado com sucesso!');
-        console.log('Estabelecimento cadastrado:', data);        
-        location.href = 'login.html';
-    })
-    .catch(error => {
-        console.error('Erro ao cadastrar:', error);
-        alert('Erro ao cadastrar estabelecimento. Por favor, tente novamente.');
-    });
+    .then(response => response.json())
+    .then(data => console.log(data.message))
+    .catch(error => console.error('Erro ao enviar e-mail:', error));
 }
 
 

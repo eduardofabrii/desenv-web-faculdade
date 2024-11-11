@@ -263,9 +263,9 @@ app.post('/api/login/motoboy', (req, res) => {
 
 // ADICIONAR MOTOBOY
 app.post('/api/motoboys', (req, res) => {
-    const { nome, cpf, senha, telefone } = req.body;
+    const { nome, email, cpf, senha, telefone, placa, cnh } = req.body;
 
-    if (!nome || !cpf || !senha || !telefone) {
+    if (!nome || !email || !cpf || !senha || !telefone || !placa || !cnh) {
         return res.status(400).json({ error: 'Nome, CPF, senha e telefone são obrigatórios!' });
     }
 
@@ -279,8 +279,8 @@ app.post('/api/motoboys', (req, res) => {
             return res.status(409).json({ error: 'Já existe um motoboy com o mesmo CPF!' });
         }
 
-        const query = 'INSERT INTO Motoboy (Nome, CPF, Senha, Telefone) VALUES (?, ?, ?, ?)';
-        connection.query(query, [nome, cpf, senha, telefone], (insertError, insertResults) => {
+        const query = 'INSERT INTO Motoboy (Nome, Email, CPF, Senha, Telefone, Placa, CNH) VALUES (?, ?, ?, ?, ?, ?, ?)';
+        connection.query(query, [nome, email, cpf, senha, telefone, placa, cnh], (insertError, insertResults) => {
             if (insertError) {
                 console.error('Erro ao inserir motoboy:', insertError);
                 return res.status(500).json({ error: 'Erro ao inserir motoboy.' });
@@ -330,14 +330,14 @@ app.get('/api/motoboys/:cpf', (req, res) => {
 // ROTA PARA ATUALIZAR UM MOTOBOY PELO CPF
 app.put('/api/motoboys/:cpf', (req, res) => {
     const cpf = req.params.cpf;
-    const { nome, telefone, senha } = req.body; // Incluímos a senha para atualização
+    const { nome, email, telefone, senha } = req.body; // Incluímos a senha para atualização
 
-    if (!nome || !telefone || !senha) {
+    if (!nome || !email || !telefone || !senha || !placa || !cnh) {
         return res.status(400).json({ error: 'Nome, telefone e senha são obrigatórios!' });
     }
 
-    const query = 'UPDATE Motoboy SET Nome = ?, Telefone = ?, Senha = ? WHERE CPF = ?';
-    connection.query(query, [nome, telefone, senha, cpf], (err, results) => {
+    const query = 'UPDATE Motoboy SET Nome = ?, Email = ?, Telefone = ?, Senha = ?, Placa = ?, CNH = ?, WHERE CPF = ?';
+    connection.query(query, [nome, email, telefone, senha, placa, cnh, cpf], (err, results) => {
         if (err) {
             console.error('Erro ao atualizar motoboy:', err);
             return res.status(500).json({ error: 'Erro ao atualizar motoboy.' });
