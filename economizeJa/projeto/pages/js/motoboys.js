@@ -8,6 +8,7 @@ async function carregarMotoboys() {
         if (!response.ok) throw new Error('Erro ao buscar dados dos motoboys');
 
         const motoboys = await response.json();
+        console.log(motoboys); // Log para conferir os dados recebidos
 
         if (motoboys.length === 0) {
             motoboysContainer.innerHTML = `<div class="carousel-item active">
@@ -26,12 +27,12 @@ async function carregarMotoboys() {
                 <div class="card mx-auto" style="width: 18rem;">
                     <div class="motoboy-photo"></div> <!-- Foto padrão -->
                     <div class="card-body text-center">
-                        <h5 class="card-title">${motoboy.nome}</h5>
-                        <p class="card-text">Email: ${motoboy.email}</p>
-                        <p class="card-text">CPF: ${motoboy.cpf}</p>
-                        <p class="card-text">Telefone: ${motoboy.telefone}</p>
-                        <p class="card-text">CNH: ${motoboy.cnh}</p>
-                        <p class="card-text">Placa: ${motoboy.placa}</p>
+                        <h5 class="card-title">${motoboy.nome || 'Nome não disponível'}</h5>
+                        <p class="card-text">Email: ${motoboy.email || 'Não informado'}</p>
+                        <p class="card-text">CPF: ${motoboy.cpf || 'Não informado'}</p>
+                        <p class="card-text">Telefone: ${motoboy.telefone || 'Não informado'}</p>
+                        <p class="card-text">CNH: ${motoboy.cnh || 'Não informado'}</p>
+                        <p class="card-text">Placa: ${motoboy.placa || 'Não informado'}</p>
                     </div>
                 </div>
             `;
