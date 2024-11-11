@@ -1,4 +1,4 @@
-
+// Função para cadastrar um estabelecimento
 function cadastrarEstabelecimento() {
     const nome_empresa = document.getElementById('nome-restaurante').value;
     const email = document.getElementById('email-restaurante').value;
@@ -11,11 +11,13 @@ function cadastrarEstabelecimento() {
     if (nome_empresa && email && cnpj && endereco && cidade && telefone && senha) {
         const estabelecimento = { nome_empresa, email, cnpj, endereco, cidade, telefone, senha };
 
+        // Adicionar ao armazenamento local
         const estabelecimentos = JSON.parse(localStorage.getItem('estabelecimentos')) || [];
         estabelecimentos.push(estabelecimento);
         localStorage.setItem('estabelecimentos', JSON.stringify(estabelecimentos));
 
-        fetch('/api/estabelecimento', {
+        // Enviar para a API
+        fetch('/api/estabelecimentos', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -32,13 +34,12 @@ function cadastrarEstabelecimento() {
             console.error('Erro ao cadastrar o estabelecimento:', error);
             alert('Ocorreu um erro ao cadastrar o estabelecimento.');
         });
-
-        } else {
-            alert('Por favor, preencha todos os campos.');
-        }
+    } else {
+        alert('Por favor, preencha todos os campos.');
+    }
 }
 
-
+// Função para enviar e-mail para o estabelecimento
 function enviarEmailParaEstabelecimento(email) {
     fetch('/api/sendEmail', {
         method: 'POST',
@@ -56,26 +57,30 @@ function enviarEmailParaEstabelecimento(email) {
     .catch(error => console.error('Erro ao enviar e-mail:', error));
 }
 
-
+// Função para carregar todos os estabelecimentos
 function carregarEstabelecimentos() {
-    fetch('/api/estabelecimento')
+    fetch('/api/estabelecimentos')
     .then(response => {
-        if (!response.ok) throw new Error(`Erro ao buscar estabelecimentos: ${response.statusText}`);
+        if (!response.ok) {
+            throw new Error(`Erro na resposta da API: ${response.statusText} (Código: ${response.status})`);
+        }
         return response.json();
     })
     .then(estabelecimentos => {
-        const tabela = document.getElementById('tabela-empresas');//.getElementByTagName('tbody')[0];
-        //tabela.innerHTML = ''; 
+        console.log("Dados retornados da API:", estabelecimentos); // Verifique o retorno da API no console
+
+        const tabela = document.getElementById('tabela-empresas');
+        tabela.innerHTML = '';
 
         estabelecimentos.forEach(empresa => {
-            console.log(empresa);
             const row = tabela.insertRow();
-            row.insertCell(0).innerText = empresa.Nome_Empresa;
-            row.insertCell(1).innerText = empresa.Email;
-            row.insertCell(2).innerText = empresa.CNPJ;
-            row.insertCell(3).innerText = empresa.Endereco;
-            row.insertCell(4).innerText = empresa.Cidade;
-            row.insertCell(5).innerText = empresa.Telefone;
+
+            row.insertCell(0).innerText = empresa.Nome_Empresa || "Nome não informado";
+            row.insertCell(1).innerText = empresa.Email || "Email não informado";
+            row.insertCell(2).innerText = empresa.CNPJ || "CNPJ não informado";
+            row.insertCell(3).innerText = empresa.Endereco || "Endereço não informado";
+            row.insertCell(4).innerText = empresa.Cidade || "Cidade não informada";
+            row.insertCell(5).innerText = empresa.Telefone || "Telefone não informado";
 
             const actionsCell = row.insertCell(6);
             actionsCell.innerHTML = `
@@ -86,15 +91,16 @@ function carregarEstabelecimentos() {
     })
     .catch(error => {
         console.error('Erro ao carregar estabelecimentos:', error);
-        alert('Erro ao buscar estabelecimentos. Verifique a conexão ou o servidor.');
+        alert(`Erro ao buscar estabelecimentos: ${error.message}`);
     });
 }
 
 
+// Função para editar um estabelecimento
 function editarEmpresa(botao, cnpj) {
     const linha = botao.parentNode.parentNode;
     const inputs = Array.from(linha.cells).slice(0, 6).map((cell, index) => {
-        if (index !== 2) { 
+        if (index !== 2) { // Ignora o campo CNPJ
             const conteudoAtual = cell.innerText;
             cell.innerHTML = `<input type="text" value="${conteudoAtual}" class="form-control">`;
             return cell.querySelector('input');
@@ -110,7 +116,7 @@ function editarEmpresa(botao, cnpj) {
             return;
         }
 
-        fetch(`/api/estabelecimento/${cnpj}`, {
+        fetch(`/api/estabelecimentos/${cnpj}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ nome_empresa, email, endereco, cidade, telefone })
@@ -127,17 +133,17 @@ function editarEmpresa(botao, cnpj) {
     };
 }
 
+// Função para excluir um estabelecimento
 function excluirEmpresa(ID_Estabelecimento) {
     if (!confirm('Tem certeza que deseja excluir este estabelecimento?')) return;
 
-    console.log('Excluindo estabelecimento:', ID_Estabelecimento);
-    fetch(`/api/estabelecimento/${ID_Estabelecimento}`, {
+    fetch(`/api/estabelecimentos/${ID_Estabelecimento}`, {
         method: 'DELETE'
     })
     .then(response => {
         if (!response.ok) throw new Error(`Erro ao excluir estabelecimento: ${response.statusText}`);
         alert('Estabelecimento excluído com sucesso!');
-        carregarEstabelecimentos(); 
+        carregarEstabelecimentos(); // Atualizar a tabela
     })
     .catch(error => {
         console.error('Erro ao excluir:', error);
@@ -145,3 +151,5 @@ function excluirEmpresa(ID_Estabelecimento) {
     });
 }
 
+// Carregar os estabelecimentos ao carregar a página
+window.onload = carregarEstabelecimentos;

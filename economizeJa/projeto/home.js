@@ -463,14 +463,14 @@ app.delete('/api/produtos/:id', (req, res) => {
 });
 
 // Rota para login de estabelecimento
-app.post('/api/login/estabelecimento', (req, res) => {
+app.post('/api/login/estabelecimentos', (req, res) => {
     const { cnpj, senha } = req.body;
 
     if (!cnpj || !senha) {
         return res.status(400).json({ message: 'CNPJ e senha são obrigatórios!' });
     }
 
-    const query = 'SELECT * FROM Estabelecimento WHERE cnpj = ? AND senha = ?';
+    const query = 'SELECT * FROM Estabelecimentos WHERE cnpj = ? AND senha = ?';
     connection.query(query, [cnpj, senha], (error, results) => {
         if (error) {
             console.error('Erro ao realizar login:', error);
@@ -483,16 +483,29 @@ app.post('/api/login/estabelecimento', (req, res) => {
     });
 });
 
+// Rota para pegar todos os estabelecimentos
+app.get('/api/estabelecimentos', (req, res) => {
+    const query = 'SELECT * FROM Estabelecimentos';
 
-// Rota para criar um novo estabelecimento
-app.post('/api/estabelecimento', (req, res) => {
+    connection.query(query, (err, results) => {
+        if (err) {
+            console.error('Erro ao buscar estabelecimentos:', err);
+            return res.status(500).json({ error: 'Erro ao buscar estabelecimentos' });
+        }
+        res.json(results); // Retorna os dados para o frontend
+    });
+});
+
+
+// Rota para cadastrar um novo estabelecimento
+app.post('/api/estabelecimentos', (req, res) => {
     const { nome_empresa, email, cnpj, endereco, cidade, telefone, senha } = req.body;
 
     if (!nome_empresa || !email || !cnpj || !endereco || !cidade || !telefone || !senha) {
         return res.status(400).json({ message: 'Todos os campos são obrigatórios!' });
     }
 
-    const query = 'INSERT INTO Estabelecimento(nome_empresa, email, cnpj, endereco, cidade, telefone, senha) VALUES (?, ?, ?, ?, ?, ?, ?)';
+    const query = 'INSERT INTO Estabelecimentos(nome_empresa, email, cnpj, endereco, cidade, telefone, senha) VALUES (?, ?, ?, ?, ?, ?, ?)';
     connection.query(query, [nome_empresa, email, cnpj, endereco, cidade, telefone, senha], (error, results) => {
         if (error) {
             console.error('Erro ao cadastrar estabelecimento:', error);
@@ -502,22 +515,12 @@ app.post('/api/estabelecimento', (req, res) => {
     });
 });
 
-// Rota para buscar todos os estabelecimentos
-app.get('/api/estabelecimentos', (req, res) => {
-    connection.query('SELECT * FROM Estabelecimento', (error, results) => {
-        if (error) {
-            console.error('Erro ao buscar estabelecimentos:', error);
-            return res.status(500).json({ message: 'Erro ao buscar estabelecimentos.' });
-        }
-        res.json(results);
-    });
-});
-
-app.put('/api/estabelecimento/:ID_Estabelecimento', (req, res) => {
+// Rota para editar um estabelecimento
+app.put('/api/estabelecimentos/:ID_Estabelecimento', (req, res) => {
     const { ID_Estabelecimento } = req.params;
     const { nome_empresa, email, endereco, cidade, telefone } = req.body;
 
-    const query = 'UPDATE Estabelecimento SET nome_empresa = ?, email = ?, endereco = ?, cidade = ?, telefone = ? WHERE ID_Estabelecimento = ?';
+    const query = 'UPDATE Estabelecimentos SET nome_empresa = ?, email = ?, endereco = ?, cidade = ?, telefone = ? WHERE ID_Estabelecimento = ?';
     connection.query(query, [nome_empresa, email, endereco, cidade, telefone, ID_Estabelecimento], (error, results) => {
         if (error) {
             console.error('Erro ao atualizar estabelecimento:', error);
@@ -530,11 +533,11 @@ app.put('/api/estabelecimento/:ID_Estabelecimento', (req, res) => {
     });
 });
 
-// Rota para excluir um estabelecimento pelo CNPJ
-app.delete('/api/estabelecimento/:ID_Estabelecimento', (req, res) => {
+// Rota para excluir um estabelecimento
+app.delete('/api/estabelecimentos/:ID_Estabelecimento', (req, res) => {
     const { ID_Estabelecimento } = req.params;
 
-    connection.query('DELETE FROM Estabelecimento WHERE ID_Estabelecimento = ?', [ID_Estabelecimento], (error, results) => {
+    connection.query('DELETE FROM Estabelecimentos WHERE ID_Estabelecimento = ?', [ID_Estabelecimento], (error, results) => {
         if (error) {
             console.error('Erro ao excluir estabelecimento:', error);
             return res.status(500).json({ message: 'Erro ao excluir estabelecimento.' });
