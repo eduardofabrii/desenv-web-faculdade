@@ -57,43 +57,39 @@ function enviarEmailParaEstabelecimento(email) {
     .catch(error => console.error('Erro ao enviar e-mail:', error));
 }
 
-// Função para carregar todos os estabelecimentos
-function carregarEstabelecimentos() {
-    fetch('/api/estabelecimentos')
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`Erro na resposta da API: ${response.statusText} (Código: ${response.status})`);
-        }
-        return response.json();
-    })
-    .then(estabelecimentos => {
-        console.log("Dados retornados da API:", estabelecimentos); // Verifique o retorno da API no console
+// Função para carregar e exibir estabelecimentos na tabela
+async function carregarEstabelecimentos() {
+    const tabela = document.getElementById('tabela-estabelecimentos');
 
-        const tabela = document.getElementById('tabela-empresas');
-        tabela.innerHTML = '';
+    // Verificar se a tabela existe
+    if (!tabela) {
+        console.error("Erro: elemento com ID 'tabela-estabelecimentos' não encontrado.");
+        return;
+    }
 
-        estabelecimentos.forEach(empresa => {
-            const row = tabela.insertRow();
+    tabela.innerHTML = ''; // Limpa a tabela antes de adicionar novos dados
 
-            row.insertCell(0).innerText = empresa.Nome_Empresa || "Nome não informado";
-            row.insertCell(1).innerText = empresa.Email || "Email não informado";
-            row.insertCell(2).innerText = empresa.CNPJ || "CNPJ não informado";
-            row.insertCell(3).innerText = empresa.Endereco || "Endereço não informado";
-            row.insertCell(4).innerText = empresa.Cidade || "Cidade não informada";
-            row.insertCell(5).innerText = empresa.Telefone || "Telefone não informado";
+    try {
+        const response = await fetch('/api/estabelecimentos');
+        const estabelecimentos = await response.json();
 
-            const actionsCell = row.insertCell(6);
-            actionsCell.innerHTML = `
-                <button class="btn btn-warning" onclick="editarEmpresa(this, '${empresa.ID_Estabelecimento}')">Editar</button>
-                <button class="btn btn-danger" onclick="excluirEmpresa('${empresa.ID_Estabelecimento}')">Excluir</button>
+        console.log(estabelecimentos); // Para verificar se os dados estão corretos
+
+        estabelecimentos.forEach(estabelecimento => {
+            const linha = document.createElement('tr');
+            linha.innerHTML = `
+                <td>${estabelecimento.Nome}</td>
+                <td>${estabelecimento.Endereco}</td>
+                <td>${estabelecimento.Telefone}</td>
+                <td>${estabelecimento.Email}</td>
             `;
+            tabela.appendChild(linha);
         });
-    })
-    .catch(error => {
+    } catch (error) {
         console.error('Erro ao carregar estabelecimentos:', error);
-        alert(`Erro ao buscar estabelecimentos: ${error.message}`);
-    });
+    }
 }
+
 
 
 // Função para editar um estabelecimento
