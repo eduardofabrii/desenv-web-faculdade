@@ -8,20 +8,22 @@ async function carregarMotoboys() {
         const response = await fetch('/api/motoboys'); // Atualize para o endpoint correto
         const motoboys = await response.json();
 
+        console.log(motoboys); // Verificar se os dados estão chegando corretamente
+
         // Adiciona uma linha na tabela para cada motoboy
         motoboys.forEach(motoboy => {
             const linha = document.createElement('tr');
             linha.innerHTML = `
-                <td>${motoboy.nome}</td>
-                <td>${motoboy.email}</td>
-                <td>${motoboy.senha}</td>
-                <td>${motoboy.cpf}</td>
-                <td>${motoboy.placa}</td>
-                <td>${motoboy.cnh}</td>
-                <td>${motoboy.telefone}</td>
+                <td>${motoboy.Nome}</td>
+                <td>${motoboy.Email}</td>
+                <td>${motoboy.Senha}</td>
+                <td>${motoboy.CPF}</td>
+                <td>${motoboy.Placa}</td>
+                <td>${motoboy.CNH}</td>
+                <td>${motoboy.Telefone}</td>
                 <td>
-                    <button class="btn btn-warning btn-sm" onclick="editarMotoboy(this, '${motoboy.cpf}')">Editar</button>
-                    <button class="btn btn-danger btn-sm" onclick="excluirMotoboy('${motoboy.cpf}')">Excluir</button>
+                    <button class="btn btn-warning btn-sm" onclick="editarMotoboy(this, '${motoboy.CPF}')">Editar</button>
+                    <button class="btn btn-danger btn-sm" onclick="excluirMotoboy('${motoboy.CPF}')">Excluir</button>
                 </td>
             `;
             tabela.appendChild(linha);

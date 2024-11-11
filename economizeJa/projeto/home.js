@@ -291,7 +291,6 @@ app.post('/api/motoboys', (req, res) => {
     });
 });
 
-// ROTA PARA LISTAR TODOS OS MOTOBOYS
 app.get('/api/motoboys', (req, res) => {
     const query = 'SELECT * FROM Motoboy';
     connection.query(query, (err, results) => {
@@ -300,6 +299,7 @@ app.get('/api/motoboys', (req, res) => {
             return res.status(500).json({ error: 'Erro ao buscar motoboys.' });
         }
 
+        console.log(results); // Verifique o conteúdo de `results` aqui
         res.status(200).json(results);
     });
 });
@@ -330,13 +330,13 @@ app.get('/api/motoboys/:cpf', (req, res) => {
 // ROTA PARA ATUALIZAR UM MOTOBOY PELO CPF
 app.put('/api/motoboys/:cpf', (req, res) => {
     const cpf = req.params.cpf;
-    const { nome, email, telefone, senha } = req.body; // Incluímos a senha para atualização
+    const { nome, email, telefone, senha, placa, cnh } = req.body; // Incluímos placa e cnh
 
     if (!nome || !email || !telefone || !senha || !placa || !cnh) {
-        return res.status(400).json({ error: 'Nome, telefone e senha são obrigatórios!' });
+        return res.status(400).json({ error: 'Nome, telefone, senha, placa e CNH são obrigatórios!' });
     }
 
-    const query = 'UPDATE Motoboy SET Nome = ?, Email = ?, Telefone = ?, Senha = ?, Placa = ?, CNH = ?, WHERE CPF = ?';
+    const query = 'UPDATE Motoboy SET Nome = ?, Email = ?, Telefone = ?, Senha = ?, Placa = ?, CNH = ? WHERE CPF = ?';
     connection.query(query, [nome, email, telefone, senha, placa, cnh, cpf], (err, results) => {
         if (err) {
             console.error('Erro ao atualizar motoboy:', err);
@@ -350,6 +350,7 @@ app.put('/api/motoboys/:cpf', (req, res) => {
         res.status(200).json({ message: 'Motoboy atualizado com sucesso!' });
     });
 });
+
 
 // ROTA PARA EXCLUIR UM MOTOBOY PELO CPF
 app.delete('/api/motoboys/:cpf', (req, res) => {
