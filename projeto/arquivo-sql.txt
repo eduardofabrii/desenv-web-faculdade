@@ -1,0 +1,57 @@
+DROP DATABASE IF EXISTS ECONOMIZEJA;
+CREATE DATABASE ECONOMIZEJA;
+USE ECONOMIZEJA;
+
+CREATE TABLE Usuario (
+    ID_Usuario INT PRIMARY KEY auto_increment,
+    Nome VARCHAR(50),
+    Email VARCHAR(100),
+    Senha VARCHAR(100),
+    CPF CHAR(11),
+    Telefone CHAR(11)
+);
+
+CREATE TABLE Motoboy (
+    ID_Motoboy INT PRIMARY KEY auto_increment,
+    Nome VARCHAR(50),
+    Email VARCHAR(100),
+    Senha VARCHAR(100),
+    CPF CHAR(11),
+    Placa VARCHAR(10),
+    CNH CHAR(11),
+    Telefone CHAR(11)
+);
+
+CREATE TABLE Estabelecimentos (
+    ID_Estabelecimento INT AUTO_INCREMENT PRIMARY KEY,
+    CNPJ VARCHAR(14) NOT NULL, 
+    Nome_Empresa VARCHAR(100) NOT NULL,
+    Email VARCHAR(100) NOT NULL UNIQUE, 
+    Senha VARCHAR(100) NOT NULL,
+    Telefone VARCHAR(11) NOT NULL, 
+    Cidade VARCHAR(30) NOT NULL,
+    Endereco VARCHAR(30) NOT NULL
+);
+
+CREATE TABLE Pedido (
+    ID_Pedido INT PRIMARY KEY,
+    Data DATE
+);
+
+CREATE TABLE Produtos (
+    ID_Produtos INT AUTO_INCREMENT PRIMARY KEY,
+    Nome VARCHAR(10),
+    Descricao TEXT,
+    Nicho VARCHAR(50),
+    Preco DECIMAL(10, 2),
+    Imagem VARCHAR(255)
+);
+
+CREATE TABLE Produtos_Pedidos (
+    ID_Produtos_Pedidos INT PRIMARY KEY,
+    Quantidade INT,
+    Dt_Fabricacao DATE,
+    Dt_Validade DATE
+);
+
+
