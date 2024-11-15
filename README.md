@@ -1,16 +1,42 @@
 # EconomizeJa
+EconomizeJa é uma aplicação web sendo desenvolvida com o objetivo de reduzir o desperdício de alimentos. Nosso projeto conecta consumidores a supermercados, restaurantes e outros estabelecimentos que desejam vender produtos próximos do vencimento, com pequenos defeitos - tudo isso com preços reduzidos. O projeto beneficia tanto os consumidores quanto os estabelecimentos, criando uma solução prática e consciente.
 
-<strong>EconomizeJa</strong> é uma aplicação web sendo desenvolvida com o objetivo de reduzir o desperdício de alimentos, conectando consumidores a supermercados, restaurantes e outros estabelecimentos que desejam vender produtos próximos do vencimento ou com pequenos defeitos a preços reduzidos. Nosso foco é promover a sustentabilidade e a economia, beneficiando tanto os consumidores quanto os estabelecimentos.
+***
 
-# Tecnologias Utilizadas
-Front-end: HTML, Bootstrap, CSS, JavaScript <br>
-Back-end: Node.js <br>
-Banco de Dados: MySQL <br>
-Controle de Versão: Git/GitHub
+## 🛠 Tecnologias Utilizadas
++ Front-end: HTML, CSS, Bootstrap, JavaScript
++ Back-end: Node.js
++ Banco de Dados: MySQL
++ Controle de Versão: Git/GitHub
 
-# Equipe
-Eduardo Fabri - Desenvolvedor <br>
-Renan - Desenvolvedor <br>
-João Vitor Correa - Desenvolvedor <br>
+***
 
-# <a href="https://eduardofabrii.github.io/desenv-web-faculdade/economizeJa/projeto/pages/home.html" target="_blank">Clique e confira o atual projeto</a>
+## 👥 Equipe
++ João Vitor Correa - Desenvolvedor
++ Eduardo Fabri - Desenvolvedor
++ Renan - Desenvolvedor
+
+***
+
+## 🌐 Experimente o Projeto
+Abaixo você poderá ver o site no GitHub Pages, que impossibilita a navegação como ele deve funcionar de fato. EM BREVE HOSPEDAREMOS!<br>
+<a href="https://eduardofabrii.github.io/economizeja/projeto/pages/home.html" target="_blank">Clique aqui</a><br>
+
+Para usar da forma correta, siga os passos abaixo:<br>
+Clone o repositório: <br>
+
+git clone https://github.com/eduardofabrii/economizeja.git<br>
+
+Configure o banco de dados
+Utilize o banco de dados sem senha e copie o os dados do Banco de Dados do arquivo existente: "arquivo-sql.txt" no seu MySQL WORKBENCH<br>
+
+Instale as dependências do back-end<br>
+cd projeto<br>
+npm install express mysql cookie-parser express-session nodemailer<br>
+npm init -y<br>
+node home.js<br>
+
+E abra no navegador:<br>
+http://localhost:3000<br>
+
+Agora você pode explorar e contribuir para o projeto! 🌟
