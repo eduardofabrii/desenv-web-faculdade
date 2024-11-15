@@ -18,25 +18,29 @@ EconomizeJa é uma aplicação web sendo desenvolvida com o objetivo de reduzir 
 
 ***
 
-## 🌐 Experimente o Projeto
-Abaixo você poderá ver o site no GitHub Pages, que impossibilita a navegação como ele deve funcionar de fato. EM BREVE HOSPEDAREMOS!<br>
-<a href="https://eduardofabrii.github.io/economizeja/projeto/pages/home.html" target="_blank">Clique aqui</a><br>
+##🌐 Experimente o Projeto
+Para usar o projeto corretamente, siga os passos abaixo:
 
-Para usar da forma correta, siga os passos abaixo:<br>
-Clone o repositório: <br>
+1️⃣ <b>Clone o Repositório</b>
+Execute o comando abaixo no terminal:
++ git clone https://github.com/eduardofabrii/economizeja.git
 
-git clone https://github.com/eduardofabrii/economizeja.git<br>
+2️⃣ <b>Configure o Banco de Dados</b>
+Utilize o banco de dados sem senha.
++ Copie os dados do arquivo arquivo-sql.txt para o seu MySQL Workbench (ou outra ferramenta de sua preferência) e execute o script.
 
-Configure o banco de dados
-Utilize o banco de dados sem senha e copie o os dados do Banco de Dados do arquivo existente: "arquivo-sql.txt" no seu MySQL WORKBENCH<br>
+3️⃣ <b>Instale as Dependências do Back-end</b>
+No terminal, navegue até o diretório do projeto e execute os comandos:
++ cd projeto
++ npm install express mysql cookie-parser express-session nodemailer
++ npm init -y
 
-Instale as dependências do back-end<br>
-cd projeto<br>
-npm install express mysql cookie-parser express-session nodemailer<br>
-npm init -y<br>
-node home.js<br>
+4️⃣ <b>Inicie o Servidor</b>
+Para iniciar o servidor, execute:
++ node home.js
 
-E abra no navegador:<br>
-http://localhost:3000<br>
+5️⃣ <b>Abra no Navegador</b>
+Acesse o projeto no seu navegador em:
++ http://localhost:3000/home.html
 
 Agora você pode explorar e contribuir para o projeto! 🌟
