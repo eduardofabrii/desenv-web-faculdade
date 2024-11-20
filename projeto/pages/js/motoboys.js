@@ -1,49 +1,44 @@
-document.addEventListener("DOMContentLoaded", carregarMotoboys);
-
-async function carregarMotoboys() {
-    const motoboysContainer = document.getElementById('motoboysContainer');
-
-    try {
-        const response = await fetch('/api/motoboys');
-        if (!response.ok) throw new Error('Erro ao buscar dados dos motoboys');
-
-        const motoboys = await response.json();
-        console.log(motoboys); // Log para conferir os dados recebidos
-
-        if (motoboys.length === 0) {
-            motoboysContainer.innerHTML = `<div class="carousel-item active">
-                <div class="d-flex justify-content-center align-items-center" style="height: 300px;">
-                    <h3>Nenhum motoboy cadastrado</h3>
-                </div>
-            </div>`;
-            return;
-        }
-
+function carregarMotoboysNoCarrossel() {
+    fetch('/api/motoboys') // Endpoint para pegar os motoboys cadastrados
+      .then((response) => response.json())
+      .then((motoboys) => {
+        const carouselContent = document.getElementById('motoboyCarouselContent');
+        carouselContent.innerHTML = '';
+  
+        // URLs das imagens
+        const imagens = [
+          'images/img-motoboy.jpg', // Imagem 1
+          'images/motoboy2.jpg', // Imagem 2
+          'images/motoboy3.jpg'  // Imagem 3
+        ];
+  
         motoboys.forEach((motoboy, index) => {
-            const isActive = index === 0 ? 'active' : '';
-            const motoboyItem = document.createElement('div');
-            motoboyItem.className = `carousel-item ${isActive}`;
-            motoboyItem.innerHTML = `
-                <div class="card mx-auto" style="width: 18rem;">
-                    <div class="motoboy-photo"></div> <!-- Foto padrão -->
-                    <div class="card-body text-center">
-                        <h5 class="card-title">${motoboy.nome || 'Nome não disponível'}</h5>
-                        <p class="card-text">Email: ${motoboy.email || 'Não informado'}</p>
-                        <p class="card-text">CPF: ${motoboy.cpf || 'Não informado'}</p>
-                        <p class="card-text">Telefone: ${motoboy.telefone || 'Não informado'}</p>
-                        <p class="card-text">CNH: ${motoboy.cnh || 'Não informado'}</p>
-                        <p class="card-text">Placa: ${motoboy.placa || 'Não informado'}</p>
-                    </div>
-                </div>
-            `;
-            motoboysContainer.appendChild(motoboyItem);
-        });
-    } catch (error) {
-        console.error(error);
-        motoboysContainer.innerHTML = `<div class="carousel-item active">
-            <div class="d-flex justify-content-center align-items-center" style="height: 300px;">
-                <h3>Erro ao carregar motoboys</h3>
+          const isActive = index === 0 ? 'active' : ''; // Primeira posição ativa no carrossel
+          const imagem = imagens[index % imagens.length]; // Escolher imagem cíclica
+  
+          const motoboyCard = `
+            <div class="carousel-item ${isActive}">
+              <div class="motoboy-card">
+                <img src="${imagem}" alt="Imagem do Motoboy" class="motoboy-img mb-3"> 
+                <h5>${motoboy.Nome || 'Nome não disponível'}</h5>
+                <p><strong>Email:</strong> ${motoboy.Email || 'Não informado'}</p>
+                <p><strong>Telefone:</strong> ${motoboy.Telefone || 'Não informado'}</p>
+                <p><strong>Placa da Moto:</strong> ${motoboy.Placa || 'Não informada'}</p> <!-- Placa exibida -->
+              </div>
             </div>
-        </div>`;
-    }
-}
+          `;
+          carouselContent.innerHTML += motoboyCard;
+        });
+      })
+      .catch((error) => {
+        console.error('Erro ao carregar motoboys:', error);
+      });
+  }
+  
+  // Função para mostrar o modal de notificação
+  document.getElementById('notificarBtn').addEventListener('click', () => {
+  });
+  
+  // Carregar os motoboys no carrossel quando a página carregar
+  window.onload = carregarMotoboysNoCarrossel;
+  

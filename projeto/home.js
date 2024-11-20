@@ -1,8 +1,27 @@
 const express = require('express');
 const mysql = require('mysql');
 const cookieParser = require('cookie-parser');
-const session = require('express-session'); // Importando express-session
+const session = require('express-session');
 const nodemailer = require('nodemailer');
+const multer = require('multer');
+const path = require('path');
+
+
+
+
+// Configuração do Multer para salvar imagens na pasta 'uploads'
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/'); // Pasta onde as imagens serão salvas
+    },
+    filename: (req, file, cb) => {
+        const ext = path.extname(file.originalname); // Extensão da imagem
+        const filename = Date.now() + ext; // Nome único para o arquivo
+        cb(null, filename);
+    }
+});
+
+const upload = multer({ storage: storage });
 
 const app = express();
 
@@ -370,16 +389,23 @@ app.delete('/api/motoboys/:cpf', (req, res) => {
     });
 });
 
-// ADICIONAR PRODUTO
-app.post('/api/produtos', (req, res) => {
+app.post('/api/produtos', upload.single('imagem'), (req, res) => {
+    if (!req.file) {
+        console.error('Nenhuma imagem foi carregada.');
+        return res.status(400).json({ error: 'A imagem é obrigatória!' });
+    }
+
+    console.log('Arquivo recebido:', req.file); // Verifique os dados do arquivo
+
     const { Nome, Descricao, Nicho, Preco } = req.body;
+    const imagemUrl = req.file ? req.file.path : null;
 
     if (!Nome || !Descricao || !Nicho || !Preco) {
         return res.status(400).json({ error: 'Nome, descrição, categoria e preço são obrigatórios!' });
     }
 
-    const query = 'INSERT INTO Produtos (Nome, Descricao, Nicho, Preco) VALUES (?, ?, ?, ?)';
-    connection.query(query, [Nome, Descricao, Nicho, Preco], (err, results) => {
+    const query = 'INSERT INTO Produtos (Nome, Descricao, Nicho, Preco, Imagem) VALUES (?, ?, ?, ?, ?)';
+    connection.query(query, [Nome, Descricao, Nicho, Preco, imagemUrl], (err, results) => {
         if (err) {
             console.error('Erro ao inserir produto:', err);
             return res.status(500).json({ error: 'Erro ao inserir produto.' });
@@ -388,7 +414,8 @@ app.post('/api/produtos', (req, res) => {
     });
 });
 
-// ROTA PARA LISTAR TODOS OS PRODUTOS
+
+// Rota para consultar todos os produtos (GET)
 app.get('/api/produtos', (req, res) => {
     const query = 'SELECT * FROM Produtos';
     connection.query(query, (err, results) => {
@@ -400,25 +427,27 @@ app.get('/api/produtos', (req, res) => {
     });
 });
 
-// ROTA PARA CONSULTAR PRODUTO PELO ID
-app.get('/api/produtos/:id', (req, res) => {
-    const id = req.params.id;
-
-    connection.query('SELECT * FROM Produtos WHERE ID_Produtos = ?', [id], (error, results) => {
-        if (error) {
-            console.error('Erro ao consultar o banco de dados:', error);
-            return res.status(500).json({ error: 'Erro ao buscar produto.' });
+// Rota para consultar todos os produtos (GET)
+app.get('/api/produtos', (req, res) => {
+    const query = 'SELECT * FROM Produtos';
+    connection.query(query, (err, results) => {
+        if (err) {
+            console.error('Erro ao buscar produtos:', err);
+            return res.status(500).json({ error: 'Erro ao buscar produtos.' });
         }
 
-        if (results.length === 0) {
-            return res.status(404).json({ error: 'Produto não encontrado.' });
-        }
+        // Para cada produto, verifica se há uma imagem e cria uma URL relativa
+        results.forEach((produto) => {
+            if (produto.Imagem) {
+                produto.Imagem = `http://localhost:3000/${produto.Imagem}`; 
+            }
+        });
 
-        return res.json(results[0]);
+        res.status(200).json(results);
     });
 });
 
-// Atualizar Produto
+// Rota para atualizar produto (PUT)
 app.put('/api/produtos/:id', (req, res) => {
     const produtoId = req.params.id;
     const { Nome, Descricao, Preco } = req.body;
@@ -445,7 +474,7 @@ app.put('/api/produtos/:id', (req, res) => {
     });
 });
 
-// ROTA PARA EXCLUIR UM PRODUTO PELO ID
+// Rota para excluir produto (DELETE)
 app.delete('/api/produtos/:id', (req, res) => {
     const id = req.params.id;
 
@@ -462,7 +491,6 @@ app.delete('/api/produtos/:id', (req, res) => {
         res.status(200).json({ message: 'Produto excluído com sucesso!' });
     });
 });
-
 // Rota para login de estabelecimento
 app.post('/api/login/estabelecimentos', (req, res) => {
     const { cnpj, senha } = req.body;

@@ -1,12 +1,11 @@
+// Função para adicionar produto
 async function adicionarProduto(event) {
     event.preventDefault();
     
     // Captura a imagem e converte para uma URL temporária
     const imageInput = document.getElementById("productImage");
     const imageFile = imageInput.files[0];
-
-    // Verifica se uma imagem foi selecionada
-    const imageURL = imageFile ? URL.createObjectURL(imageFile) : ''; // Se não houver imagem, a URL será uma string vazia
+    const imageURL = imageFile ? URL.createObjectURL(imageFile) : ''; // Caso não tenha imagem, será uma string vazia
     
     // Captura os outros campos
     const nome = document.getElementById("productName").value;
@@ -20,7 +19,7 @@ async function adicionarProduto(event) {
         Nicho: nicho,
         Descricao: descricao,
         Preco: preco,
-        Imagem: imageURL // Adiciona a URL da imagem ao objeto produto
+        Imagem: imageURL, // Adiciona a URL da imagem ao objeto produto
     };
 
     try {
@@ -36,10 +35,6 @@ async function adicionarProduto(event) {
         if (response.ok) {
             alert("Produto adicionado com sucesso!");
             document.getElementById("produtoForm").reset();
-            // Salva a imagem no localStorage
-            if (imageFile) {
-                localStorage.setItem(`imagem-${nome}`, imageURL);
-            }
             carregarProdutos(); // Atualiza a lista de produtos
         } else {
             throw new Error("Erro ao adicionar produto.");
@@ -50,11 +45,9 @@ async function adicionarProduto(event) {
     }
 }
 
-
-// Função para carregar os produtos do banco de dados (API)
+// Função para carregar os produtos
 async function carregarProdutos() {
     try {
-        // Faz a requisição GET para carregar os produtos
         const response = await fetch('/api/produtos');
         const produtos = await response.json();
 
@@ -68,8 +61,7 @@ async function carregarProdutos() {
 
         // Exibe os produtos existentes
         produtos.forEach((produto, index) => {
-            // Use a URL da imagem correta que foi retornada pelo backend
-            const imagem = produto.Imagem || '';  // Alterado de produto.image para produto.Imagem
+            const imagem = produto.Imagem || '';  // Usar a URL da imagem retornada do backend
 
             const produtoCard = `
                 <div class="col-md-4">
@@ -96,20 +88,6 @@ async function carregarProdutos() {
     }
 }
 
-// Função para carregar todos os produtos
-async function carregarTodosProdutos() {
-    try {
-        const response = await fetch('/api/produtos');
-        const todosOsProdutos = await response.json();
-        produtos.length = 0; // Limpa a lista atual
-        produtos.push(...todosOsProdutos); // Adiciona todos os produtos à lista atual
-        salvarProdutos(); // Salva as alterações
-    } catch (error) {
-        console.error("Erro ao carregar todos os produtos:", error);
-        alert("Erro ao carregar todos os produtos.");
-    }
-}
-
 // Função para alternar entre editar e salvar
 async function toggleEdit(index, event, produtoId) {
     const nameInput = document.getElementById(`name-${index}`);
@@ -118,21 +96,21 @@ async function toggleEdit(index, event, produtoId) {
     const nameDisplay = document.getElementById(`nameDisplay-${index}`);
     const descriptionDisplay = document.getElementById(`descriptionDisplay-${index}`);
     const priceDisplay = document.getElementById(`priceDisplay-${index}`);
-    const button = event.target; // Pega o botão que foi clicado
+    const button = event.target;
 
     if (button.innerText === 'Editar') {
-        // Mostra os campos de entrada e esconde os textos
+        // Muda para modo de edição
         nameInput.style.display = 'block';
         descriptionInput.style.display = 'block';
         priceInput.style.display = 'block';
         nameDisplay.style.display = 'none';
         descriptionDisplay.style.display = 'none';
         priceDisplay.style.display = 'none';
-        button.innerText = 'Salvar'; // Muda o texto do botão para 'Salvar'
-        nameInput.removeAttribute('readonly'); // Permite edição
-        descriptionInput.removeAttribute('readonly'); // Permite edição
-        priceInput.removeAttribute('readonly'); // Permite edição
-        nameInput.focus(); // Foca no campo de entrada para facilitar a edição
+        button.innerText = 'Salvar';
+        nameInput.removeAttribute('readonly');
+        descriptionInput.removeAttribute('readonly');
+        priceInput.removeAttribute('readonly');
+        nameInput.focus();
     } else {
         // Salva as alterações
         const updatedProduto = {
@@ -142,25 +120,19 @@ async function toggleEdit(index, event, produtoId) {
         };
 
         try {
-            // Faz a requisição PUT para atualizar o produto no banco de dados
             const response = await fetch(`/api/produtos/${produtoId}`, {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(updatedProduto)
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedProduto),
             });
 
             if (response.ok) {
-                // Atualiza a exibição com os novos dados
-                const produtoAtualizado = await response.json(); // Captura o produto atualizado
-
+                const produtoAtualizado = await response.json();
                 atualizarDisplay(index, produtoAtualizado, button);
                 alert("Produto atualizado com sucesso!");
                 carregarProdutos(); // Recarrega a lista de produtos
             } else {
-                const errorData = await response.json();
-                throw new Error(errorData.message || "Erro ao atualizar produto.");
+                throw new Error("Erro ao atualizar produto.");
             }
         } catch (error) {
             console.error("Erro ao atualizar produto:", error);
@@ -215,7 +187,6 @@ async function excluirProduto(produtoId) {
         }
     }
 }
-
 
 // Carrega os produtos ao iniciar a página
 document.addEventListener('DOMContentLoaded', carregarProdutos);
