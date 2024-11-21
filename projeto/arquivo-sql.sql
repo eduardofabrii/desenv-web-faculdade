@@ -1,5 +1,5 @@
-DROP DATABASE IF EXISTS ECONOMIZEJA;
 CREATE DATABASE ECONOMIZEJA;
+drop database EconomizeJa;
 USE ECONOMIZEJA;
 
 CREATE TABLE Usuario (
@@ -33,25 +33,32 @@ CREATE TABLE Estabelecimentos (
     Endereco VARCHAR(30) NOT NULL
 );
 
-CREATE TABLE Pedido (
-    ID_Pedido INT PRIMARY KEY,
-    Data DATE
-);
+
 
 CREATE TABLE Produtos (
     ID_Produtos INT AUTO_INCREMENT PRIMARY KEY,
-    Nome VARCHAR(10),
+    Nome VARCHAR(115),
     Descricao TEXT,
     Nicho VARCHAR(50),
     Preco DECIMAL(10, 2),
     Imagem VARCHAR(255)
 );
 
-CREATE TABLE Produtos_Pedidos (
-    ID_Produtos_Pedidos INT PRIMARY KEY,
-    Quantidade INT,
-    Dt_Fabricacao DATE,
-    Dt_Validade DATE
+CREATE TABLE Pedido (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    ID_Cliente INT,
+    Data_Pedido DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE Produtos_Pedidos (
+    ID_Produtos_Pedidos INT AUTO_INCREMENT PRIMARY KEY,
+    ID_Pedido INT, 
+    ID_Produtos INT,
+    Quantidade INT,
+    FOREIGN KEY (ID_Pedido) REFERENCES Pedido(ID),  -
+    FOREIGN KEY (ID_Produtos) REFERENCES Produtos(ID_Produtos)   
+);
+
+
 
 
