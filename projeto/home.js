@@ -6,25 +6,9 @@ const nodemailer = require('nodemailer');
 const multer = require('multer');
 const path = require('path');
 
+const app = express(); // Mover a inicialização do `app` para o início
 
-
-
-// Configuração do Multer para salvar imagens na pasta 'uploads'
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads/'); // Pasta onde as imagens serão salvas
-    },
-    filename: (req, file, cb) => {
-        const ext = path.extname(file.originalname); // Extensão da imagem
-        const filename = Date.now() + ext; // Nome único para o arquivo
-        cb(null, filename);
-    }
-});
-
-const upload = multer({ storage: storage });
-
-const app = express();
-
+// Configurações gerais
 app.use(express.json());
 app.use(express.static('./pages'));
 app.use(cookieParser());
@@ -34,6 +18,35 @@ app.use(session({
     saveUninitialized: true,
 }));
 
+// Servir arquivos estáticos
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Configuração do Multer para upload de imagens
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, path.join(__dirname, 'uploads')); // Diretório onde as imagens serão salvas
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + '-' + file.originalname); // Nome único para cada imagem
+    }
+});
+
+const upload = multer({
+    storage: storage,
+    fileFilter: (req, file, cb) => {
+        // Aceita apenas imagens
+        const fileTypes = /jpeg|jpg|png|gif/;
+        const mimeType = fileTypes.test(file.mimetype);
+        const extName = fileTypes.test(path.extname(file.originalname).toLowerCase());
+        if (mimeType && extName) {
+            return cb(null, true);
+        }
+        cb(new Error('Apenas arquivos de imagem são permitidos.'));
+    }
+});
+
+// Conexão com o banco de dados
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -43,10 +56,21 @@ const connection = mysql.createConnection({
 
 connection.connect((err) => {
     if (err) {
-        console.error('Error connecting to MySQL:', err);
-        return;
+        console.error('Erro ao conectar ao MySQL:', err);
+        process.exit(1);
     }
-    console.log('Connected to MySQL database!');
+    console.log('Conectado ao banco de dados MySQL!');
+});
+
+// Rotas
+app.post('/upload', upload.single('image'), (req, res) => {
+    if (!req.file) {
+        return res.status(400).send('Nenhuma imagem foi enviada.');
+    }
+    res.json({
+        message: 'Imagem enviada com sucesso!',
+        imageUrl: `/uploads/${req.file.filename}`
+    });
 });
 
 // ROTA PARA OBTER DADOS DA SESSÃO
@@ -67,7 +91,7 @@ app.get('/api/sessao', (req, res) => {
 // ROTA PARA REINICIALIZAR A SESSÃO (similar ao logout)
 app.post('/api/sessao/reiniciar', (req, res) => {
     req.session.destroy(err => {
-        if (err) {
+        if (err) {                                   
             console.error('Erro ao reinicializar sessão:', err);
             return res.status(500).json({ error: 'Erro ao reinicializar sessão.' });
 
@@ -389,33 +413,23 @@ app.delete('/api/motoboys/:cpf', (req, res) => {
     });
 });
 
-app.post('/api/produtos', upload.single('imagem'), (req, res) => {
-    if (!req.file) {
-        console.error('Nenhuma imagem foi carregada.');
-        return res.status(400).json({ error: 'A imagem é obrigatória!' });
-    }
-
-    console.log('Arquivo recebido:', req.file); // Verifique os dados do arquivo
-
+app.post('/api/produtos', upload.single('Imagem'), (req, res) => {
     const { Nome, Descricao, Nicho, Preco } = req.body;
-    const imagemUrl = req.file ? req.file.path : null;
-
-    if (!Nome || !Descricao || !Nicho || !Preco) {
-        return res.status(400).json({ error: 'Nome, descrição, categoria e preço são obrigatórios!' });
+    if (!req.file || !Nome || !Descricao || !Nicho || !Preco) {
+        return res.status(400).json({ error: 'Nome, descrição, nicho, preço e imagem são obrigatórios!' });
     }
 
+    const imagemUrl = `/uploads/${req.file.filename}`;
     const query = 'INSERT INTO Produtos (Nome, Descricao, Nicho, Preco, Imagem) VALUES (?, ?, ?, ?, ?)';
     connection.query(query, [Nome, Descricao, Nicho, Preco, imagemUrl], (err, results) => {
         if (err) {
             console.error('Erro ao inserir produto:', err);
             return res.status(500).json({ error: 'Erro ao inserir produto.' });
         }
-        return res.status(201).json({ message: 'Produto adicionado com sucesso!', id: results.insertId });
+        res.status(201).json({ message: 'Produto adicionado com sucesso!', id: results.insertId });
     });
 });
 
-
-// Rota para consultar todos os produtos (GET)
 app.get('/api/produtos', (req, res) => {
     const query = 'SELECT * FROM Produtos';
     connection.query(query, (err, results) => {
@@ -423,74 +437,163 @@ app.get('/api/produtos', (req, res) => {
             console.error('Erro ao buscar produtos:', err);
             return res.status(500).json({ error: 'Erro ao buscar produtos.' });
         }
-        res.status(200).json(results);
-    });
-});
-
-// Rota para consultar todos os produtos (GET)
-app.get('/api/produtos', (req, res) => {
-    const query = 'SELECT * FROM Produtos';
-    connection.query(query, (err, results) => {
-        if (err) {
-            console.error('Erro ao buscar produtos:', err);
-            return res.status(500).json({ error: 'Erro ao buscar produtos.' });
-        }
-
-        // Para cada produto, verifica se há uma imagem e cria uma URL relativa
         results.forEach((produto) => {
             if (produto.Imagem) {
-                produto.Imagem = `http://localhost:3000/${produto.Imagem}`; 
+                produto.Imagem = `http://localhost:3000${produto.Imagem}`;
             }
         });
-
         res.status(200).json(results);
     });
 });
 
-// Rota para atualizar produto (PUT)
 app.put('/api/produtos/:id', (req, res) => {
-    const produtoId = req.params.id;
     const { Nome, Descricao, Preco } = req.body;
-
+    const produtoId = req.params.id;
     if (!Nome || !Descricao || !Preco) {
         return res.status(400).json({ error: 'Nome, descrição e preço são obrigatórios!' });
     }
 
-    // Query SQL para atualizar o produto
     const query = 'UPDATE Produtos SET Nome = ?, Descricao = ?, Preco = ? WHERE ID_Produtos = ?';
-    
     connection.query(query, [Nome, Descricao, Preco, produtoId], (err, results) => {
         if (err) {
             console.error('Erro ao atualizar produto:', err);
             return res.status(500).json({ error: 'Erro ao atualizar produto.' });
         }
-
-        // Verifica se o produto foi encontrado e atualizado
         if (results.affectedRows === 0) {
             return res.status(404).json({ error: 'Produto não encontrado.' });
         }
-
         res.status(200).json({ message: 'Produto atualizado com sucesso!' });
     });
 });
 
-// Rota para excluir produto (DELETE)
 app.delete('/api/produtos/:id', (req, res) => {
-    const id = req.params.id;
-
-    connection.query('DELETE FROM Produtos WHERE ID_Produtos = ?', [id], (err, results) => {
+    const produtoId = req.params.id;
+    const query = 'DELETE FROM Produtos WHERE ID_Produtos = ?';
+    connection.query(query, [produtoId], (err, results) => {
         if (err) {
             console.error('Erro ao excluir produto:', err);
             return res.status(500).json({ error: 'Erro ao excluir produto.' });
         }
-
         if (results.affectedRows === 0) {
-            return res.status(404).json({ error: 'Produto não encontrado!' });
+            return res.status(404).json({ error: 'Produto não encontrado.' });
         }
-
         res.status(200).json({ message: 'Produto excluído com sucesso!' });
     });
 });
+// Rota para adicionar um produto ao carrinho (tabela Produtos_Pedidos)
+app.post('/api/produtos-pedidos', (req, res) => {
+    const { produtoId, quantidade } = req.body;
+
+    if (!produtoId || !quantidade) {
+        return res.status(400).json({ error: 'Produto ID e quantidade são obrigatórios!' });
+    }
+
+    const query = 'INSERT INTO Produtos_Pedidos (ID_Produtos, Quantidade) VALUES (?, ?)';
+    connection.query(query, [produtoId, quantidade], (err, results) => {
+        if (err) {
+            console.error('Erro ao adicionar produto ao carrinho:', err);
+            return res.status(500).json({ error: 'Erro ao adicionar produto ao carrinho.' });
+        }
+        res.status(201).json({ message: 'Produto adicionado ao carrinho com sucesso!' });
+    });
+});
+
+
+app.get('/api/produtos-pedidos', (req, res) => {
+    const query = `
+        SELECT pp.ID_Produtos_Pedidos, pp.Quantidade, p.Nome, p.Descricao, p.Preco, p.Imagem
+        FROM Produtos_Pedidos pp
+        JOIN Produtos p ON pp.ID_Produtos = p.ID_Produtos;
+    `;
+    connection.query(query, (err, results) => {
+        if (err) {
+            console.error('Erro ao carregar produtos do carrinho:', err);
+            return res.status(500).json({ error: 'Erro ao carregar produtos do carrinho.' });
+        }
+        res.json(results);  // Retorna os dados completos
+    });
+});
+
+
+
+app.put('/api/produtos-pedidos/:id', (req, res) => {
+    const produtoId = req.params.id;
+    const { quantidade } = req.body;
+
+    if (quantidade < 1) {
+        return res.status(400).json({ error: "A quantidade deve ser maior que 0." });
+    }
+
+    // Atualiza a quantidade para o valor enviado
+    const query = `
+        UPDATE Produtos_Pedidos
+        SET Quantidade = ?
+        WHERE ID_Produtos_Pedidos = ?;
+    `;
+    connection.query(query, [quantidade, produtoId], (err, result) => {
+        if (err) {
+            console.error('Erro ao atualizar quantidade:', err);
+            return res.status(500).json({ error: 'Erro ao atualizar quantidade.' });
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Produto não encontrado.' });
+        }
+
+        res.json({ message: 'Quantidade atualizada com sucesso.' });
+    });
+});
+
+// Rota para excluir um produto do carrinho
+app.delete('/api/produtos-pedidos/:id', (req, res) => {
+    const { id } = req.params;
+
+    const query = 'DELETE FROM Produtos_Pedidos WHERE ID_Produtos_Pedidos = ?';
+    connection.query(query, [id], (err, results) => {
+        if (err) {
+            console.error('Erro ao excluir produto do carrinho:', err);
+            return res.status(500).json({ error: 'Erro ao excluir produto do carrinho.' });
+        }
+        res.status(200).json({ message: 'Produto excluído do carrinho com sucesso!' });
+    });
+});
+app.post('/api/finalizar-compra', async (req, res) => {
+    const { idCliente, carrinhoProdutos } = req.body;
+
+    // Verificação de dados válidos
+    if (!idCliente || !Array.isArray(carrinhoProdutos) || carrinhoProdutos.length === 0) {
+        return res.status(400).json({ error: 'Dados inválidos ou carrinho vazio' });
+    }
+
+    try {
+        // Passo 1: Criar o Pedido
+        const resultPedido = await connection.query(`
+            INSERT INTO Pedido (ID_Cliente)
+            VALUES (?)`, [idCliente]);
+
+        const pedidoId = resultPedido.insertId; // ID do novo pedido criado
+
+        // Passo 2: Inserir os produtos no pedido
+        const produtosPedidoValues = carrinhoProdutos.map(produto => [
+            pedidoId, produto.idProduto, produto.quantidade
+        ]);
+
+        // Inserir os produtos no pedido
+        await connection.query(`
+            INSERT INTO Produtos_Pedidos (ID_Pedido, ID_Produtos, Quantidade)
+            VALUES ?`, [produtosPedidoValues]);
+
+        // Retornar sucesso
+        res.status(200).json({ message: 'Compra finalizada com sucesso!' });
+
+    } catch (error) {
+        console.error('Erro ao finalizar compra:', error);
+        res.status(500).json({ error: 'Erro ao processar a compra.' });
+    }
+});
+
+
+
 // Rota para login de estabelecimento
 app.post('/api/login/estabelecimentos', (req, res) => {
     const { cnpj, senha } = req.body;
@@ -511,6 +614,7 @@ app.post('/api/login/estabelecimentos', (req, res) => {
         res.json({ message: 'Login bem-sucedido!', estabelecimento: results[0] });
     });
 });
+
 
 // Rota para pegar todos os estabelecimentos
 app.get('/api/estabelecimentos', (req, res) => {

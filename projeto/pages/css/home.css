@@ -6,14 +6,14 @@
 }
 
 :root{
-    --font-main: 'Fonte', sans-serif; /* Atualizado para usar a fonte personalizada */
+    --font-main: 'Fonte', sans-serif; 
 }
 
 * {
     padding: 0;
     margin: 0;
     box-sizing: border-box;
-    font-family: var(--font-main) !important; /* Usa a fonte personalizada em todo o site */
+    font-family: var(--font-main) !important; 
     
 }
 
@@ -141,11 +141,12 @@ body::-webkit-scrollbar-thumb:hover {
     background-image: url(../images/kitchen.jpg);
     background-size: cover;
     background-position: center;
-    background-attachment: fixed;
+    background-attachment:fixed;
     display: flex;
     align-items: flex-start;
     flex-direction: column;
     z-index: 100;
+    margin-top: 500px;
 }
 
 .footer > .container{

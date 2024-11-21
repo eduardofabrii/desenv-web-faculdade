@@ -1,49 +1,36 @@
-// Função para adicionar produto
 async function adicionarProduto(event) {
     event.preventDefault();
-    
-    // Captura a imagem e converte para uma URL temporária
-    const imageInput = document.getElementById("productImage");
-    const imageFile = imageInput.files[0];
-    const imageURL = imageFile ? URL.createObjectURL(imageFile) : ''; // Caso não tenha imagem, será uma string vazia
-    
-    // Captura os outros campos
-    const nome = document.getElementById("productName").value;
-    const nicho = document.getElementById("productCategory").value;
-    const descricao = document.getElementById("productDescription").value;
-    const preco = parseFloat(document.getElementById("productPrice").value);
 
-    // Cria o objeto produto com os dados
-    const produto = {
-        Nome: nome,
-        Nicho: nicho,
-        Descricao: descricao,
-        Preco: preco,
-        Imagem: imageURL, // Adiciona a URL da imagem ao objeto produto
-    };
+    const formData = new FormData();
+
+    // Adiciona os campos ao FormData
+    const imageInput = document.getElementById("productImage");
+    formData.append("Imagem", imageInput.files[0]);
+    formData.append("Nome", document.getElementById("productName").value);
+    formData.append("Nicho", document.getElementById("productCategory").value);
+    formData.append("Descricao", document.getElementById("productDescription").value);
+    formData.append("Preco", document.getElementById("productPrice").value);
 
     try {
-        // Envia o produto para o backend
         const response = await fetch('/api/produtos', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(produto),
+            body: formData,
         });
 
         if (response.ok) {
-            alert("Produto adicionado com sucesso!");
+            
             document.getElementById("produtoForm").reset();
-            carregarProdutos(); // Atualiza a lista de produtos
+            carregarProdutos();
         } else {
-            throw new Error("Erro ao adicionar produto.");
+            const error = await response.json();
+            throw new Error(error.error || "Erro ao adicionar produto.");
         }
     } catch (error) {
         console.error(error);
         alert(error.message);
     }
 }
+
 
 // Função para carregar os produtos
 async function carregarProdutos() {
@@ -52,7 +39,7 @@ async function carregarProdutos() {
         const produtos = await response.json();
 
         const produtosContainer = document.getElementById("produtosContainer");
-        produtosContainer.innerHTML = ""; // Limpa a lista existente
+        produtosContainer.innerHTML = "";
 
         if (produtos.length === 0) {
             produtosContainer.innerHTML = "<p class='alert alert-warning'>Nenhum produto encontrado.</p>";
@@ -61,7 +48,7 @@ async function carregarProdutos() {
 
         // Exibe os produtos existentes
         produtos.forEach((produto, index) => {
-            const imagem = produto.Imagem || '';  // Usar a URL da imagem retornada do backend
+            const imagem = produto.Imagem || '';  
 
             const produtoCard = `
                 <div class="col-md-4">

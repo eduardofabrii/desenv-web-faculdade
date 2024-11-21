@@ -10,6 +10,16 @@ html, body {
     margin: 0;
 }
 
+.carrinho  {
+    font-size: 2rem;
+    color: rgb(0, 0, 0) !important;
+    text-decoration: none ;
+}
+.carrinho:hover{
+    color: #196B20 !important;
+    transition: 0.5s;
+}
+
 /* Estilo para a navegação */
 .logo-img {
     width: 40px; 
@@ -258,3 +268,4 @@ nav.py-2.bg.bg-light.border-bottom {
         margin-right: auto;
     }
 }
+
