@@ -5,6 +5,7 @@ const session = require('express-session');
 const nodemailer = require('nodemailer');
 const multer = require('multer');
 const path = require('path');
+require('dotenv').config();
 
 const app = express(); // Mover a inicialização do `app` para o início
 
@@ -48,10 +49,10 @@ const upload = multer({
 
 // Conexão com o banco de dados
 const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'economizeja'
+    host: process.env.DB_HOST,        // Usa a variável de ambiente DB_HOST
+    user: process.env.DB_USER,        // Usa a variável de ambiente DB_USER
+    password: process.env.DB_PASSWORD,// Usa a variável de ambiente DB_PASSWORD
+    database: process.env.DB_NAME     // Usa a variável de ambiente DB_NAME
 });
 
 connection.connect((err) => {
