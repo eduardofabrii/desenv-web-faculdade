@@ -1,5 +1,4 @@
 CREATE DATABASE ECONOMIZEJA;
-drop database EconomizeJa;
 USE ECONOMIZEJA;
 
 CREATE TABLE Usuario (
@@ -55,7 +54,7 @@ CREATE TABLE Produtos_Pedidos (
     ID_Pedido INT, 
     ID_Produtos INT,
     Quantidade INT,
-    FOREIGN KEY (ID_Pedido) REFERENCES Pedido(ID),  -
+    FOREIGN KEY (ID_Pedido) REFERENCES Pedido(ID), 
     FOREIGN KEY (ID_Produtos) REFERENCES Produtos(ID_Produtos)   
 );
 

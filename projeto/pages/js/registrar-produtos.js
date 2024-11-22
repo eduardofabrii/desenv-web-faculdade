@@ -18,7 +18,6 @@ async function adicionarProduto(event) {
         });
 
         if (response.ok) {
-            
             document.getElementById("produtoForm").reset();
             carregarProdutos();
         } else {
@@ -30,6 +29,7 @@ async function adicionarProduto(event) {
         alert(error.message);
     }
 }
+
 
 
 // Função para carregar os produtos
