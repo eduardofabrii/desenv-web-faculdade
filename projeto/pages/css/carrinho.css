@@ -1,11 +1,9 @@
 /* Estilo do contêiner do carrinho */
 #carrinhoContainer {
-    margin-top: 20px;
+    margin-bottom: 50px;
     display: flex;
     flex-direction: column;
     align-items: center;
-
-
 }
 
 .conteudo {
@@ -19,7 +17,6 @@
 /* Estilo do card do produto */
 .produto-card {
     display: flex;
-   
     background-color: #fff;
     border: 1px solid #ddd;
     border-radius: 10px;
@@ -28,8 +25,6 @@
     align-items: center;
     justify-content: center;
     width: 50%;
-    height: 500px;
-    
 }
 
 /* Estilo da imagem do produto */

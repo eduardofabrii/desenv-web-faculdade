@@ -36,36 +36,13 @@ body {
     background-color: rgb(248, 248, 248) !important;   
 }
 
-main {
-    height: 95%; 
-    position: relative;
-    margin-top: 100px;
-}
-
 section {    
     position: relative;
 }
 
-.container.mt-4 {
-    width: 350px;
-    height: 130px;
-    margin: 0 auto;
-    padding: 0;
-    border-radius: 10px;
-    color: #000000;
-    font-size: 1.5rem;
-    font-weight: bold;
-    text-align: center;
-    transition: 0.5s;
-}
-
-.btn.btn-primary.ms-2 {
-    background-color: #196B20;
-    color: #ffffff;
-    border: none;
-    border-radius: 10px;
-    padding: 10px;
-    font-size: 1rem;
+.mb-4 {
+    margin-bottom: 0rem !important;
+    margin-top: 5rem !important;
 }
 
 body::-webkit-scrollbar {

@@ -107,6 +107,8 @@ nav.py-2.bg.bg-light.border-bottom {
 }
 
 
+
+
 @media (min-width: 768px) and (max-width: 1199px) {
     .nav-register {
         display: none;

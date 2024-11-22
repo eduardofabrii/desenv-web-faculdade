@@ -71,8 +71,7 @@
     border: none;
   }
 
-    #notificarBtn:hover{
-        background-color:goldenrod!important; 
-        color: #196B20;        border: none;
-    }
-  
+#notificarBtn:hover{
+    background-color:goldenrod!important; 
+    color: #196B20;        border: none;
+}
