@@ -666,7 +666,7 @@ app.put('/api/estabelecimentos/:ID_Estabelecimento', (req, res) => {
         res.json({ message: 'Estabelecimento atualizado com sucesso!' });
     });
 });
-
+ 
 // Rota para excluir um estabelecimento
 app.delete('/api/estabelecimentos/:ID_Estabelecimento', (req, res) => {
     const { ID_Estabelecimento } = req.params;
