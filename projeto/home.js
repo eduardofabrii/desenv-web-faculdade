@@ -49,11 +49,11 @@ const upload = multer({
 
 // Conexão com o banco de dados
 const connection = mysql.createConnection({
-    host: process.env.DB_HOST,        // Usa a variável de ambiente DB_HOST
-    user: process.env.DB_USER,        // Usa a variável de ambiente DB_USER
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME     // Usa a variável de ambiente DB_NAME
-});  
+    host: 'localhost',
+    user: 'root',
+    password: 'a1s2d3',
+    database: 'economizeja'
+});
 
 connection.connect((err) => {
     if (err) {
