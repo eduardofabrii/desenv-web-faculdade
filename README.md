@@ -26,7 +26,7 @@ Para usar o projeto corretamente, siga os passos abaixo:<br>
 + git clone https://github.com/eduardofabrii/economizeja.git<br>
 
 2️⃣ Configure o Banco de Dados<br>
-+ Utilize o banco de dados sem senha.<br>
++ Utilize o banco de dados com a senha a1s2d3 - ou use qual quiser, mas terá que alterar na variavel connection a senha do BD.<br>
 + Copie os dados do arquivo arquivo-sql.txt para o seu MySQL Workbench (ou outra ferramenta de sua preferência) e execute o script.<br>
 
 3️⃣ Instale as Dependências do Back-end<br>
